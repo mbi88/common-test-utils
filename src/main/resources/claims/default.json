@@ -1,0 +1,8 @@
+{
+  "audience": {
+    "allowedCompanies": [],
+    "allowAll": true
+  },
+  "exp": 1484935225,
+  "sub": "fb69ac25-fa48-4cf7-8698-6321dfec6f9d"
+}

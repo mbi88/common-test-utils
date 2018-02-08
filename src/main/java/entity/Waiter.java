@@ -1,0 +1,42 @@
+package entity;
+
+import com.mbi.RequestBuilder;
+import io.restassured.response.Response;
+
+import java.util.function.Predicate;
+
+class Waiter {
+
+    private final String path;
+    private final String token;
+    private final int MINUTES_TO_WAIT = 2;
+    private final int MAX_ITERATION = MINUTES_TO_WAIT * 60;
+    private int iteration = 0;
+
+    Waiter(RequestBuilder builder) {
+        this.path = builder.getPath();
+        this.token = builder.getToken();
+    }
+
+    Response waitCondition(Predicate<Response> expectedCondition) {
+        Response response = produceRequest();
+
+        while (!expectedCondition.test(response)) {
+            iteration++;
+            if (iteration > MAX_ITERATION)
+                throw new Error("Expected conditions are not met. Max waiting time is exceeded");
+
+            response = produceRequest();
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException ignored) {
+            }
+        }
+
+        return response;
+    }
+
+    private Response produceRequest() {
+        return new RequestBuilder().setToken(token).get(path);
+    }
+}
