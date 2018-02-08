@@ -1,0 +1,13 @@
+# idea
+.idea/
+*.iml
+
+# gradle
+.gradle/
+out/
+gradle/
+build/
+gradlew
+gradlew.bat
+
+src/main/resources/configuration/
