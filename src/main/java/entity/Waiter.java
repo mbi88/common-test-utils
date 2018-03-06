@@ -5,7 +5,7 @@ import io.restassured.response.Response;
 
 import java.util.function.Predicate;
 
-class Waiter {
+public final class Waiter {
 
     private final String path;
     private final String token;
@@ -13,12 +13,12 @@ class Waiter {
     private final int MAX_ITERATION = MINUTES_TO_WAIT * 60;
     private int iteration = 0;
 
-    Waiter(RequestBuilder builder) {
+    public Waiter(RequestBuilder builder) {
         this.path = builder.getPath();
         this.token = builder.getToken();
     }
 
-    Response waitCondition(Predicate<Response> expectedCondition) {
+    public Response waitCondition(Predicate<Response> expectedCondition) {
         Response response = produceRequest();
 
         while (!expectedCondition.test(response)) {

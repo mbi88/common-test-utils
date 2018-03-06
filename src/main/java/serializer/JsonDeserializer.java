@@ -1,4 +1,4 @@
-package app.serializer;
+package serializer;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -47,5 +47,21 @@ public class JsonDeserializer {
         }
 
         return json;
+    }
+
+    /*
+    Get json object from json array by object key and value
+     */
+    public JSONObject getJsonFromArrayByField(JSONArray sourceArray, String fieldName, String fieldValue){
+        JSONObject jsonObject = new JSONObject();
+
+        for (Object o : sourceArray) {
+            JSONObject jo = new JSONObject(o.toString());
+            jo.getString(fieldName);
+            if (jo.getString(fieldName).equalsIgnoreCase(fieldValue))
+                jsonObject = jo;
+        }
+
+        return jsonObject;
     }
 }
