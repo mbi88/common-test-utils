@@ -48,7 +48,7 @@ public abstract class Entity<T> {
         }
     }
 
-    protected class QueryParameters {
+    public class QueryParameters {
 
         private Map<String, String> params = new HashMap<>();
 
