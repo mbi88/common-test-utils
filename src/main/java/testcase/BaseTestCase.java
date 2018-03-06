@@ -16,15 +16,19 @@ public abstract class BaseTestCase {
         return System.currentTimeMillis();
     }
 
-    protected static String getRandomGUID() {
+    protected static String getRandomUUID() {
         return java.util.UUID.randomUUID().toString();
     }
 
-    protected JSONObject getJsonFromFile(String path) {
+    protected JSONObject getJsonFromFile(final String path) {
         return JsonDeserializer.getJsonFromFile(path);
     }
 
-    protected JSONArray getJsonArrayFromFile(String path) {
+    protected JSONArray getJsonArrayFromFile(final String path) {
         return JsonDeserializer.getJsonArrayFromFile(path);
+    }
+
+    protected JSONObject findJsonInArray(final JSONArray sourceArray, final String fieldName, final String fieldValue) {
+        return JsonDeserializer.findJsonInArray(sourceArray, fieldName, fieldValue);
     }
 }

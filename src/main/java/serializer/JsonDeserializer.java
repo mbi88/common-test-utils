@@ -1,4 +1,5 @@
 package serializer;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -7,7 +8,10 @@ import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-public class JsonDeserializer {
+public final class JsonDeserializer {
+
+    private JsonDeserializer() {
+    }
 
     /**
      * Method to read a data from file from passed patch and return Json object.
@@ -16,7 +20,7 @@ public class JsonDeserializer {
      *             it is already implemented in the method.
      * @return Json object
      */
-    public static JSONObject getJsonFromFile(String path) {
+    public static JSONObject getJsonFromFile(final String path) {
         JSONObject json = new JSONObject();
 
         try {
@@ -36,7 +40,7 @@ public class JsonDeserializer {
      *             it is already implemented in the method.
      * @return Json array
      */
-    public static JSONArray getJsonArrayFromFile(String path) {
+    public static JSONArray getJsonArrayFromFile(final String path) {
         JSONArray json = new JSONArray();
 
         try {
@@ -49,10 +53,15 @@ public class JsonDeserializer {
         return json;
     }
 
-    /*
-    Get json object from json array by object key and value
+    /**
+     * Get json object from json array by object key and value.
+     *
+     * @param sourceArray sourceArray
+     * @param fieldName   fieldName of wanted json object
+     * @param fieldValue  fieldValue of wanted json object
+     * @return inner json object
      */
-    public JSONObject getJsonFromArrayByField(JSONArray sourceArray, String fieldName, String fieldValue){
+    public static JSONObject findJsonInArray(final JSONArray sourceArray, final String fieldName, final String fieldValue) {
         JSONObject jsonObject = new JSONObject();
 
         for (Object o : sourceArray) {

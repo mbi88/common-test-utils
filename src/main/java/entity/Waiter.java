@@ -9,16 +9,16 @@ public final class Waiter {
 
     private final String path;
     private final String token;
-    private final int MINUTES_TO_WAIT = 2;
-    private final int MAX_ITERATION = MINUTES_TO_WAIT * 60;
+    private final int MAX_ITERATION;
     private int iteration = 0;
 
-    public Waiter(RequestBuilder builder) {
+    public Waiter(final RequestBuilder builder, final int waitingTimeInMin) {
         this.path = builder.getPath();
         this.token = builder.getToken();
+        this.MAX_ITERATION = waitingTimeInMin * 60;
     }
 
-    public Response waitCondition(Predicate<Response> expectedCondition) {
+    public Response waitCondition(final Predicate<Response> expectedCondition) {
         Response response = produceRequest();
 
         while (!expectedCondition.test(response)) {

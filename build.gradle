@@ -2,6 +2,7 @@ group 'com.audienceproject'
 version '1.0-SNAPSHOT'
 
 apply plugin: 'java'
+apply plugin: 'checkstyle'
 
 description = """"""
 
@@ -23,4 +24,17 @@ dependencies {
     compile group: 'io.rest-assured', name: 'rest-assured', version: '3.0.7'
     compile group: 'org.json', name: 'json', version: '20180130'
     compile group: 'io.jsonwebtoken', name: 'jjwt', version: '0.9.0'
+}
+
+checkstyle {
+    toolVersion '7.8.1'
+    configFile file("checkstyle.xml")
+}
+
+checkstyleMain {
+    source = 'src/main/java'
+}
+
+checkstyleTest {
+    source = 'src/test/java'
 }

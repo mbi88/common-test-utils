@@ -4,8 +4,14 @@ import org.json.JSONObject;
 
 import static serializer.JsonDeserializer.getJsonFromFile;
 
+/**
+ * Tests configurations.
+ */
 public interface Configuration {
 
+    /**
+     * Available environments.
+     */
     enum Environment {
         QA1,
         QA2,

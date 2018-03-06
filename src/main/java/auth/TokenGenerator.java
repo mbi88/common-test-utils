@@ -1,6 +1,6 @@
 package auth;
 
-import base64.Base64Coder;
+import base64.Base64Utils;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.joda.time.DateTime;
@@ -53,7 +53,7 @@ public final class TokenGenerator {
     }
 
     private Key getKey(String scr, boolean encoded) {
-        byte[] secret = encoded ? Base64Coder.decode(scr) : scr.getBytes();
+        byte[] secret = encoded ? Base64Utils.decode(scr) : scr.getBytes();
 
         return new SecretKeySpec(secret, SignatureAlgorithm.HS256.getJcaName());
     }
