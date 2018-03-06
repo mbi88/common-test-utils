@@ -9,15 +9,15 @@ import java.util.Map;
 
 public abstract class Entity<T> {
 
-    public HttpRequest http = new RequestBuilder();
-    public Response response;
+    protected HttpRequest http = new RequestBuilder();
+    protected Response response;
     private String id;
 
-    public Entity(String id) {
+    protected Entity(String id) {
         this.id = id;
     }
 
-    public Entity() {
+    protected Entity() {
     }
 
     public String getId() {
@@ -48,7 +48,7 @@ public abstract class Entity<T> {
         }
     }
 
-    public class QueryParameters {
+    protected class QueryParameters {
 
         private Map<String, String> params = new HashMap<>();
 
