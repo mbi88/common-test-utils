@@ -5,7 +5,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
- * Build query parameters as a string in format '?k1=v1&k2=v2'.
+ * Build query parameters as a string in format <!--?k1=v1&k2=v2<-->.
  */
 public final class QueryParameter {
 
@@ -25,7 +25,7 @@ public final class QueryParameter {
     }
 
     /**
-     * Returns query parameters in format '?k1=v1&k2=v2'.
+     * Returns query parameters in format <!--?k1=v1&k2=v2<-->.
      *
      * @return query parameters
      */
