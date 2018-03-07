@@ -10,6 +10,7 @@ import org.json.JSONObject;
 
 import javax.crypto.spec.SecretKeySpec;
 import java.security.Key;
+import java.util.Objects;
 
 /**
  * Generates tokens.
@@ -20,6 +21,9 @@ public final class TokenGenerator {
     private final boolean encoded;
 
     public TokenGenerator(final String secret, final boolean encoded) {
+        assert !Objects.isNull(secret) : "'Secret' can't be null. Set appropriate environment variable";
+        assert !Objects.isNull(encoded) : "'Encoded' can't be null. Set appropriate environment variable";
+
         this.secret = secret;
         this.encoded = encoded;
     }
