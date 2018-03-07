@@ -9,9 +9,10 @@ import java.util.Objects;
 /**
  * Base request class.
  *
- * @param <T> class inheritors.
+ * @param <T> class inheritor.
+ * @param <U> object id type.
  */
-public abstract class Request<T> {
+public abstract class Request<T, U> {
 
     /**
      * Http request builder.
@@ -24,16 +25,7 @@ public abstract class Request<T> {
     /**
      * Created object id.
      */
-    private String id;
-
-    /**
-     * Is needed for creation objects with specified id.
-     *
-     * @param id object id.
-     */
-    protected Request(final String id) {
-        this.id = id;
-    }
+    private U id;
 
     /**
      * Default constructor.
@@ -42,12 +34,21 @@ public abstract class Request<T> {
     }
 
     /**
+     * Is needed for creation objects with specified id.
+     *
+     * @param id object id.
+     */
+    protected Request(final U id) {
+        this.id = id;
+    }
+
+    /**
      * Returns object id.
      *
      * @return id
      */
-    public String getId() {
-        return !Objects.isNull(this.id) ? this.id : this.response.path("id").toString();
+    public U getId() {
+        return !Objects.isNull(this.id) ? this.id : this.response.path("id");
     }
 
     /**
@@ -71,24 +72,24 @@ public abstract class Request<T> {
     /**
      * Is needed for test cases that check performing requests without object id in URL.
      */
-    private final class WithoutId extends Request<T> {
+    private final class WithoutId extends Request<T, U> {
         /**
          * @return "".
          */
-        public String getId() {
-            return "";
+        public U getId() {
+            return (U) "";
         }
     }
 
     /**
      * Is needed for test cases that check performing requests with incorrect object id in URL.
      */
-    private final class WithIncorrectId extends Request<T> {
+    private final class WithIncorrectId extends Request<T, U> {
         /**
          * @return UUID
          */
-        public String getId() {
-            return "09fe8a5c-b09a-4794-1741-08d42d809985";
+        public U getId() {
+            return (U) "09fe8a5c-b09a-4794-1741-08d42d809985";
         }
     }
 }
