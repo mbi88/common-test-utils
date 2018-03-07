@@ -23,8 +23,9 @@ public final class Waiter {
 
         while (!expectedCondition.test(response)) {
             iteration++;
-            if (iteration > MAX_ITERATION)
+            if (iteration > MAX_ITERATION) {
                 throw new Error("Expected conditions are not met. Max waiting time is exceeded");
+            }
 
             response = produceRequest();
             try {

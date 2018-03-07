@@ -8,6 +8,9 @@ import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
+/**
+ * Read content from file and map to org.json.JSONObject/JSONArray.
+ */
 public final class JsonDeserializer {
 
     private JsonDeserializer() {
@@ -61,14 +64,17 @@ public final class JsonDeserializer {
      * @param fieldValue  fieldValue of wanted json object
      * @return inner json object
      */
-    public static JSONObject findJsonInArray(final JSONArray sourceArray, final String fieldName, final String fieldValue) {
+    public static JSONObject findJsonInArray(final JSONArray sourceArray,
+                                             final String fieldName,
+                                             final String fieldValue) {
         JSONObject jsonObject = new JSONObject();
 
         for (Object o : sourceArray) {
             JSONObject jo = new JSONObject(o.toString());
             jo.getString(fieldName);
-            if (jo.getString(fieldName).equalsIgnoreCase(fieldValue))
+            if (jo.getString(fieldName).equalsIgnoreCase(fieldValue)) {
                 jsonObject = jo;
+            }
         }
 
         return jsonObject;

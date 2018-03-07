@@ -10,7 +10,7 @@ public abstract class BaseTestCase {
     protected HttpRequest http = new RequestBuilder();
     protected JsonAssert assertion = new JsonAssert();
     protected JsonValidator validator = new JsonValidator();
-    private DateHandler dateHandler = new DateHandler();
+    protected DateHandler dateHandler = new DateHandler();
 
     protected static long getRandomNum() {
         return System.currentTimeMillis();
@@ -20,15 +20,17 @@ public abstract class BaseTestCase {
         return java.util.UUID.randomUUID().toString();
     }
 
-    protected JSONObject getJsonFromFile(final String path) {
+    protected final JSONObject getJsonFromFile(final String path) {
         return JsonDeserializer.getJsonFromFile(path);
     }
 
-    protected JSONArray getJsonArrayFromFile(final String path) {
+    protected final JSONArray getJsonArrayFromFile(final String path) {
         return JsonDeserializer.getJsonArrayFromFile(path);
     }
 
-    protected JSONObject findJsonInArray(final JSONArray sourceArray, final String fieldName, final String fieldValue) {
+    protected final JSONObject findJsonInArray(final JSONArray sourceArray,
+                                               final String fieldName,
+                                               final String fieldValue) {
         return JsonDeserializer.findJsonInArray(sourceArray, fieldName, fieldValue);
     }
 }

@@ -6,6 +6,8 @@ import io.restassured.response.Response;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 public abstract class Entity<T> {
 
@@ -13,7 +15,7 @@ public abstract class Entity<T> {
     protected Response response;
     private String id;
 
-    protected Entity(String id) {
+    protected Entity(final String id) {
         this.id = id;
     }
 
@@ -21,11 +23,7 @@ public abstract class Entity<T> {
     }
 
     public String getId() {
-        if (id != null) {
-            return id;
-        } else {
-            return this.response.path("id").toString();
-        }
+        return !Objects.isNull(this.id) ? this.id : this.response.path("id").toString();
     }
 
     public WithoutId withoutId() {
@@ -48,25 +46,20 @@ public abstract class Entity<T> {
         }
     }
 
-    public class QueryParameters {
+    public final class QueryParameters {
 
-        private Map<String, String> params = new HashMap<>();
+        private final Map<String, String> params = new HashMap<>();
 
-        public void setParameter(String parameter, String value) {
-            params.put(parameter, value);
+        public void addParameter(final String parameter, final String value) {
+            this.params.put(parameter, value);
         }
 
         public String getParametersString() {
-            String result = "?";
-            String tmp = "";
+            String tmp = params.entrySet().stream()
+                    .map(m -> m.getKey().concat("=").concat(m.getValue()).concat("&"))
+                    .collect(Collectors.joining());
 
-            for (String k : params.keySet()) {
-                tmp = tmp.concat(k).concat("=").concat(params.get(k)).concat("&");
-            }
-
-            result = result.concat(tmp);
-
-            return result.substring(0, result.length() - 1);
+            return "?" + tmp.substring(0, tmp.length() - 1);
         }
     }
 }
