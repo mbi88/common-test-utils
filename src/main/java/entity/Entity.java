@@ -55,11 +55,11 @@ public abstract class Entity<T> {
         }
 
         public String getParametersString() {
-            String tmp = params.entrySet().stream()
+            String tmp = "?" + params.entrySet().stream()
                     .map(m -> m.getKey().concat("=").concat(m.getValue()).concat("&"))
                     .collect(Collectors.joining());
 
-            return "?" + tmp.substring(0, tmp.length() - 1);
+            return tmp.substring(0, tmp.length() - 1);
         }
     }
 }
