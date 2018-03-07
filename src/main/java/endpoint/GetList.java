@@ -5,9 +5,18 @@ package endpoint;
  */
 public interface GetList {
 
+    /**
+     * Check basic endpoint operations.
+     */
     void testCanGetList();
 
+    /**
+     * Validate response according to specified schema.
+     */
     void validateJson();
 
+    /**
+     * Check sorting order.
+     */
     void testSortOrder();
 }

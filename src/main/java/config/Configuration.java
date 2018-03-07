@@ -7,10 +7,16 @@ import java.util.Objects;
 import static serializer.JsonDeserializer.getJsonFromFile;
 
 /**
- * Tests configurations.
+ * Tests configuration.
  */
 public interface Configuration {
 
+    /**
+     * Returns environment variable value by its name.
+     *
+     * @param varName environment variable name.
+     * @return variable value.
+     */
     default String readVar(final String varName) {
         System.out.println("Reading env var " + varName + ": ");
         String result = Objects.isNull(System.getenv(varName)) ? System.getenv(varName) : "null";
@@ -28,11 +34,16 @@ public interface Configuration {
         TESTS,
         LOCAL;
 
+        /**
+         * Reads config from 'src/resources/configuration/' and returns as a JSONObject.
+         *
+         * @return config.
+         */
         public JSONObject getConfig() {
             return getJsonFromFile(getConfigPath());
         }
 
-        // Configuration files are in src/resources/configuration/
+        // Configuration files are expected in src/resources/configuration/
         private String getConfigPath() {
             return "/configuration/" + this.toString().toLowerCase() + ".json";
         }

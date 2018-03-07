@@ -49,14 +49,36 @@ public abstract class BaseTestCase {
         return java.util.UUID.randomUUID().toString();
     }
 
+    /**
+     * Method to read a data from file from passed patch and return Json object.
+     *
+     * @param path Path to the file with data. No need to add "src/main/resources" every time when you pass the patch -
+     *             it is already implemented in the method.
+     * @return Json object
+     */
     protected final JSONObject getJsonFromFile(final String path) {
         return JsonDeserializer.getJsonFromFile(path);
     }
 
+    /**
+     * Method to read a data from file from passed patch and return Json array.
+     *
+     * @param path Path to the file with data. No need to add "src/main/resources" every time when you pass the patch -
+     *             it is already implemented in the method.
+     * @return Json array
+     */
     protected final JSONArray getJsonArrayFromFile(final String path) {
         return JsonDeserializer.getJsonArrayFromFile(path);
     }
 
+    /**
+     * Get json object from json array by object key and value.
+     *
+     * @param sourceArray sourceArray
+     * @param fieldName   fieldName of wanted json object
+     * @param fieldValue  fieldValue of wanted json object
+     * @return inner json object
+     */
     protected final JSONObject findJsonInArray(final JSONArray sourceArray,
                                                final String fieldName,
                                                final String fieldValue) {

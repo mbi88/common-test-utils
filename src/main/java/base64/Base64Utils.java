@@ -8,6 +8,9 @@ import java.util.Base64;
  */
 public final class Base64Utils {
 
+    /**
+     * Prohibits object initialization.
+     */
     private Base64Utils() {
     }
 

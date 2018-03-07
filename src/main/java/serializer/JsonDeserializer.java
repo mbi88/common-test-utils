@@ -13,6 +13,9 @@ import java.nio.file.Paths;
  */
 public final class JsonDeserializer {
 
+    /**
+     * Prohibits object initialization.
+     */
     private JsonDeserializer() {
     }
 

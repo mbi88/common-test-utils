@@ -4,11 +4,24 @@ import org.testng.ITestContext;
 import org.testng.ITestListener;
 import org.testng.ITestResult;
 
+/**
+ * Custom TestNG listener for test running.
+ */
 public class BaseTestListener implements ITestListener {
 
+    /**
+     * Needed to avoid printing class name twice.
+     */
     private String prevClassName = "";
 
-    private void printTestResult(ITestResult iTestResult, String status, String message) {
+    /**
+     * Prints test result.
+     *
+     * @param iTestResult result.
+     * @param status      test status.
+     * @param message     message to print.
+     */
+    private void printTestResult(final ITestResult iTestResult, final String status, final String message) {
         String testName = "    " + iTestResult.getMethod().getMethodName();
         String dots = getDots(testName);
         String time = getTime(iTestResult);
@@ -16,11 +29,23 @@ public class BaseTestListener implements ITestListener {
         System.out.println(testName + dots + status + time + message);
     }
 
-    private String getTime(ITestResult iTestResult) {
+    /**
+     * Get elapsed test case time.
+     *
+     * @param iTestResult result.
+     * @return elapsed time.
+     */
+    private String getTime(final ITestResult iTestResult) {
         return "[ " + (iTestResult.getEndMillis() - iTestResult.getStartMillis()) + "ms ]";
     }
 
-    private String getDots(String testName) {
+    /**
+     * Counts dots according to test case name length.
+     *
+     * @param testName tc name
+     * @return dots.
+     */
+    private String getDots(final String testName) {
         String dots = ".";
         for (int i = testName.length(); i < 70; i++) {
             dots = dots.concat(".");
@@ -29,7 +54,13 @@ public class BaseTestListener implements ITestListener {
         return dots;
     }
 
-    private String getMessage(ITestResult iTestResult) {
+    /**
+     * Returns terminal command to rerun test.
+     *
+     * @param iTestResult result.
+     * @return command.
+     */
+    private String getMessage(final ITestResult iTestResult) {
         return String.valueOf(new StringBuilder()
                 .append(" [ ")
                 .append("gradle clean test --tests ")
@@ -39,7 +70,12 @@ public class BaseTestListener implements ITestListener {
                 .append(" ]"));
     }
 
-    private void printClassName(ITestResult iTestResult) {
+    /**
+     * Prints class name.
+     *
+     * @param iTestResult result.
+     */
+    private void printClassName(final ITestResult iTestResult) {
         // Store only class name without packages
         String[] s = iTestResult.getTestClass().getName().split("\\.");
         String className = s[s.length - 1];
