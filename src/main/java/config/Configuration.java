@@ -11,10 +11,12 @@ import static serializer.JsonDeserializer.getJsonFromFile;
  */
 public interface Configuration {
 
-    default void readVar(final String varName) {
+    default String readVar(final String varName) {
         System.out.println("Reading env var " + varName + ": ");
         String result = Objects.isNull(System.getenv(varName)) ? System.getenv(varName) : "null";
         System.out.println(result);
+
+        return result;
     }
 
     /**
