@@ -81,8 +81,9 @@ public class BaseTestListener implements ITestListener {
         String className = s[s.length - 1];
 
         // Print class name only 1 time
-        if (!className.equals(prevClassName))
+        if (!className.equals(prevClassName)) {
             System.out.println("  " + className);
+        }
         prevClassName = className;
     }
 

@@ -13,9 +13,21 @@ import java.util.Random;
  */
 public abstract class BaseTestCase {
 
+    /**
+     * Http requests based on rest-assured framework.
+     */
     protected final HttpRequest http = new RequestBuilder();
+    /**
+     * Json comparison.
+     */
     protected final JsonAssert assertion = new JsonAssert();
+    /**
+     * Json validation based on json schema validation.
+     */
     protected final JsonValidator validator = new JsonValidator();
+    /**
+     * Different operations with dates.
+     */
     protected final DateHandler dateHandler = new DateHandler();
 
     /**
