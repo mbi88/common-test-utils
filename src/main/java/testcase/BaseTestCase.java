@@ -1,6 +1,7 @@
 package testcase;
 
 import com.mbi.*;
+import io.restassured.response.Response;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import serializer.JsonDeserializer;
@@ -83,5 +84,25 @@ public abstract class BaseTestCase {
                                                final String fieldName,
                                                final String fieldValue) {
         return JsonDeserializer.findJsonInArray(sourceArray, fieldName, fieldValue);
+    }
+
+    /**
+     * Converts response to json object.
+     *
+     * @param response rest-assured response
+     * @return json object.
+     */
+    public static JSONObject toJson(final Response response) {
+        return new JSONObject(response.asString());
+    }
+
+    /**
+     * Converts response to json array.
+     *
+     * @param response rest-assured response
+     * @return json array.
+     */
+    public JSONArray toJsonArray(final Response response) {
+        return new JSONArray(response.asString());
     }
 }

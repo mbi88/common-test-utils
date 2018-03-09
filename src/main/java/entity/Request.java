@@ -3,7 +3,6 @@ package entity;
 import com.mbi.HttpRequest;
 import com.mbi.RequestBuilder;
 import io.restassured.response.Response;
-import org.json.JSONObject;
 
 import java.util.Objects;
 
@@ -50,17 +49,6 @@ public abstract class Request<T, U> {
      */
     public U getId() {
         return !Objects.isNull(this.id) ? this.id : this.response.path("id");
-    }
-
-
-    /**
-     * Converts response to json object.
-     *
-     * @param response rest-assured response
-     * @return json object.
-     */
-    public JSONObject toJson(final Response response) {
-        return new JSONObject(response.asString());
     }
 
     /**
