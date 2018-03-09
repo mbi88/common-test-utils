@@ -3,6 +3,8 @@ package config;
 import org.json.JSONObject;
 
 import java.util.Objects;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static serializer.JsonDeserializer.getJsonFromFile;
 
@@ -23,6 +25,20 @@ public interface Configuration {
         System.out.println(result);
 
         return result;
+    }
+
+    /**
+     * Returns current environment.
+     *
+     * @param apiUrl url of tested API.
+     * @return environment prefix.
+     */
+    default String getCurrentEnv(final String apiUrl) {
+        return Stream.of(apiUrl.split("://"))
+                .filter(s -> !s.contains("http"))
+                .map(s -> s.split("-"))
+                .map(string -> string[0])
+                .collect(Collectors.joining());
     }
 
     /**
