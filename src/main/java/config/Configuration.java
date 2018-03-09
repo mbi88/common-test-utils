@@ -19,7 +19,7 @@ public interface Configuration {
      */
     default String readVar(final String varName) {
         System.out.println("Reading env var " + varName + ": ");
-        String result = Objects.isNull(System.getenv(varName)) ? System.getenv(varName) : "null";
+        String result = Objects.isNull(System.getenv(varName)) ? "null" : System.getenv(varName);
         System.out.println(result);
 
         return result;
