@@ -7,8 +7,13 @@ import org.testng.ITestResult;
 /**
  * Custom TestNG listener for test running.
  */
+@SuppressWarnings("PMD")
 public class BaseTestListener implements ITestListener {
 
+    /**
+     * Simple dot char.
+     */
+    private static final String DOT = ".";
     /**
      * Needed to avoid printing class name twice.
      */
@@ -22,9 +27,9 @@ public class BaseTestListener implements ITestListener {
      * @param message     message to print.
      */
     private void printTestResult(final ITestResult iTestResult, final String status, final String message) {
-        String testName = "    " + iTestResult.getMethod().getMethodName();
-        String dots = getDots(testName);
-        String time = getTime(iTestResult);
+        final String testName = "    " + iTestResult.getMethod().getMethodName();
+        final String dots = getDots(testName);
+        final String time = getTime(iTestResult);
 
         System.out.println(testName + dots + status + time + message);
     }
@@ -46,9 +51,9 @@ public class BaseTestListener implements ITestListener {
      * @return dots.
      */
     private String getDots(final String testName) {
-        String dots = ".";
+        String dots = DOT;
         for (int i = testName.length(); i < 70; i++) {
-            dots = dots.concat(".");
+            dots = dots.concat(DOT);
         }
 
         return dots;
@@ -65,7 +70,7 @@ public class BaseTestListener implements ITestListener {
                 .append(" [ ")
                 .append("gradle clean test --tests ")
                 .append(iTestResult.getTestClass().getName())
-                .append(".")
+                .append(DOT)
                 .append(iTestResult.getMethod().getMethodName())
                 .append(" ]"));
     }
@@ -77,8 +82,8 @@ public class BaseTestListener implements ITestListener {
      */
     private void printClassName(final ITestResult iTestResult) {
         // Store only class name without packages
-        String[] s = iTestResult.getTestClass().getName().split("\\.");
-        String className = s[s.length - 1];
+        final String[] s = iTestResult.getTestClass().getName().split("\\.");
+        final String className = s[s.length - 1];
 
         // Print class name only 1 time
         if (!className.equals(prevClassName)) {

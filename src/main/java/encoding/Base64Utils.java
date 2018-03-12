@@ -1,4 +1,4 @@
-package base64;
+package encoding;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;

@@ -5,6 +5,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
@@ -12,6 +13,11 @@ import java.nio.file.Paths;
  * Read content from file and map to org.json.JSONObject/JSONArray.
  */
 public final class JsonDeserializer {
+
+    /**
+     * The name of the requested charset.
+     */
+    private static final String CHARSET_NAME = "UTF-8";
 
     /**
      * Prohibits object initialization.
@@ -26,11 +32,14 @@ public final class JsonDeserializer {
      *             it is already implemented in the method.
      * @return Json object
      */
+    @SuppressWarnings("PMD.AvoidPrintStackTrace")
     public static JSONObject getJsonFromFile(final String path) {
         JSONObject json = new JSONObject();
 
         try {
-            String s = new String(Files.readAllBytes(Paths.get(JsonDeserializer.class.getResource(path).toURI())));
+            final String s = new String(
+                    Files.readAllBytes(Paths.get(JsonDeserializer.class.getResource(path).toURI())),
+                    Charset.forName(CHARSET_NAME));
             json = new JSONObject(s);
         } catch (URISyntaxException | IOException e) {
             e.printStackTrace();
@@ -46,11 +55,14 @@ public final class JsonDeserializer {
      *             it is already implemented in the method.
      * @return Json array
      */
+    @SuppressWarnings("PMD.AvoidPrintStackTrace")
     public static JSONArray getJsonArrayFromFile(final String path) {
         JSONArray json = new JSONArray();
 
         try {
-            String s = new String(Files.readAllBytes(Paths.get(JsonDeserializer.class.getResource(path).toURI())));
+            final String s = new String(
+                    Files.readAllBytes(Paths.get(JsonDeserializer.class.getResource(path).toURI())),
+                    Charset.forName(CHARSET_NAME));
             json = new JSONArray(s);
         } catch (URISyntaxException | IOException e) {
             e.printStackTrace();
@@ -67,13 +79,14 @@ public final class JsonDeserializer {
      * @param fieldValue  fieldValue of wanted json object
      * @return inner json object
      */
+    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public static JSONObject findJsonInArray(final JSONArray sourceArray,
                                              final String fieldName,
                                              final String fieldValue) {
         JSONObject jsonObject = new JSONObject();
 
         for (Object o : sourceArray) {
-            JSONObject jo = new JSONObject(o.toString());
+            final JSONObject jo = new JSONObject(o.toString());
             jo.getString(fieldName);
             if (jo.getString(fieldName).equalsIgnoreCase(fieldValue)) {
                 jsonObject = jo;

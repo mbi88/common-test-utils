@@ -19,9 +19,10 @@ public interface Configuration {
      * @param varName environment variable name.
      * @return variable value.
      */
+    @SuppressWarnings("PMD.SystemPrintln")
     default String readVar(final String varName) {
         System.out.println("Reading env var " + varName + ": ");
-        String result = Objects.isNull(System.getenv(varName)) ? "null" : System.getenv(varName);
+        final String result = Objects.isNull(System.getenv(varName)) ? "null" : System.getenv(varName);
         System.out.println(result);
 
         return result;
@@ -66,6 +67,9 @@ public interface Configuration {
 
     }
 
+    /**
+     * Configure the system with system environment variables or read from json config file.
+     */
     @FunctionalInterface
     interface Configurable {
         void configure();

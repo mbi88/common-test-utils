@@ -21,11 +21,11 @@ public final class Waiter {
     /**
      * Max iterations count.
      */
-    private final int MAX_ITERATION;
+    private final int maxIteration;
     /**
      * Iteration.
      */
-    private int iteration = 0;
+    private int iteration;
 
     /**
      * Waiter constructor.
@@ -36,27 +36,25 @@ public final class Waiter {
     public Waiter(final RequestBuilder builder, final int waitingTimeInMin) {
         this.path = builder.getPath();
         this.token = builder.getToken();
-        this.MAX_ITERATION = waitingTimeInMin * 60;
+        this.maxIteration = waitingTimeInMin * 60;
     }
 
     /**
      * @param expectedCondition condition.
      * @return result response.
      */
+    @SuppressWarnings("PMD.AvoidThrowingRawExceptionTypes")
     public Response waitCondition(final Predicate<Response> expectedCondition) {
         Response response = produceRequest();
 
         while (!expectedCondition.test(response)) {
             iteration++;
-            if (iteration > MAX_ITERATION) {
+            if (iteration > maxIteration) {
                 throw new Error("Expected conditions are not met. Max waiting time is exceeded");
             }
 
             response = produceRequest();
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException ignored) {
-            }
+            wait(1000);
         }
 
         return response;
@@ -69,5 +67,19 @@ public final class Waiter {
      */
     private Response produceRequest() {
         return new RequestBuilder().setToken(token).get(path);
+    }
+
+    /**
+     * Sleep n seconds.
+     *
+     * @param ms milliseconds
+     */
+    @SuppressWarnings("PMD.AvoidPrintStackTrace")
+    private void wait(final int ms) {
+        try {
+            Thread.sleep(ms);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 }

@@ -30,6 +30,7 @@ public abstract class Request<T, U> {
     /**
      * Default constructor.
      */
+    @SuppressWarnings("PMD.UncommentedEmptyConstructor")
     protected Request() {
     }
 
@@ -40,6 +41,15 @@ public abstract class Request<T, U> {
      */
     protected Request(final U id) {
         this.id = id;
+    }
+
+    /**
+     * Setting response.
+     *
+     * @param response rest-assured response.
+     */
+    protected void setResponse(final Response response) {
+        this.response = response;
     }
 
     /**

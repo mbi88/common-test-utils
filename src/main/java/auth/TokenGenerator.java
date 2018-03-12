@@ -1,6 +1,6 @@
 package auth;
 
-import base64.Base64Utils;
+import encoding.Base64Utils;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.joda.time.DateTime;
@@ -9,6 +9,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import javax.crypto.spec.SecretKeySpec;
+import java.nio.charset.Charset;
 import java.security.Key;
 import java.util.Objects;
 
@@ -61,9 +62,9 @@ public final class TokenGenerator {
      */
     public JSONObject updateClaim(final JSONObject json, final String key, final Object value) {
         // In case if I forget that the key accepts JSONArray instead of object or string
-        Object object = json.get(key);
+        final Object object = json.get(key);
         if (object instanceof JSONArray && !(value instanceof JSONArray)) {
-            JSONArray putJson = new JSONArray();
+            final JSONArray putJson = new JSONArray();
             putJson.put(value);
             json.put(key, putJson);
 
@@ -81,7 +82,7 @@ public final class TokenGenerator {
      * @return key.
      */
     private Key getKey(final String scr, final boolean encoded) {
-        byte[] secretBytes = encoded ? Base64Utils.decode(scr) : scr.getBytes();
+        final byte[] secretBytes = encoded ? Base64Utils.decode(scr) : scr.getBytes(Charset.forName("UTF-8"));
 
         return new SecretKeySpec(secretBytes, SignatureAlgorithm.HS256.getJcaName());
     }

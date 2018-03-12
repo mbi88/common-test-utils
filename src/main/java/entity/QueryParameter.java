@@ -30,7 +30,7 @@ public final class QueryParameter {
      * @return query parameters
      */
     public String getParametersString() {
-        String tmp = "?" + params.entrySet().stream()
+        final String tmp = "?" + params.entrySet().stream()
                 .map(m -> m.getKey().concat("=").concat(m.getValue()).concat("&"))
                 .collect(Collectors.joining());
 

@@ -1,8 +1,11 @@
+plugins {
+    id 'ru.vyarus.quality' version '2.4.0'
+}
+
 group 'com.audienceproject'
 version '1.0-SNAPSHOT'
 
 apply plugin: 'java'
-apply plugin: 'checkstyle'
 
 description = """"""
 
@@ -23,19 +26,6 @@ dependencies {
     compile group: 'org.testng', name: 'testng', version: '6.11'
     compile group: 'org.json', name: 'json', version: '20180130'
     compile group: 'io.jsonwebtoken', name: 'jjwt', version: '0.9.0'
-}
-
-checkstyle {
-    toolVersion '7.8.1'
-    configFile file("checkstyle.xml")
-}
-
-checkstyleMain {
-    source = 'src/main/java'
-}
-
-checkstyleTest {
-    source = 'src/test/java'
 }
 
 task sourcesJar(type: Jar, dependsOn: classes) {
