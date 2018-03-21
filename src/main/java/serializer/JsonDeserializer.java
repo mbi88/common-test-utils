@@ -1,23 +1,21 @@
 package serializer;
 
+import org.apache.commons.lang3.Validate;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 
 /**
  * Read content from file and map to org.json.JSONObject/JSONArray.
  */
 public final class JsonDeserializer {
-
-    /**
-     * The name of the requested charset.
-     */
-    private static final String CHARSET_NAME = "UTF-8";
 
     /**
      * Prohibits object initialization.
@@ -37,12 +35,9 @@ public final class JsonDeserializer {
         JSONObject json = new JSONObject();
 
         try {
-            final String s = new String(
-                    Files.readAllBytes(Paths.get(JsonDeserializer.class.getResource(path).toURI())),
-                    Charset.forName(CHARSET_NAME));
+            final String s = readStringFromFile(path);
             json = new JSONObject(s);
-        } catch (URISyntaxException | IOException e) {
-            e.printStackTrace();
+        } catch (URISyntaxException | IOException ignored) {
         }
 
         return json;
@@ -60,12 +55,9 @@ public final class JsonDeserializer {
         JSONArray json = new JSONArray();
 
         try {
-            final String s = new String(
-                    Files.readAllBytes(Paths.get(JsonDeserializer.class.getResource(path).toURI())),
-                    Charset.forName(CHARSET_NAME));
+            final String s = readStringFromFile(path);
             json = new JSONArray(s);
-        } catch (URISyntaxException | IOException e) {
-            e.printStackTrace();
+        } catch (URISyntaxException | IOException ignored) {
         }
 
         return json;
@@ -94,5 +86,15 @@ public final class JsonDeserializer {
         }
 
         return jsonObject;
+    }
+
+    private static Path getSourcePath(final String path) throws URISyntaxException {
+        URL url = JsonDeserializer.class.getResource(path);
+        Validate.notNull(url, "Can't find file: " + path);
+        return Paths.get(url.toURI());
+    }
+
+    private static String readStringFromFile(final String path) throws URISyntaxException, IOException {
+        return new String(Files.readAllBytes(getSourcePath(path)), Charset.forName("UTF-8"));
     }
 }
