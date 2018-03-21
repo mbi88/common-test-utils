@@ -66,6 +66,26 @@ public abstract class BaseTestCase {
     }
 
     /**
+     * Converts response to json object.
+     *
+     * @param response rest-assured response
+     * @return json object.
+     */
+    public static JSONObject toJson(final Response response) {
+        return new JSONObject(response.asString());
+    }
+
+    /**
+     * Converts response to json array.
+     *
+     * @param response rest-assured response
+     * @return json array.
+     */
+    public static JSONArray toJsonArray(final Response response) {
+        return new JSONArray(response.asString());
+    }
+
+    /**
      * Method to read a data from file from passed patch and return Json object.
      *
      * @param path Path to the file with data. No need to add "src/main/resources" every time when you pass the patch -
@@ -99,25 +119,5 @@ public abstract class BaseTestCase {
                                                final String fieldName,
                                                final String fieldValue) {
         return JsonDeserializer.findJsonInArray(sourceArray, fieldName, fieldValue);
-    }
-
-    /**
-     * Converts response to json object.
-     *
-     * @param response rest-assured response
-     * @return json object.
-     */
-    public final JSONObject toJson(final Response response) {
-        return new JSONObject(response.asString());
-    }
-
-    /**
-     * Converts response to json array.
-     *
-     * @param response rest-assured response
-     * @return json array.
-     */
-    public final JSONArray toJsonArray(final Response response) {
-        return new JSONArray(response.asString());
     }
 }
