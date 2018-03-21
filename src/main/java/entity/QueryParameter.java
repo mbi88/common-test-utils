@@ -20,8 +20,8 @@ public final class QueryParameter {
      * @param key   key.
      * @param value value.
      */
-    public void addParameter(final String key, final String value) {
-        this.params.put(key, value);
+    public void addParameter(final String key, final Object value) {
+        this.params.put(key, value.toString());
     }
 
     /**
