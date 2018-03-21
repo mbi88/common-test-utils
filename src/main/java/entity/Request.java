@@ -32,7 +32,6 @@ public abstract class Request<T, U> {
     /**
      * Default constructor.
      */
-    @SuppressWarnings("PMD.UncommentedEmptyConstructor")
     protected Request() {
     }
 

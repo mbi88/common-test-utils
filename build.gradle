@@ -47,3 +47,10 @@ artifacts {
     archives sourcesJar
     archives javadocJar
 }
+
+quality {
+    checkstyle = true
+    pmd = false
+    findbugs = true
+    codenarc = true
+}

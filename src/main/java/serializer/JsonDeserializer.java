@@ -14,6 +14,7 @@ import java.nio.file.Paths;
 
 /**
  * Read content from file and map to org.json.JSONObject/JSONArray.
+ * Base url prefix: src/main/resources/
  */
 public final class JsonDeserializer {
 
@@ -25,12 +26,12 @@ public final class JsonDeserializer {
 
     /**
      * Method to read a data from file from passed patch and return Json object.
+     * Base url prefix: src/main/resources/
      *
      * @param path Path to the file with data. No need to add "src/main/resources" every time when you pass the patch -
      *             it is already implemented in the method.
-     * @return Json object
+     * @return Json object.
      */
-    @SuppressWarnings("PMD.AvoidPrintStackTrace")
     public static JSONObject getJsonFromFile(final String path) {
         JSONObject json = new JSONObject();
 
@@ -38,6 +39,7 @@ public final class JsonDeserializer {
             final String s = readStringFromFile(path);
             json = new JSONObject(s);
         } catch (URISyntaxException | IOException ignored) {
+            // Ignored
         }
 
         return json;
@@ -45,12 +47,12 @@ public final class JsonDeserializer {
 
     /**
      * Method to read a data from file from passed patch and return Json array.
+     * Base url prefix: src/main/resources/
      *
      * @param path Path to the file with data. No need to add "src/main/resources" every time when you pass the patch -
      *             it is already implemented in the method.
-     * @return Json array
+     * @return Json array.
      */
-    @SuppressWarnings("PMD.AvoidPrintStackTrace")
     public static JSONArray getJsonArrayFromFile(final String path) {
         JSONArray json = new JSONArray();
 
@@ -58,6 +60,7 @@ public final class JsonDeserializer {
             final String s = readStringFromFile(path);
             json = new JSONArray(s);
         } catch (URISyntaxException | IOException ignored) {
+            // Ignored
         }
 
         return json;
@@ -69,31 +72,49 @@ public final class JsonDeserializer {
      * @param sourceArray sourceArray
      * @param fieldName   fieldName of wanted json object
      * @param fieldValue  fieldValue of wanted json object
-     * @return inner json object
+     * @return inner json object.
      */
-    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public static JSONObject findJsonInArray(final JSONArray sourceArray,
                                              final String fieldName,
                                              final String fieldValue) {
-        JSONObject jsonObject = new JSONObject();
+        JSONObject foundJson = new JSONObject();
 
         for (Object o : sourceArray) {
             final JSONObject jo = new JSONObject(o.toString());
             jo.getString(fieldName);
             if (jo.getString(fieldName).equalsIgnoreCase(fieldValue)) {
-                jsonObject = jo;
+                foundJson = jo;
             }
         }
 
-        return jsonObject;
+        return foundJson;
     }
 
+    /**
+     * Returns a representation of a system dependent file path.
+     * Base url prefix: src/main/resources/
+     *
+     * @param path path to file.
+     * @return represent a system dependent file path.
+     * @throws URISyntaxException   if this URL is not formatted strictly according to
+     *                              to RFC2396 and cannot be converted to a URI.
+     * @throws NullPointerException if can't find a file.
+     */
     private static Path getSourcePath(final String path) throws URISyntaxException {
-        URL url = JsonDeserializer.class.getResource(path);
-        Validate.notNull(url, "Can't find file: " + path);
+        final URL url = JsonDeserializer.class.getResource(path);
+        Validate.notNull(url, "Can't find a file: " + path);
         return Paths.get(url.toURI());
     }
 
+    /**
+     * Returns string representation of file content.
+     *
+     * @param path representation of a system dependent file path.
+     * @return content from file as a string.
+     * @throws URISyntaxException if this URL is not formatted strictly according to
+     *                            to RFC2396 and cannot be converted to a URI.
+     * @throws IOException        if an I/O error occurs reading from the stream.
+     */
     private static String readStringFromFile(final String path) throws URISyntaxException, IOException {
         return new String(Files.readAllBytes(getSourcePath(path)), Charset.forName("UTF-8"));
     }

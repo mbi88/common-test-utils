@@ -46,7 +46,6 @@ public final class Waiter {
      * @param expectedCondition condition.
      * @return result response.
      */
-    @SuppressWarnings("PMD.AvoidThrowingRawExceptionTypes")
     public Response waitCondition(final Predicate<Response> expectedCondition) {
         Response response = produceRequest();
 

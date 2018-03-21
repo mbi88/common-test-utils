@@ -19,7 +19,6 @@ public interface Configuration {
      * @param varName environment variable name.
      * @return variable value.
      */
-    @SuppressWarnings("PMD.SystemPrintln")
     default String readVar(final String varName) {
         System.out.println("Reading env var " + varName + ": ");
         final String result = Objects.isNull(System.getenv(varName)) ? "null" : System.getenv(varName);

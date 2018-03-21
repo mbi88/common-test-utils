@@ -7,7 +7,6 @@ import org.testng.ITestResult;
 /**
  * Custom TestNG listener for test running.
  */
-@SuppressWarnings("PMD")
 public class BaseTestListener implements ITestListener {
 
     /**
