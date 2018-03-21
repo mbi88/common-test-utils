@@ -3,6 +3,7 @@ package auth;
 import encoding.Base64Utils;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import org.apache.commons.lang3.Validate;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.json.JSONArray;
@@ -11,7 +12,6 @@ import org.json.JSONObject;
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.Charset;
 import java.security.Key;
-import java.util.Objects;
 
 /**
  * Generates tokens.
@@ -22,10 +22,12 @@ public final class TokenGenerator {
      * How many hours token will be alive.
      */
     private static final int TTL = 9;
+
     /**
      * Secret for token generation.
      */
     private final String secret;
+
     /**
      * If the secret is base64 encoded.
      */
@@ -38,9 +40,9 @@ public final class TokenGenerator {
      * @param encoded if the secret is base64 encoded.
      * @throws AssertionError if secret/encoded is null.
      */
-    public TokenGenerator(final String secret, final boolean encoded) {
-        assert !Objects.isNull(secret) : "'Secret' can't be null. Set appropriate environment variable";
-        assert !Objects.isNull(encoded) : "'Encoded' can't be null. Set appropriate environment variable";
+    public TokenGenerator(final String secret, final Boolean encoded) {
+        Validate.notNull(secret, "'Secret' can't be null. Set appropriate environment variable");
+        Validate.notNull(encoded, "'Encoded' can't be null. Set appropriate environment variable");
 
         this.secret = secret;
         this.encoded = encoded;

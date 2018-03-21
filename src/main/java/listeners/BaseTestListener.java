@@ -14,6 +14,7 @@ public class BaseTestListener implements ITestListener {
      * Simple dot char.
      */
     private static final String DOT = ".";
+
     /**
      * Needed to avoid printing class name twice.
      */

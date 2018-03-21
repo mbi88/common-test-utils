@@ -18,10 +18,12 @@ public abstract class Request<T, U> {
      * Http request builder.
      */
     protected final HttpRequest http = new RequestBuilder();
+
     /**
      * Response.
      */
     protected Response response;
+
     /**
      * Created object id.
      */

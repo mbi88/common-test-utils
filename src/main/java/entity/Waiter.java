@@ -14,14 +14,17 @@ public final class Waiter {
      * Request URL.
      */
     private final String path;
+
     /**
      * Request token.
      */
     private final String token;
+
     /**
      * Max iterations count.
      */
     private final int maxIteration;
+
     /**
      * Iteration.
      */

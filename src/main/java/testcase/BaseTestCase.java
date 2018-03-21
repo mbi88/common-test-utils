@@ -17,14 +17,17 @@ public abstract class BaseTestCase {
      * Http requests based on rest-assured framework.
      */
     protected final HttpRequest http = new RequestBuilder();
+
     /**
      * Json comparison.
      */
     protected final JsonAssert assertion = new JsonAssert();
+
     /**
      * Json validation based on json schema validation.
      */
     protected final JsonValidator validator = new JsonValidator();
+
     /**
      * Different operations with dates.
      */
@@ -104,7 +107,7 @@ public abstract class BaseTestCase {
      * @param response rest-assured response
      * @return json object.
      */
-    public static JSONObject toJson(final Response response) {
+    public final JSONObject toJson(final Response response) {
         return new JSONObject(response.asString());
     }
 
@@ -114,7 +117,7 @@ public abstract class BaseTestCase {
      * @param response rest-assured response
      * @return json array.
      */
-    public JSONArray toJsonArray(final Response response) {
+    public final JSONArray toJsonArray(final Response response) {
         return new JSONArray(response.asString());
     }
 }

@@ -220,7 +220,7 @@
         <!-- Whitespace (http://checkstyle.sourceforge.net/config_whitespace.html) -->
         <module name="EmptyForInitializerPad"/>
         <module name="EmptyForIteratorPad"/>
-        <!--<module name="EmptyLineSeparator"/>-->
+        <module name="EmptyLineSeparator"/>
         <module name="GenericWhitespace"/>
         <module name="MethodParamPad"/>
         <module name="NoLineWrap"/>
