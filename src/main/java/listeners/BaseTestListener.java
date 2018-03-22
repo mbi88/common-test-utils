@@ -10,7 +10,7 @@ import org.testng.ITestResult;
 public class BaseTestListener implements ITestListener {
 
     /**
-     * Prints test result.
+     * Prints test results.
      *
      * @param iTestResult result.
      * @param status      test status.
