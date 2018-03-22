@@ -87,6 +87,7 @@ public abstract class Request<T, U> {
         /**
          * @return "".
          */
+        @SuppressWarnings("unchecked")
         public U getId() {
             return (U) "";
         }
@@ -99,6 +100,7 @@ public abstract class Request<T, U> {
         /**
          * @return UUID
          */
+        @SuppressWarnings("unchecked")
         public U getId() {
             return (U) "09fe8a5c-b09a-4794-1741-08d42d809985";
         }

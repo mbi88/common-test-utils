@@ -1,6 +1,8 @@
 package config;
 
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -20,9 +22,10 @@ public interface Configuration {
      * @return variable value.
      */
     default String readVar(final String varName) {
-        System.out.println("Reading env var " + varName + ": ");
+        final Logger log = LoggerFactory.getLogger(Configuration.class);
+        log.info("Reading env var " + varName + ": ");
         final String result = Objects.isNull(System.getenv(varName)) ? "null" : System.getenv(varName);
-        System.out.println(result);
+        log.info(result);
 
         return result;
     }

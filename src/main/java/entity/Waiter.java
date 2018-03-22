@@ -76,12 +76,11 @@ public final class Waiter {
      *
      * @param ms milliseconds
      */
-    @SuppressWarnings("PMD.AvoidPrintStackTrace")
     private void wait(final int ms) {
         try {
             Thread.sleep(ms);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+        } catch (InterruptedException ignored) {
+            // Ignored
         }
     }
 }

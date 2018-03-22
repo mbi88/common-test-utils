@@ -1,5 +1,7 @@
 package listeners;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.testng.ITestContext;
 import org.testng.ITestListener;
 import org.testng.ITestResult;
@@ -16,8 +18,9 @@ public class BaseTestListener implements ITestListener {
      * @param status      test status.
      * @param message     message to print.
      */
-    private void printTestResult(final ITestResult iTestResult, final String status, final String message) {
-        System.out.println(status + getTime(iTestResult) + message);
+    private void logTestResult(final ITestResult iTestResult, final String status, final String message) {
+        final Logger log = LoggerFactory.getLogger(BaseTestListener.class);
+        log.error(status + getTime(iTestResult) + message);
     }
 
     /**
@@ -56,7 +59,7 @@ public class BaseTestListener implements ITestListener {
 
     @Override
     public void onTestFailure(ITestResult iTestResult) {
-        printTestResult(iTestResult, " [ FAILED ] ", getMessage(iTestResult));
+        logTestResult(iTestResult, " [ FAILED ] ", getMessage(iTestResult));
     }
 
     @Override
