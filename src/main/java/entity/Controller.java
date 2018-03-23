@@ -2,9 +2,7 @@ package entity;
 
 import com.mbi.HttpRequest;
 import com.mbi.RequestBuilder;
-import io.restassured.response.Response;
-
-import java.util.Objects;
+import org.apache.commons.lang3.Validate;
 
 /**
  * Base controller class.
@@ -15,11 +13,6 @@ public abstract class Controller {
      * Http request builder.
      */
     protected final HttpRequest http = new RequestBuilder();
-
-    /**
-     * Rest-assured response.
-     */
-    protected Response response;
 
     /**
      * Created object id.
@@ -45,9 +38,20 @@ public abstract class Controller {
      * Returns object id.
      *
      * @return id
+     * @throws NullPointerException if object was not initialized.
      */
     public Object getId() {
-        return !Objects.isNull(this.id) ? this.id : this.response.path("id");
+        Validate.notNull(this.id, this.getClass().getSimpleName() + ": Object id is not initialized");
+        return this.id;
+    }
+
+    /**
+     * Set object id.
+     *
+     * @param id object id.
+     */
+    protected void setId(final Object id) {
+        this.id = id;
     }
 
     /**
