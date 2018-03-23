@@ -2,18 +2,23 @@ package entity;
 
 import io.restassured.response.Response;
 
+import java.util.function.Function;
+
 /**
  * Endpoints that have methods to create objects (POST, PUT) should implement this interface for accessing created
- * objects by id.
- *
- * @param <T> id class.
+ * objects by its id.
  */
-interface Creatable<T> {
+interface Creatable {
+
     /**
      * Extracts id from response.
      *
      * @param response rest-assured response
+     * @param function extract function.
+     * @param <T>      id class.
      * @return id.
      */
-    T extractId(Response response);
+    default <T> T extractId(final Response response, final Function<Response, T> function) {
+        return function.apply(response);
+    }
 }
