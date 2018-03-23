@@ -25,7 +25,7 @@ public interface Configuration {
         final Logger log = LoggerFactory.getLogger(Configuration.class);
         log.info("Reading env var " + varName + ": ");
         final String result = Objects.isNull(System.getenv(varName)) ? "null" : System.getenv(varName);
-        log.info(result);
+        log.info(result + "\n");
 
         return result;
     }

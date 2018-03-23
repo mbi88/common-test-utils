@@ -8,7 +8,7 @@ import java.util.function.Function;
  * Endpoints that have methods to create objects (POST, PUT) should implement this interface for accessing created
  * objects by its id.
  */
-interface Creatable {
+public interface Creatable {
 
     /**
      * Extracts id from response.
