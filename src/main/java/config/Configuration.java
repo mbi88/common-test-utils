@@ -8,7 +8,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static serializer.JsonDeserializer.getJsonFromFile;
+import static serializer.JsonDeserializer.getResource;
 
 /**
  * Tests configuration.
@@ -59,7 +59,7 @@ public interface Configuration {
          * @return config.
          */
         public JSONObject getConfig() {
-            return getJsonFromFile(getConfigPath());
+            return getResource(getConfigPath());
         }
 
         // Configuration files are expected in src/resources/configuration/

@@ -4,6 +4,8 @@
     <test name="test">
         <classes>
             <class name="tests.FrameworkTest"/>
+            <class name="tests.TestCaseTest"/>
+            <class name="tests.EntityTest"/>
         </classes>
     </test>
 </suite>

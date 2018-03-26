@@ -86,38 +86,36 @@ public abstract class BaseTestCase {
     }
 
     /**
-     * Method to read a data from file from passed patch and return Json object.
+     * Reads a data from file in src/main/resources/ from passed path and returns Json object.
      *
-     * @param path Path to the file with data. No need to add "src/main/resources" every time when you pass the patch -
+     * @param path Path to the file with data. No need to add "src/main/resources" every time when you pass the path -
      *             it is already implemented in the method.
-     * @return Json object
+     * @return Json object.
      */
-    protected final JSONObject getJsonFromFile(final String path) {
-        return JsonDeserializer.getJsonFromFile(path);
+    protected final JSONObject getResource(final String path) {
+        return JsonDeserializer.getResource(path);
     }
 
     /**
-     * Method to read a data from file from passed patch and return Json array.
+     * Reads a data from file in src/main/resources/ from passed path and returns Json array.
      *
-     * @param path Path to the file with data. No need to add "src/main/resources" every time when you pass the patch -
+     * @param path Path to the file with data. No need to add "src/main/resources" every time when you pass the path -
      *             it is already implemented in the method.
-     * @return Json array
+     * @return Json array.
      */
-    protected final JSONArray getJsonArrayFromFile(final String path) {
-        return JsonDeserializer.getJsonArrayFromFile(path);
+    protected final JSONArray getResources(final String path) {
+        return JsonDeserializer.getResources(path);
     }
 
     /**
      * Get json object from json array by object key and value.
      *
      * @param sourceArray sourceArray
-     * @param fieldName   fieldName of wanted json object
-     * @param fieldValue  fieldValue of wanted json object
+     * @param name        field name of wanted json object
+     * @param value       field value of wanted json object
      * @return inner json object
      */
-    protected final JSONObject findJsonInArray(final JSONArray sourceArray,
-                                               final String fieldName,
-                                               final String fieldValue) {
-        return JsonDeserializer.findJsonInArray(sourceArray, fieldName, fieldValue);
+    protected final JSONObject findJsonInArray(final JSONArray sourceArray, final String name, final Object value) {
+        return JsonDeserializer.findJsonInArray(sourceArray, name, value);
     }
 }
