@@ -39,7 +39,7 @@ public abstract class BaseTestCase {
      * @param count digits count
      * @return number
      */
-    protected static long getRandomNum(final int count) {
+    public static long getRandomNum(final int count) {
         final String s = String.valueOf(getRandomNum());
 
         assert count > 0 && count <= s.length() : "getRandomNum(int count): incorrect digits count";
@@ -52,7 +52,7 @@ public abstract class BaseTestCase {
      *
      * @return number
      */
-    protected static long getRandomNum() {
+    public static long getRandomNum() {
         return System.currentTimeMillis() + new Random().nextInt(100000) + 1;
     }
 
@@ -61,7 +61,7 @@ public abstract class BaseTestCase {
      *
      * @return uuid
      */
-    protected static String getRandomUID() {
+    public static String getRandomUID() {
         return java.util.UUID.randomUUID().toString();
     }
 
