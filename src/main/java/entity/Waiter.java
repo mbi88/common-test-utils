@@ -13,7 +13,7 @@ public final class Waiter {
     /**
      * Request URL.
      */
-    private final String path;
+    private final String url;
 
     /**
      * Request token.
@@ -33,11 +33,11 @@ public final class Waiter {
     /**
      * Waiter constructor.
      *
-     * @param builder          path and token in request builder.
+     * @param builder          url and token in request builder.
      * @param waitingTimeInMin how many minutes water will wait until throw exception.
      */
     public Waiter(final RequestBuilder builder, final int waitingTimeInMin) {
-        this.path = builder.getPath();
+        this.url = builder.getUrl();
         this.token = builder.getToken();
         this.maxIteration = waitingTimeInMin * 60;
     }
@@ -68,7 +68,7 @@ public final class Waiter {
      * @return response of request.
      */
     private Response produceRequest() {
-        return new RequestBuilder().setToken(token).get(path);
+        return new RequestBuilder().setToken(token).get(url);
     }
 
     /**
