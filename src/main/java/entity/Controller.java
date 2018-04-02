@@ -6,8 +6,10 @@ import org.apache.commons.lang3.Validate;
 
 /**
  * Base controller class.
+ *
+ * @param <T> controller inheritor.
  */
-public abstract class Controller {
+public abstract class Controller<T> {
 
     /**
      * Http request builder.
@@ -59,8 +61,8 @@ public abstract class Controller {
      *
      * @return ""
      */
-    public final Controller withoutId() {
-        return new Controller() {
+    public final Controller<T> withoutId() {
+        return new Controller<T>() {
             @Override
             public Object getId() {
                 return "";
@@ -73,8 +75,8 @@ public abstract class Controller {
      *
      * @return UUID
      */
-    public final Controller withIncorrectId() {
-        return new Controller() {
+    public final Controller<T> withIncorrectId() {
+        return new Controller<T>() {
             @Override
             public Object getId() {
                 return "09fe8a5c-b09a-4794-1741-08d42d809985";
