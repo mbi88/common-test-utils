@@ -4,6 +4,8 @@ import com.mbi.HttpRequest;
 import com.mbi.RequestBuilder;
 import org.apache.commons.lang3.Validate;
 
+import static testcase.BaseTestCase.getRandomUID;
+
 /**
  * Base controller class.
  *
@@ -79,7 +81,7 @@ public abstract class Controller<T> {
         return new Controller<T>() {
             @Override
             public Object getId() {
-                return "09fe8a5c-b09a-4794-1741-08d42d809985";
+                return getRandomUID();
             }
         };
     }
