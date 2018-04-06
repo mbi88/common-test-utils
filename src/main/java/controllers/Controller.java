@@ -1,4 +1,4 @@
-package entity;
+package controllers;
 
 import com.mbi.HttpRequest;
 import com.mbi.RequestBuilder;

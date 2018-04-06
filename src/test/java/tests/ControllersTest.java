@@ -1,10 +1,10 @@
 package tests;
 
-import entity.Controller;
-import entity.Creatable;
+import controllers.Controller;
+import controllers.Creatable;
 import org.testng.annotations.Test;
 
-public class EntityTest {
+public class ControllersTest {
 
     @Test
     public void testName() {

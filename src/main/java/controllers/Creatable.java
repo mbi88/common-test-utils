@@ -1,4 +1,4 @@
-package entity;
+package controllers;
 
 import io.restassured.response.Response;
 

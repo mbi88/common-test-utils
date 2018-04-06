@@ -5,7 +5,7 @@
         <classes>
             <class name="tests.FrameworkTest"/>
             <class name="tests.TestCaseTest"/>
-            <class name="tests.EntityTest"/>
+            <class name="tests.ControllersTest"/>
         </classes>
     </test>
 </suite>

@@ -1,4 +1,4 @@
-package entity;
+package controllers;
 
 import com.mbi.RequestBuilder;
 import io.restassured.response.Response;
