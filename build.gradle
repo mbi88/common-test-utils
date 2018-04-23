@@ -25,7 +25,7 @@ repositories {
 dependencies {
     compile group: 'com.github.mbi88', name: 'json-assert', version: '0bbd4136a1'
     compile group: 'com.github.mbi88', name: 'json-validator', version: 'a77cfac'
-    compile group: 'com.github.mbi88', name: 'http-request', version: '82b6376d1f'
+    compile group: 'com.github.mbi88', name: 'http-request', version: '56e99de04f'
     compile group: 'com.github.mbi88', name: 'date-handler', version: 'de2416b'
     compile group: 'org.testng', name: 'testng', version: '6.14.2'
     compile group: 'org.json', name: 'json', version: '20180130'
