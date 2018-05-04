@@ -4,7 +4,6 @@ import com.amazonaws.services.simplesystemsmanagement.AWSSimpleSystemsManagement
 import com.amazonaws.services.simplesystemsmanagement.AWSSimpleSystemsManagementClientBuilder;
 import com.amazonaws.services.simplesystemsmanagement.model.GetParametersRequest;
 import com.amazonaws.services.simplesystemsmanagement.model.GetParametersResult;
-import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,8 +13,6 @@ import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import static serializer.JsonDeserializer.getResource;
 
 /**
  * Tests configuration.
@@ -85,38 +82,5 @@ public interface Configuration {
                 .map(s -> s.split("-"))
                 .map(string -> string[0])
                 .collect(Collectors.joining());
-    }
-
-    /**
-     * Available environments.
-     */
-    enum Environment {
-        QA1,
-        QA2,
-        TESTS,
-        LOCAL;
-
-        /**
-         * Reads config from 'src/resources/configuration/' and returns as a JSONObject.
-         *
-         * @return config.
-         */
-        public JSONObject getConfig() {
-            return getResource(getConfigPath());
-        }
-
-        // Configuration files are expected in src/resources/configuration/
-        private String getConfigPath() {
-            return "/configuration/" + this.toString().toLowerCase() + ".json";
-        }
-
-    }
-
-    /**
-     * Configure the system with system environment variables or read from json config file.
-     */
-    @FunctionalInterface
-    interface Configurable {
-        void configure();
     }
 }
