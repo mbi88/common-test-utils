@@ -1,7 +1,9 @@
 package controllers;
 
-import java.util.HashMap;
-import java.util.Map;
+
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Multimap;
+
 import java.util.stream.Collectors;
 
 /**
@@ -12,7 +14,23 @@ public final class QueryParameter {
     /**
      * Map of parameters.
      */
-    private final Map<String, String> params = new HashMap<>();
+    private final Multimap<String, String> params = ArrayListMultimap.create();
+
+    /**
+     * Default constructor.
+     */
+    public QueryParameter() {
+    }
+
+    /**
+     * Add parameter via constructor.
+     *
+     * @param name  parameter name.
+     * @param value parameter value.
+     */
+    public QueryParameter(final String name, final Object value) {
+        params.put(name, value.toString());
+    }
 
     /**
      * Adds parameters.
@@ -30,7 +48,7 @@ public final class QueryParameter {
      * @return query parameters
      */
     public String getParametersString() {
-        final String tmp = "?" + params.entrySet().stream()
+        final String tmp = "?" + params.entries().stream()
                 .map(m -> m.getKey().concat("=").concat(m.getValue()).concat("&"))
                 .collect(Collectors.joining());
 
