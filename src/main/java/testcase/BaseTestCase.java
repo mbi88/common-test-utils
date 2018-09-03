@@ -47,7 +47,7 @@ public abstract class BaseTestCase {
         // Replace 0 in the beginning
         String result = s.substring(s.length() - count);
         if (result.startsWith("0")) {
-            result = result.replaceFirst("0", "8");
+            result = result.replaceFirst("^.", "8");
         }
 
         return Long.parseLong(result);
