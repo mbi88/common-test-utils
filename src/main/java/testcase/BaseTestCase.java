@@ -44,7 +44,13 @@ public abstract class BaseTestCase {
 
         assert count > 0 && count <= s.length() : "getRandomNum(int count): incorrect digits count";
 
-        return Long.parseLong(s.substring(s.length() - count));
+        // Replace 0 in the beginning
+        String result = s.substring(s.length() - count);
+        if (result.startsWith("0")) {
+            result = result.replaceFirst("0", "8");
+        }
+
+        return Long.parseLong(result);
     }
 
     /**
