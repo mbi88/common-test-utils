@@ -1,6 +1,7 @@
 package tests;
 
 import com.mbi.RequestBuilder;
+import controllers.Controller;
 import controllers.QueryParameter;
 import controllers.Waiter;
 import io.restassured.response.Response;
@@ -63,5 +64,24 @@ public class ControllersTest {
         } catch (Throwable t) {
             assertTrue(t.getMessage().contains("Max waiting time is exceeded"));
         }
+    }
+
+    @Test
+    public void testWithIncorrectId() {
+        class TestClass extends Controller<TestClass> {
+        }
+        TestClass testClass = new TestClass();
+
+        assertTrue(testClass.withIncorrectId().getId().toString()
+                .matches("^([0-9A-Fa-f]{8}[-][0-9A-Fa-f]{4}[-][0-9A-Fa-f]{4}[-][0-9A-Fa-f]{4}[-][0-9A-Fa-f]{12})$"));
+    }
+
+    @Test
+    public void testWithoutId() {
+        class TestClass extends Controller<TestClass> {
+        }
+        TestClass testClass = new TestClass();
+
+        assertEquals(testClass.withoutId().getId().toString().length(), 0);
     }
 }
