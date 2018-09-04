@@ -52,7 +52,10 @@ public final class Waiter {
         while (!expectedCondition.test(response)) {
             iteration++;
             if (iteration > maxIteration) {
-                throw new Error("Expected conditions are not met. Max waiting time is exceeded");
+                throw new Error(String.format(
+                        "Expected conditions are not met. Max waiting time is exceeded%nUrl: %s%nResponse: %s%n",
+                        this.url,
+                        response.asString()));
             }
 
             response = produceRequest();
