@@ -39,6 +39,7 @@ public abstract class BaseTestCase {
      * @param count digits count
      * @return number
      */
+    @SuppressWarnings("PMD.SimplifyStartsWith")
     public static long getRandomNum(final int count) {
         final String s = String.valueOf(getRandomNum());
 

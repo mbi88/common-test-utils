@@ -71,6 +71,7 @@ public final class JsonDeserializer {
      * @param value       field value of wanted json object
      * @return inner json object.
      */
+    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public static JSONObject findJsonInArray(final JSONArray sourceArray, final String name, final Object value) {
         JSONObject foundJson = new JSONObject();
 

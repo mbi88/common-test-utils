@@ -50,31 +50,37 @@ public class BaseTestListener implements ITestListener {
     }
 
     @Override
-    public void onTestStart(ITestResult iTestResult) {
+    public void onTestStart(final ITestResult iTestResult) {
+        // Not used
     }
 
     @Override
-    public void onTestSuccess(ITestResult iTestResult) {
+    public void onTestSuccess(final ITestResult iTestResult) {
+        // Not used
     }
 
     @Override
-    public void onTestFailure(ITestResult iTestResult) {
+    public void onTestFailure(final ITestResult iTestResult) {
         logTestResult(iTestResult, " [ FAILED ] ", getMessage(iTestResult));
     }
 
     @Override
-    public void onTestSkipped(ITestResult iTestResult) {
+    public void onTestSkipped(final ITestResult iTestResult) {
+        // Not used
     }
 
     @Override
-    public void onStart(ITestContext iTestContext) {
+    public void onStart(final ITestContext iTestContext) {
+        // Not used
     }
 
     @Override
-    public void onFinish(ITestContext iTestContext) {
+    public void onFinish(final ITestContext iTestContext) {
+        // Not used
     }
 
     @Override
-    public void onTestFailedButWithinSuccessPercentage(ITestResult iTestResult) {
+    public void onTestFailedButWithinSuccessPercentage(final ITestResult iTestResult) {
+        // Not used
     }
 }

@@ -20,6 +20,7 @@ public final class QueryParameter {
      * Default constructor.
      */
     public QueryParameter() {
+        // This constructor is intentionally empty. Nothing special is needed here.
     }
 
     /**

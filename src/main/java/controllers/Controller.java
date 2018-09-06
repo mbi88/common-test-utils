@@ -27,6 +27,7 @@ public abstract class Controller<T> {
      * Default constructor.
      */
     protected Controller() {
+        // This constructor is intentionally empty. Nothing special is needed here.
     }
 
     /**
