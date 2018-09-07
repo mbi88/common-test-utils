@@ -6,6 +6,7 @@ plugins {
 
 apply plugin: 'java'
 apply plugin: 'jacoco'
+apply plugin: 'maven'
 
 def suitesDir = 'src/test/resources/suites/'
 
