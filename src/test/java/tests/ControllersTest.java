@@ -1,6 +1,6 @@
 package tests;
 
-import com.mbi.RequestBuilder;
+import com.mbi.request.RequestBuilder;
 import controllers.Controller;
 import controllers.QueryParameter;
 import controllers.Waiter;

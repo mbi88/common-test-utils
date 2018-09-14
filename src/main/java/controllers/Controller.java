@@ -1,7 +1,7 @@
 package controllers;
 
 import com.mbi.HttpRequest;
-import com.mbi.RequestBuilder;
+import com.mbi.request.RequestBuilder;
 import org.apache.commons.lang3.Validate;
 
 import static testcase.BaseTestCase.getRandomUID;

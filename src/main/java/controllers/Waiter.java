@@ -1,6 +1,6 @@
 package controllers;
 
-import com.mbi.RequestBuilder;
+import com.mbi.request.RequestBuilder;
 import io.restassured.response.Response;
 
 import java.util.function.Predicate;
