@@ -76,4 +76,14 @@ public class TestCaseTest extends BaseTestCase {
 
         assertion.jsonEquals(json, new JSONObject().put("a", 1));
     }
+
+    @Test
+    public void testRandomWith9Num() {
+        try {
+            getRandomNum(13);
+        } catch (AssertionError error) {
+            assertTrue(error.getMessage().contains("getRandomNum(int count): incorrect digits count"),
+                    error.getMessage());
+        }
+    }
 }
