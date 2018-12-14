@@ -1,7 +1,7 @@
 import groovy.io.FileType
 
 plugins {
-    id 'ru.vyarus.quality' version '3.1.1'
+    id 'ru.vyarus.quality' version '3.3.0'
 }
 
 apply plugin: 'java'
