@@ -10,6 +10,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import serializer.JsonDeserializer;
 
+import java.util.Objects;
 import java.util.Random;
 
 /**
@@ -43,7 +44,6 @@ public abstract class BaseTestCase {
      * @param count digits count
      * @return number
      */
-    @SuppressWarnings("PMD.SimplifyStartsWith")
     public static long getRandomNum(final int count) {
         final String s = String.valueOf(getRandomNum());
 
@@ -51,7 +51,7 @@ public abstract class BaseTestCase {
 
         // Replace 0 in the beginning
         String result = s.substring(s.length() - count);
-        if (result.startsWith("0")) {
+        if (Objects.equals(result.charAt(0), '0')) {
             result = result.replaceFirst("^.", "8");
         }
 
