@@ -1,5 +1,7 @@
 package serializer;
 
+import com.mbi.Faker;
+import com.mbi.JsonFaker;
 import org.apache.commons.lang3.Validate;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -16,6 +18,8 @@ import java.nio.file.Paths;
  * Read content from src/main/resources/ file and map to org.json.JSONObject/JSONArray.
  */
 public final class JsonDeserializer {
+
+    private static final Faker FAKER = new JsonFaker();
 
     /**
      * Prohibits object initialization.
@@ -40,7 +44,7 @@ public final class JsonDeserializer {
             // Ignored
         }
 
-        return json;
+        return FAKER.fakeData(json);
     }
 
     /**
@@ -60,7 +64,7 @@ public final class JsonDeserializer {
             // Ignored
         }
 
-        return json;
+        return FAKER.fakeData(json);
     }
 
     /**
@@ -71,15 +75,13 @@ public final class JsonDeserializer {
      * @param value       field value of wanted json object
      * @return inner json object.
      */
-    @SuppressWarnings("PMD.AvoidInstantiatingObjectsInLoops")
     public static JSONObject findJsonInArray(final JSONArray sourceArray, final String name, final Object value) {
         JSONObject foundJson = new JSONObject();
 
         for (Object o : sourceArray) {
-            final JSONObject jo = new JSONObject(o.toString());
-            jo.get(name);
-            if (jo.get(name).toString().equalsIgnoreCase(value.toString())) {
-                foundJson = jo;
+            ((JSONObject) o).get(name);
+            if (((JSONObject) o).get(name).toString().equalsIgnoreCase(value.toString())) {
+                foundJson = (JSONObject) o;
             }
         }
 
