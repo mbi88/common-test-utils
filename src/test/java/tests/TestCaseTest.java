@@ -86,4 +86,16 @@ public class TestCaseTest extends BaseTestCase {
                     error.getMessage());
         }
     }
+
+    @Test
+    public void testObjectHasUpdateParameter() {
+        assertion.jsonEquals(getResource("/jsons/obj_upd_par.json"),
+                new JSONObject().put("a", "Hello " + dateHandler.getCurrentDate() + "!"));
+    }
+
+    @Test
+    public void testArrayHasUpdateParameter() {
+        assertion.jsonEquals(getResources("/jsons/array_upd_par.json"),
+                new JSONArray().put(new JSONObject().put("a", "Hello " + dateHandler.getCurrentDate() + "!")));
+    }
 }
