@@ -2,15 +2,17 @@ package tests;
 
 import com.mbi.request.RequestBuilder;
 import controllers.Controller;
+import controllers.Creatable;
 import controllers.QueryParameter;
 import controllers.Waiter;
 import io.restassured.response.Response;
 import org.testng.annotations.Test;
 
+import java.util.function.Function;
 import java.util.function.Predicate;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.*;
+import static testcase.BaseTestCase.toJson;
 
 public class ControllersTest {
 
@@ -56,7 +58,7 @@ public class ControllersTest {
         RequestBuilder httpRequest = new RequestBuilder();
 
         httpRequest.setUrl("https://www.google.com.ua/");
-        Waiter waiter = new Waiter(httpRequest, 0);
+        Waiter waiter = new Waiter(httpRequest, 1);
         Predicate<Response> predicate = response -> response.statusCode() == 20;
 
         try {
@@ -78,10 +80,56 @@ public class ControllersTest {
 
     @Test
     public void testWithoutId() {
-        class TestClass extends Controller<TestClass> {
-        }
         TestClass testClass = new TestClass();
 
         assertEquals(testClass.withoutId().getId().toString().length(), 0);
+    }
+
+    @Test
+    public void testSettingIdViaConstructor() {
+        TestClass testClass = new TestClass(1);
+
+        assertEquals(testClass.getId(), 1);
+    }
+
+    @Test
+    public void testErrorMessageOnNullId() {
+        TestClass testClass = new TestClass(null);
+
+        boolean passed;
+        try {
+            testClass.getId();
+            passed = true;
+        } catch (NullPointerException ex) {
+            passed = false;
+            assertEquals(ex.getMessage(), "TestClass: Object id is not initialized");
+        }
+        assertFalse(passed);
+    }
+
+    @Test
+    public void testExtractingIdFromResponse() {
+        TestClass testClass = new TestClass();
+        testClass.getResponse();
+
+        assertEquals(testClass.getId(), 1);
+    }
+
+    class TestClass extends Controller<TestClass> implements Creatable {
+        private final Function<Response, Integer> getIdFunction = response -> toJson(response).optInt("a");
+
+        TestClass() {
+        }
+
+        TestClass(Object id) {
+            super(id);
+        }
+
+        Response getResponse() {
+            Response response = http.get("http://www.mocky.io/v2/5ab8a4952c00005700186093");
+            setId(extractId(response, getIdFunction));
+
+            return response;
+        }
     }
 }
