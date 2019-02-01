@@ -6,6 +6,7 @@ import com.mbi.JsonAssert;
 import com.mbi.JsonValidator;
 import com.mbi.request.RequestBuilder;
 import io.restassured.response.Response;
+import org.apache.commons.lang3.Validate;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import serializer.JsonDeserializer;
@@ -47,7 +48,8 @@ public abstract class BaseTestCase {
     public static long getRandomNum(final int count) {
         final String s = String.valueOf(getRandomNum());
 
-        assert count > 0 && count <= s.length() : "getRandomNum(int count): incorrect digits count";
+        Validate.exclusiveBetween(0, s.length() + 1, count,
+                String.format("Value %d is not in the specified exclusive range of %d to %d", count, 1, s.length()));
 
         // Replace 0 in the beginning
         String result = s.substring(s.length() - count);

@@ -3,9 +3,13 @@
 
     <test name="test">
         <classes>
-            <class name="tests.FrameworkTest"/>
             <class name="tests.TestCaseTest"/>
             <class name="tests.ControllersTest"/>
+            <class name="tests.EncoderTest"/>
+            <class name="tests.SerializerTest"/>
+            <class name="tests.AuthTest"/>
+            <class name="tests.ListenerTest"/>
+            <class name="tests.ConfigTest"/>
         </classes>
     </test>
 </suite>

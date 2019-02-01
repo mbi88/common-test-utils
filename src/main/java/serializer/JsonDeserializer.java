@@ -4,6 +4,7 @@ import com.mbi.Faker;
 import com.mbi.JsonFaker;
 import org.apache.commons.lang3.Validate;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -35,14 +36,7 @@ public final class JsonDeserializer {
      * @return Json object.
      */
     public static JSONObject getResource(final String path) {
-        JSONObject json = new JSONObject();
-
-        try {
-            final String s = readStringFromFile(path);
-            json = new JSONObject(s);
-        } catch (URISyntaxException | IOException ignored) {
-            // Ignored
-        }
+        final JSONObject json = new JSONObject(readStringFromFile(path));
 
         return FAKER.fakeData(json);
     }
@@ -55,14 +49,7 @@ public final class JsonDeserializer {
      * @return Json array.
      */
     public static JSONArray getResources(final String path) {
-        JSONArray json = new JSONArray();
-
-        try {
-            final String s = readStringFromFile(path);
-            json = new JSONArray(s);
-        } catch (URISyntaxException | IOException ignored) {
-            // Ignored
-        }
+        final JSONArray json = new JSONArray(readStringFromFile(path));
 
         return FAKER.fakeData(json);
     }
@@ -78,10 +65,17 @@ public final class JsonDeserializer {
     public static JSONObject findJsonInArray(final JSONArray sourceArray, final String name, final Object value) {
         JSONObject foundJson = new JSONObject();
 
-        for (Object o : sourceArray) {
-            ((JSONObject) o).get(name);
-            if (((JSONObject) o).get(name).toString().equalsIgnoreCase(value.toString())) {
-                foundJson = (JSONObject) o;
+        for (Object json : sourceArray) {
+            // Find field
+            try {
+                ((JSONObject) json).get(name);
+            } catch (JSONException ignored) {
+                continue;
+            }
+
+            // Objects are equal
+            if (((JSONObject) json).get(name).equals(value)) {
+                foundJson = (JSONObject) json;
             }
         }
 
@@ -109,11 +103,15 @@ public final class JsonDeserializer {
      *
      * @param path representation of a system dependent file path.
      * @return content from file as a string.
-     * @throws URISyntaxException if this URL is not formatted strictly according to
-     *                            to RFC2396 and cannot be converted to a URI.
-     * @throws IOException        if an I/O error occurs reading from the stream.
      */
-    private static String readStringFromFile(final String path) throws URISyntaxException, IOException {
-        return new String(Files.readAllBytes(getSourcePath(path)), Charset.forName("UTF-8"));
+    private static String readStringFromFile(final String path) {
+        String s = null;
+        try {
+            s = new String(Files.readAllBytes(getSourcePath(path)), Charset.forName("UTF-8"));
+        } catch (IOException | URISyntaxException ignored) {
+            // Nothing to do here. Just skip
+        }
+
+        return s;
     }
 }

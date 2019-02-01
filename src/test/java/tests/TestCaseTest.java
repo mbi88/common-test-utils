@@ -6,8 +6,7 @@ import org.json.JSONObject;
 import org.testng.annotations.Test;
 import testcase.BaseTestCase;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.*;
 
 public class TestCaseTest extends BaseTestCase {
 
@@ -32,14 +31,14 @@ public class TestCaseTest extends BaseTestCase {
     }
 
     @Test
-    public void testRandomNum1() {
+    public void testRandomNumLength() {
         assertEquals(String.valueOf(getRandomNum(1)).length(), 1);
         assertEquals(String.valueOf(getRandomNum(10)).length(), 10);
         assertEquals(String.valueOf(getRandomNum(5)).length(), 5);
     }
 
     @Test
-    public void testGetRandomNum2() {
+    public void testGetRandomNumWithoutCount() {
         assertTrue(getRandomNum() > 1000);
     }
 
@@ -78,12 +77,42 @@ public class TestCaseTest extends BaseTestCase {
     }
 
     @Test
-    public void testRandomWith9Num() {
+    public void testGetRandomWithNegativeCases() {
+        boolean passed;
         try {
-            getRandomNum(13);
-        } catch (AssertionError error) {
-            assertTrue(error.getMessage().contains("getRandomNum(int count): incorrect digits count"),
+            getRandomNum(14);
+            getRandomNum(0);
+            getRandomNum(-1);
+            getRandomNum(15);
+            passed = true;
+        } catch (IllegalArgumentException error) {
+            passed = false;
+            assertTrue(error.getMessage().contains("is not in the specified exclusive range"),
                     error.getMessage());
+        }
+        assertFalse(passed);
+    }
+
+    @Test
+    public void testGetRandomWithPositiveCases() {
+        getRandomNum(1);
+        getRandomNum(5);
+        getRandomNum(13);
+    }
+
+    @Test
+    public void testCheckErrorMessageOnIncorrectRandomCount() {
+        try {
+            getRandomNum(14);
+        } catch (IllegalArgumentException error) {
+            assertEquals(error.getMessage(), "Value 14 is not in the specified exclusive range of 1 to 13");
+        }
+    }
+
+    @Test
+    public void testReplacing0InTheBeginning() {
+        for (int i = 0; i < 1000; i++) {
+            assertEquals(String.valueOf(getRandomNum(4)).length(), 4);
         }
     }
 
