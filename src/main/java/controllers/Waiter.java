@@ -2,6 +2,7 @@ package controllers;
 
 import com.mbi.request.RequestBuilder;
 import io.restassured.response.Response;
+import org.joda.time.DateTime;
 
 import java.util.function.Predicate;
 
@@ -21,25 +22,20 @@ public final class Waiter {
     private final String token;
 
     /**
-     * Max iterations count.
+     * Time in minutes to be spent on waiting of condition.
      */
-    private final int maxIteration;
-
-    /**
-     * Iteration.
-     */
-    private int iteration;
+    private final int waitingTimeInMin;
 
     /**
      * Waiter constructor.
      *
      * @param builder          url and token in request builder.
-     * @param waitingTimeInMin how many minutes water will wait until throw exception.
+     * @param waitingTimeInMin how many minutes waiter will wait until throw exception.
      */
     public Waiter(final RequestBuilder builder, final int waitingTimeInMin) {
         this.url = builder.getUrl();
         this.token = builder.getToken();
-        this.maxIteration = waitingTimeInMin * 60;
+        this.waitingTimeInMin = waitingTimeInMin;
     }
 
     /**
@@ -49,10 +45,10 @@ public final class Waiter {
     @SuppressWarnings("PMD.AvoidThrowingRawExceptionTypes")
     public Response waitCondition(final Predicate<Response> expectedCondition) {
         Response response = produceRequest();
+        final long startTime = DateTime.now().getMillis();
 
         while (!expectedCondition.test(response)) {
-            iteration++;
-            if (iteration > maxIteration) {
+            if (!waiting(startTime)) {
                 throw new Error(String.format(
                         "Expected conditions are not met. Max waiting time is exceeded%nUrl: %s%nResponse: %s%n",
                         this.url,
@@ -60,7 +56,6 @@ public final class Waiter {
             }
 
             response = produceRequest();
-            wait(1000);
         }
 
         return response;
@@ -76,15 +71,18 @@ public final class Waiter {
     }
 
     /**
-     * Sleep n seconds.
+     * Whether waiter should sleep or throw exception.
+     * Sleep 1 second.
      *
-     * @param ms milliseconds
+     * @param startTime time before first request.
      */
-    private void wait(final int ms) {
+    private boolean waiting(final long startTime) {
         try {
-            Thread.sleep(ms);
+            Thread.sleep(1000);
         } catch (InterruptedException ignored) {
             // Ignored
         }
+
+        return (startTime + waitingTimeInMin * 60 * 1000L) > DateTime.now().getMillis();
     }
 }
