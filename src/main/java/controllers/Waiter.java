@@ -22,20 +22,20 @@ public final class Waiter {
     private final String token;
 
     /**
-     * Time in minutes to be spent on waiting of condition.
+     * Time in seconds to be spent on waiting of condition.
      */
-    private final int waitingTimeInMin;
+    private final int waitingTime;
 
     /**
      * Waiter constructor.
      *
      * @param builder          url and token in request builder.
-     * @param waitingTimeInMin how many minutes waiter will wait until throw exception.
+     * @param waitingTime how many seconds waiter will wait until throw exception.
      */
-    public Waiter(final RequestBuilder builder, final int waitingTimeInMin) {
+    public Waiter(final RequestBuilder builder, final int waitingTime) {
         this.url = builder.getUrl();
         this.token = builder.getToken();
-        this.waitingTimeInMin = waitingTimeInMin;
+        this.waitingTime = waitingTime;
     }
 
     /**
@@ -83,6 +83,6 @@ public final class Waiter {
             // Ignored
         }
 
-        return (startTime + waitingTimeInMin * 60 * 1000L) > DateTime.now().getMillis();
+        return (startTime + waitingTime * 1000L) > DateTime.now().getMillis();
     }
 }

@@ -58,7 +58,7 @@ public class ControllersTest {
         RequestBuilder httpRequest = new RequestBuilder();
 
         httpRequest.setUrl("https://www.google.com.ua/");
-        Waiter waiter = new Waiter(httpRequest, 1);
+        Waiter waiter = new Waiter(httpRequest, 10);
         Predicate<Response> predicate = response -> response.statusCode() == 20;
 
         try {
