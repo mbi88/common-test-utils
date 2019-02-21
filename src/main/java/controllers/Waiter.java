@@ -1,88 +1,104 @@
 package controllers;
 
-import com.mbi.request.RequestBuilder;
-import io.restassured.response.Response;
 import org.joda.time.DateTime;
 
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 
 /**
  * Waiting for special object condition. Condition is checked every 1 sec.
+ *
+ * @param <T>
  */
-public final class Waiter {
+public final class Waiter<T> {
 
-    /**
-     * Request URL.
-     */
-    private final String url;
+	/**
+	 * Time in seconds to be spent on waiting of condition.
+	 */
+	private final int waitingTime;
 
-    /**
-     * Request token.
-     */
-    private final String token;
+	/**
+	 *
+	 */
+	private final Supplier<T> function;
 
-    /**
-     * Time in seconds to be spent on waiting of condition.
-     */
-    private final int waitingTime;
+	/**
+	 *
+	 */
+	private final Function<T, String> result;
 
-    /**
-     * Waiter constructor.
-     *
-     * @param builder          url and token in request builder.
-     * @param waitingTime how many seconds waiter will wait until throw exception.
-     */
-    public Waiter(final RequestBuilder builder, final int waitingTime) {
-        this.url = builder.getUrl();
-        this.token = builder.getToken();
-        this.waitingTime = waitingTime;
-    }
+	private boolean printResultWhileWait = false;
 
-    /**
-     * @param expectedCondition condition.
-     * @return result response.
-     */
-    @SuppressWarnings("PMD.AvoidThrowingRawExceptionTypes")
-    public Response waitCondition(final Predicate<Response> expectedCondition) {
-        Response response = produceRequest();
-        final long startTime = DateTime.now().getMillis();
+	/**
+	 * Waiter constructor.
+	 *
+	 * @param function    d.
+	 * @param result      string representation of function result to be used if exception occurs.
+	 * @param waitingTime how many seconds waiter will wait until throw exception.
+	 */
+	public Waiter(final Supplier<T> function, final Function<T, String> result, final int waitingTime) {
+		this.function = function;
+		this.result = result;
+		this.waitingTime = waitingTime;
+	}
 
-        while (!expectedCondition.test(response)) {
-            if (!waiting(startTime)) {
-                throw new Error(String.format(
-                        "Expected conditions are not met. Max waiting time is exceeded%nUrl: %s%nResponse: %s%n",
-                        this.url,
-                        response.asString()));
-            }
+	/**
+	 * Waiter constructor.
+	 *
+	 * @param function    d.
+	 * @param result      string representation of function result to be used if exception occurs.
+	 * @param waitingTime how many seconds waiter will wait until throw exception.
+	 */
+	public Waiter(final Supplier<T> function, final Function<T, String> result, final int waitingTime, final boolean printResultWhileWait) {
+		this.function = function;
+		this.result = result;
+		this.waitingTime = waitingTime;
+		this.printResultWhileWait = printResultWhileWait;
+	}
 
-            response = produceRequest();
-        }
+	/**
+	 * @param expectedCondition condition.
+	 * @return result response.
+	 */
+	@SuppressWarnings("PMD.AvoidThrowingRawExceptionTypes")
+	public T waitCondition(final Predicate<T> expectedCondition) {
+		T r = function.get();
+		final long startTime = DateTime.now().getMillis();
 
-        return response;
-    }
+		while (!expectedCondition.test(r)) {
+			if (!waiting(startTime)) {
+				throw new Error(String.format(
+						"Expected conditions not met. Max waiting time exceeded%n%nResult: %s%n",
+						result.apply(r)));
+			}
 
-    /**
-     * Generates a request.
-     *
-     * @return response of request.
-     */
-    private Response produceRequest() {
-        return new RequestBuilder().setToken(token).get(url);
-    }
+			r = function.get();
+		}
 
-    /**
-     * Whether waiter should sleep or throw exception.
-     * Sleep 1 second.
-     *
-     * @param startTime time before first request.
-     */
-    private boolean waiting(final long startTime) {
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException ignored) {
-            // Ignored
-        }
+		return r;
+	}
 
-        return (startTime + waitingTime * 1000L) > DateTime.now().getMillis();
-    }
+	/**
+	 * Whether waiter should sleep or throw exception.
+	 * Sleep 1 second.
+	 *
+	 * @param startTime time before first request.
+	 */
+	private boolean waiting(final long startTime) {
+		ScheduledExecutorService scheduledExecutorService = Executors.newScheduledThreadPool(1);
+		scheduledExecutorService.schedule(() -> {
+					String res;
+					res = printResultWhileWait ? result.apply(function.get()) : "23";
+					System.out.println(res);
+					return res;
+				},
+				1,
+				TimeUnit.SECONDS);
+
+		return (startTime + waitingTime * 1000L) > DateTime.now().getMillis();
+	}
 }
