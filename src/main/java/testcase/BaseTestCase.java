@@ -58,13 +58,12 @@ public abstract class BaseTestCase {
         final Random randomGenerator = new Random();
 
         for (int i = 0; i < count; i++) {
-            int random = randomGenerator.nextInt(10);
+            integers.add(randomGenerator.nextInt(10));
+        }
 
-            // Replace 0 in the beginning
-            if (random == 0 && integers.isEmpty()) {
-                random = 1;
-            }
-            integers.add(random);
+        // Replace 0 in the beginning
+        if (integers.get(0).equals(0)) {
+            integers.set(0, 1);
         }
 
         final StringBuilder randomString = new StringBuilder();
