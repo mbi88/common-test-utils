@@ -11,7 +11,8 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import serializer.JsonDeserializer;
 
-import java.util.Objects;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 /**
@@ -46,18 +47,32 @@ public abstract class BaseTestCase {
      * @return number
      */
     public static long getRandomNum(final int count) {
-        final String s = String.valueOf(getRandomNum());
+        // Valid range
+        final int start = 1;
+        final int end = 18;
+        // Validate digits count is in a supported range
+        Validate.exclusiveBetween(start - 1, end + 1, count,
+                String.format("Value %d is not in the specified exclusive range of %d to %d", count, start, end));
 
-        Validate.exclusiveBetween(0, s.length() + 1, count,
-                String.format("Value %d is not in the specified exclusive range of %d to %d", count, 1, s.length()));
+        final List<Integer> integers = new ArrayList<>();
+        final Random randomGenerator = new Random();
 
-        // Replace 0 in the beginning
-        String result = s.substring(s.length() - count);
-        if (Objects.equals(result.charAt(0), '0')) {
-            result = result.replaceFirst("^.", "8");
+        for (int i = 0; i < count; i++) {
+            int random = randomGenerator.nextInt(10);
+
+            // Replace 0 in the beginning
+            if (random == 0 && integers.isEmpty()) {
+                random = 1;
+            }
+            integers.add(random);
         }
 
-        return Long.parseLong(result);
+        final StringBuilder randomString = new StringBuilder();
+        for (Integer i : integers) {
+            randomString.append(i);
+        }
+
+        return Long.parseLong(String.valueOf(randomString));
     }
 
     /**
@@ -66,7 +81,7 @@ public abstract class BaseTestCase {
      * @return number
      */
     public static long getRandomNum() {
-        return System.currentTimeMillis() + new Random().nextInt(100000) + 1;
+        return getRandomNum(13);
     }
 
     /**

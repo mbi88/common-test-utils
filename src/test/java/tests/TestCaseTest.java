@@ -77,18 +77,40 @@ public class TestCaseTest extends BaseTestCase {
     }
 
     @Test
-    public void testGetRandomWithNegativeCases() {
+    public void testCantGetRandomNumWith0Digits() {
         boolean passed;
         try {
-            getRandomNum(14);
             getRandomNum(0);
-            getRandomNum(-1);
-            getRandomNum(15);
             passed = true;
         } catch (IllegalArgumentException error) {
             passed = false;
-            assertTrue(error.getMessage().contains("is not in the specified exclusive range"),
-                    error.getMessage());
+            assertEquals(error.getMessage(), "Value 0 is not in the specified exclusive range of 1 to 18");
+        }
+        assertFalse(passed);
+    }
+
+    @Test
+    public void testCantGetRandomNumWithMinus1Digits() {
+        boolean passed;
+        try {
+            getRandomNum(-1);
+            passed = true;
+        } catch (IllegalArgumentException error) {
+            passed = false;
+            assertEquals(error.getMessage(), "Value -1 is not in the specified exclusive range of 1 to 18");
+        }
+        assertFalse(passed);
+    }
+
+    @Test
+    public void testCantGetRandomNumWith20Digits() {
+        boolean passed;
+        try {
+            getRandomNum(20);
+            passed = true;
+        } catch (IllegalArgumentException error) {
+            passed = false;
+            assertEquals(error.getMessage(), "Value 20 is not in the specified exclusive range of 1 to 18");
         }
         assertFalse(passed);
     }
@@ -97,22 +119,14 @@ public class TestCaseTest extends BaseTestCase {
     public void testGetRandomWithPositiveCases() {
         getRandomNum(1);
         getRandomNum(5);
-        getRandomNum(13);
-    }
-
-    @Test
-    public void testCheckErrorMessageOnIncorrectRandomCount() {
-        try {
-            getRandomNum(14);
-        } catch (IllegalArgumentException error) {
-            assertEquals(error.getMessage(), "Value 14 is not in the specified exclusive range of 1 to 13");
-        }
+        getRandomNum(18);
     }
 
     @Test
     public void testReplacing0InTheBeginning() {
         for (int i = 0; i < 1000; i++) {
-            assertEquals(String.valueOf(getRandomNum(4)).length(), 4);
+            long num = getRandomNum(4);
+            assertEquals(String.valueOf(num).length(), 4, num);
         }
     }
 
