@@ -1,0 +1,8 @@
+{
+  "field1": 111,
+  "field3": {
+    "field1": "old-value"
+  },
+  "field2": "old-value",
+  "field4": "new-value"
+}

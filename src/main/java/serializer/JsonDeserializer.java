@@ -10,10 +10,10 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Map;
 
 /**
  * Read content from src/main/resources/ file and map to org.json.JSONObject/JSONArray.
@@ -39,6 +39,25 @@ public final class JsonDeserializer {
         final JSONObject json = new JSONObject(readStringFromFile(path));
 
         return FAKER.fakeData(json);
+    }
+
+    /**
+     * Updates values of json by passed values in map.
+     *
+     * @param json Json object to be updated.
+     * @param map  Map of json field name as a key and json field value as a value
+     * @return Json object.
+     */
+    public static JSONObject updateJson(final JSONObject json, final Map<String, Object> map) {
+        final JSONObject result = new JSONObject(json.toString());
+
+        for (Map.Entry<String, Object> entry : map.entrySet()) {
+            if (result.has(entry.getKey())) {
+                result.put(entry.getKey(), entry.getValue());
+            }
+        }
+
+        return result;
     }
 
     /**
@@ -107,7 +126,7 @@ public final class JsonDeserializer {
     private static String readStringFromFile(final String path) {
         String s = null;
         try {
-            s = new String(Files.readAllBytes(getSourcePath(path)), Charset.forName("UTF-8"));
+            s = Files.readString(getSourcePath(path));
         } catch (IOException | URISyntaxException ignored) {
             // Nothing to do here. Just skip
         }

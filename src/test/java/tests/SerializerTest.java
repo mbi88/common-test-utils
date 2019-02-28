@@ -4,7 +4,10 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.testng.annotations.Test;
 
+import java.util.Map;
+
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
 import static serializer.JsonDeserializer.*;
 
 public class SerializerTest {
@@ -62,5 +65,21 @@ public class SerializerTest {
     @Test
     public void testGetResourcesFromFile() {
         getResources("/jsons/ja.json").similar(new JSONArray().put(new JSONObject().put("a", 1)));
+    }
+
+    @Test
+    public void testValuesOverriding() {
+        JSONObject json = updateJson(getResource("/jsons/override_test.json"),
+                Map.of("field1", 111, "field4", "new-value"));
+
+        json.similar(getResource("/jsons/override_result.json"));
+        assertFalse(json.similar(getResource("/jsons/override_test.json")));
+    }
+
+    @Test
+    public void testValuesNotOverriddenIfKeyNotFound() {
+        JSONObject json = updateJson(getResource("/jsons/jo.json"), Map.of("field1", 111));
+
+        json.similar(getResource("/jsons/jo.json"));
     }
 }
