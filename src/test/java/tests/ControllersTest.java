@@ -1,11 +1,9 @@
 package tests;
 
 import com.mbi.request.RequestBuilder;
-import controllers.Controller;
-import controllers.Creatable;
-import controllers.QueryParameter;
-import controllers.Waiter;
+import controllers.*;
 import io.restassured.response.Response;
+import io.restassured.response.ResponseBodyData;
 import org.testng.annotations.Test;
 
 import java.util.function.Function;
@@ -44,10 +42,9 @@ public class ControllersTest {
 
     @Test
     public void testWaiterIfConditionIsMet() {
-        RequestBuilder httpRequest = new RequestBuilder();
-
-        httpRequest.setUrl("https://www.google.com.ua/");
-        Waiter waiter = new Waiter(httpRequest, 0);
+        Waiter<Response> waiter = new Waiter<>(() -> new RequestBuilder().get("https://www.google.com.ua/"),
+                ResponseBodyData::asString,
+                10);
         Predicate<Response> predicate = response -> response.statusCode() == 200;
 
         waiter.waitCondition(predicate);
@@ -55,16 +52,15 @@ public class ControllersTest {
 
     @Test
     public void testWaiterIfConditionIsNoMet() {
-        RequestBuilder httpRequest = new RequestBuilder();
-
-        httpRequest.setUrl("https://www.google.com.ua/");
-        Waiter waiter = new Waiter(httpRequest, 10);
+        Waiter<Response> waiter = new Waiter<>(() -> new RequestBuilder().get("http://www.mocky.io/v2/5ab8a4952c00005700186093"),
+                ResponseBodyData::asString,
+                10);
         Predicate<Response> predicate = response -> response.statusCode() == 20;
 
         try {
             waiter.waitCondition(predicate);
         } catch (Throwable t) {
-            assertTrue(t.getMessage().contains("Max waiting time is exceeded"));
+            assertTrue(t.getMessage().contains("Max waiting time exceeded"));
         }
     }
 
@@ -121,7 +117,7 @@ public class ControllersTest {
         TestClass() {
         }
 
-        TestClass(Object id) {
+        TestClass(Integer id) {
             super(id);
         }
 

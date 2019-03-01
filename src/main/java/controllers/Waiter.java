@@ -1,25 +1,17 @@
 package controllers;
 
-import com.mbi.request.RequestBuilder;
-import io.restassured.response.Response;
 import org.joda.time.DateTime;
 
+import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.function.Supplier;
 
 /**
  * Waiting for special object condition. Condition is checked every 1 sec.
+ *
+ * @param <T> type of result of function to execute.
  */
-public final class Waiter {
-
-    /**
-     * Request URL.
-     */
-    private final String url;
-
-    /**
-     * Request token.
-     */
-    private final String token;
+public final class Waiter<T> {
 
     /**
      * Time in seconds to be spent on waiting of condition.
@@ -27,62 +19,54 @@ public final class Waiter {
     private final int waitingTime;
 
     /**
-     * Waiter constructor.
-     *
-     * @param builder          url and token in request builder.
+     * Function to execute.
+     */
+    private final Supplier<T> function;
+
+    /**
+     * Function execution result to be thrown if expected condition will not be met.
+     */
+    private final Function<T, String> result;
+
+    /**
+     * @param function    function to execute.
+     * @param result      string representation of function result to be used in exception if occurs.
      * @param waitingTime how many seconds waiter will wait until throw exception.
      */
-    public Waiter(final RequestBuilder builder, final int waitingTime) {
-        this.url = builder.getUrl();
-        this.token = builder.getToken();
+    public Waiter(final Supplier<T> function, final Function<T, String> result, final int waitingTime) {
+        this.function = function;
+        this.result = result;
         this.waitingTime = waitingTime;
     }
 
     /**
      * @param expectedCondition condition.
      * @return result response.
+     * @throws Error if expected condition not met during waiting time.
      */
     @SuppressWarnings("PMD.AvoidThrowingRawExceptionTypes")
-    public Response waitCondition(final Predicate<Response> expectedCondition) {
-        Response response = produceRequest();
+    public T waitCondition(final Predicate<T> expectedCondition) {
         final long startTime = DateTime.now().getMillis();
+        final long endTime = startTime + waitingTime * 1000L;
+        boolean timeExceeded = false;
+        T response = function.get();
 
-        while (!expectedCondition.test(response)) {
-            if (!waiting(startTime)) {
-                throw new Error(String.format(
-                        "Expected conditions are not met. Max waiting time is exceeded%nUrl: %s%nResponse: %s%n",
-                        this.url,
-                        response.asString()));
+        while (!timeExceeded && !expectedCondition.test(response)) {
+            timeExceeded = DateTime.now().getMillis() >= endTime;
+            response = function.get();
+
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException ignored) {
+                // Ignored
             }
+        }
 
-            response = produceRequest();
+        if (timeExceeded) {
+            throw new Error(String.format("Expected condition not met. Max waiting time exceeded%n%nResult: %s%n",
+                    result.apply(response)));
         }
 
         return response;
-    }
-
-    /**
-     * Generates a request.
-     *
-     * @return response of request.
-     */
-    private Response produceRequest() {
-        return new RequestBuilder().setToken(token).get(url);
-    }
-
-    /**
-     * Whether waiter should sleep or throw exception.
-     * Sleep 1 second.
-     *
-     * @param startTime time before first request.
-     */
-    private boolean waiting(final long startTime) {
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException ignored) {
-            // Ignored
-        }
-
-        return (startTime + waitingTime * 1000L) > DateTime.now().getMillis();
     }
 }
