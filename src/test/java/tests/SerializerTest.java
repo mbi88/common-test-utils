@@ -6,8 +6,7 @@ import org.testng.annotations.Test;
 
 import java.util.Map;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.*;
 import static serializer.JsonDeserializer.*;
 
 public class SerializerTest {
@@ -81,5 +80,118 @@ public class SerializerTest {
         JSONObject json = updateJson(getResource("/jsons/jo.json"), Map.of("field1", 111));
 
         json.similar(getResource("/jsons/jo.json"));
+    }
+
+    @Test
+    public void testUpdateSameFields() {
+        JSONObject json = getResource("/jsons/update_test.json");
+        JSONObject expected = new JSONObject(json.toString());
+        expected.put("a", "updated");
+        expected.getJSONObject("c").put("a", "updated");
+
+        assertTrue(updateJson(json, Map.of("a", "updated")).similar(expected));
+    }
+
+    @Test
+    public void testUpdateParent() {
+        JSONObject json = getResource("/jsons/update_test.json");
+        JSONObject expected = new JSONObject(json.toString());
+        expected.put("c", "updated");
+
+        assertTrue(updateJson(json, Map.of("c", "updated")).similar(expected));
+    }
+
+    @Test
+    public void testUpdateChildOfParent() {
+        JSONObject json = getResource("/jsons/update_test.json");
+        JSONObject expected = new JSONObject(json.toString());
+        expected.getJSONObject("c").put("bb", "updated");
+
+        assertTrue(updateJson(json, Map.of("bb", "updated")).similar(expected));
+    }
+
+    @Test
+    public void testUpdateChild() {
+        JSONObject json = getResource("/jsons/update_test.json");
+        JSONObject expected = new JSONObject(json.toString());
+        expected.getJSONObject("c").getJSONObject("bb").put("q", "updated");
+
+        assertTrue(updateJson(json, Map.of("q", "updated")).similar(expected));
+    }
+
+    @Test
+    public void testUpdateSeveralValues() {
+        JSONObject json = getResource("/jsons/update_test.json");
+        JSONObject expected = new JSONObject(json.toString());
+        expected.getJSONObject("c").getJSONObject("bb").put("q", "updated");
+        expected.getJSONObject("c").getJSONObject("bb").put("w", "updated");
+        expected.getJSONObject("c").put("a", "updated");
+        expected.put("a", "updated");
+
+        assertTrue(updateJson(json, Map.of("q", "updated", "w", "updated", "a", "updated")).similar(expected));
+    }
+
+    @Test
+    public void testJsonNotUpdatedIfFieldNotFound() {
+        JSONObject json = getResource("/jsons/update_test.json");
+
+        assertTrue(updateJson(json, Map.of("aaaa", "updated")).similar(json));
+    }
+
+    @Test
+    public void testUpdateParentInArray() {
+        JSONObject json = getResource("/jsons/update_test_array.json");
+        JSONObject expected = new JSONObject(json.toString());
+        expected.put("c", "updated");
+
+        assertTrue(updateJson(json, Map.of("c", "updated")).similar(expected));
+    }
+
+    @Test
+    public void testUpdateChildOfParentInArray() {
+        JSONObject json = getResource("/jsons/update_test_array.json");
+        JSONObject expected = new JSONObject(json.toString());
+        expected.getJSONArray("c").getJSONObject(0).put("bb", "updated");
+
+        assertTrue(updateJson(json, Map.of("bb", "updated")).similar(expected));
+    }
+
+    @Test
+    public void testUpdateChildInArray() {
+        JSONObject json = getResource("/jsons/update_test_array.json");
+        JSONObject expected = new JSONObject(json.toString());
+        expected.getJSONArray("c").getJSONObject(0).getJSONObject("bb").put("q", "updated");
+
+        assertTrue(updateJson(json, Map.of("q", "updated")).similar(expected));
+    }
+
+    @Test
+    public void testUpdateSameFieldsIncludeArray() {
+        JSONObject json = getResource("/jsons/update_test_array.json");
+        JSONObject expected = new JSONObject(json.toString());
+        expected.put("a", "updated");
+        expected.getJSONArray("c").getJSONObject(0).put("a", "updated");
+
+        assertTrue(updateJson(json, Map.of("a", "updated")).similar(expected));
+    }
+
+    @Test
+    public void testUpdateRootElementAndChild() {
+        JSONObject json = getResource("/jsons/update_test.json");
+        JSONObject expected = new JSONObject(json.toString());
+        expected.put("a", "updated");
+        expected.put("c", "new");
+
+        assertTrue(updateJson(json, Map.of("a", "updated", "q", "new 2", "c", "new")).similar(expected));
+    }
+
+    @Test
+    public void testUpdateRootElementAndChildInArray() {
+        JSONObject json = getResource("/jsons/update_test_array.json");
+        JSONObject expected = new JSONObject(json.toString());
+        expected.put("a", "updated");
+        expected.put("c", "new");
+
+        assertTrue(updateJson(json, Map.of("a", "updated", "q", "new 2", "c", "new")).similar(expected));
     }
 }

@@ -1,5 +1,8 @@
 package serializer;
 
+import com.github.wnameless.json.flattener.FlattenMode;
+import com.github.wnameless.json.flattener.JsonFlattener;
+import com.github.wnameless.json.unflattener.JsonUnflattener;
 import com.mbi.Faker;
 import com.mbi.JsonFaker;
 import org.apache.commons.lang3.Validate;
@@ -14,6 +17,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Read content from src/main/resources/ file and map to org.json.JSONObject/JSONArray.
@@ -39,25 +43,6 @@ public final class JsonDeserializer {
         final JSONObject json = new JSONObject(readStringFromFile(path));
 
         return FAKER.fakeData(json);
-    }
-
-    /**
-     * Updates values of json by passed values in map.
-     *
-     * @param json Json object to be updated.
-     * @param map  Map of json field name as a key and json field value as a value
-     * @return Json object.
-     */
-    public static JSONObject updateJson(final JSONObject json, final Map<String, Object> map) {
-        final JSONObject result = new JSONObject(json.toString());
-
-        for (Map.Entry<String, Object> entry : map.entrySet()) {
-            if (result.has(entry.getKey())) {
-                result.put(entry.getKey(), entry.getValue());
-            }
-        }
-
-        return result;
     }
 
     /**
@@ -132,5 +117,45 @@ public final class JsonDeserializer {
         }
 
         return s;
+    }
+
+    /**
+     * Updates values of json by passed values in map.
+     *
+     * @param json Json object to be updated.
+     * @param map  Map of json field name as a key and json field value as a value
+     * @return Json object.
+     */
+    public static JSONObject updateJson(final JSONObject json, final Map<String, Object> map) {
+        // Get flattened JSON
+        final String flattenStr = new JsonFlattener(json.toString())
+                .withFlattenMode(FlattenMode.NORMAL)
+                .flatten();
+        final JSONObject flattened = new JSONObject(flattenStr);
+
+        // Update every value in map
+        for (Map.Entry<String, Object> entry : map.entrySet()) {
+            // Go throw all flattened keys: {"a": {"b":1}, "c":2} -> ["a.b", "c"]
+            for (String flattenedKey : Set.copyOf(flattened.keySet())) {
+                // Go throw all flattened keys parts: {"a": {"b":1}, "c":2} -> [["a", "b"], "c"]
+                for (String flattenedKeyPart : flattenedKey.split("\\.")) {
+                    // Handle json arrays. Flattened keys can contain "[]": {"a":[{"c":1}]} -> {"a[0].c":1}.
+                    // "[0]" will be removed.
+                    final String atomicKey = (flattenedKeyPart.matches("^.*\\[[0-9]+]$"))
+                            ? flattenedKeyPart.substring(0, flattenedKeyPart.indexOf('['))
+                            : flattenedKeyPart;
+                    // Update value
+                    if (atomicKey.equals(entry.getKey())) {
+                        flattened.remove(flattenedKey);
+                        final String newKey = flattenedKey
+                                .substring(0, flattenedKey.indexOf(atomicKey))
+                                .concat(atomicKey);
+                        flattened.put(newKey, entry.getValue());
+                    }
+                }
+            }
+        }
+
+        return new JSONObject(JsonUnflattener.unflatten(flattened.toString()));
     }
 }
