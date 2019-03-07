@@ -1,7 +1,3 @@
-[![Build Status](https://travis-ci.org/mbi88/date-handler.svg?branch=master)](https://travis-ci.org/mbi88/date-handler)
-[![codecov](https://codecov.io/gh/mbi88/date-handler/branch/master/graph/badge.svg)](https://codecov.io/gh/mbi88/date-handler)
-
-
 ## About
 Based on
  - <a href="http://www.joda.org/joda-time/">joda-time</a>.
