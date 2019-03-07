@@ -1,0 +1,5 @@
+connectionTimeout: 600000
+maxResponseLength: 0
+#headers:
+#  Accept: application/json
+#  Content-Type: application/json; charset=UTF-8

@@ -1,0 +1,4 @@
+dependencies {
+    implementation group: 'joda-time', name: 'joda-time', version: '2.9.9'
+    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.6.3'
+}

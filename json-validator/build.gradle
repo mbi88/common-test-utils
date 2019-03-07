@@ -1,0 +1,3 @@
+dependencies {
+    implementation group: 'com.github.everit-org.json-schema', name: 'org.everit.json.schema', version: '1.8.0'
+}

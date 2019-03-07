@@ -1,0 +1,90 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "id": "http://example.com/example.json",
+  "additionalProperties": false,
+  "properties": {
+    "a": {
+      "id": "/properties/a",
+      "type": "integer"
+    },
+    "b": {
+      "id": "/properties/b",
+      "type": ["null", "string"]
+    },
+    "c": {
+      "id": "/properties/c",
+      "type": "string"
+    },
+    "d": {
+      "id": "/properties/d",
+      "items": {},
+      "type": "array"
+    },
+    "e": {
+      "id": "/properties/e",
+      "properties": {},
+      "type": "object"
+    },
+    "f": {
+      "id": "/properties/f",
+      "minItems": 1,
+      "additionalItems": false,
+      "additionalProperties": false,
+      "items": {
+        "id": "/properties/f/items",
+        "additionalProperties": false,
+        "additionalItems": false,
+        "properties": {
+          "aa": {
+            "id": "/properties/f/items/properties/aa",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "aa"
+        ],
+        "type": "object"
+      },
+      "type": "array"
+    },
+    "g": {
+      "id": "/properties/g",
+      "additionalProperties": false,
+      "properties": {
+        "aa": {
+          "id": "/properties/g/properties/aa",
+          "type": "integer"
+        },
+        "bb": {
+          "id": "/properties/g/properties/bb",
+          "additionalProperties": false,
+          "properties": {
+            "aaa": {
+              "id": "/properties/g/properties/bb/properties/aaa",
+              "type": "integer"
+            }
+          },
+          "required": [
+            "aaa"
+          ],
+          "type": "object"
+        }
+      },
+      "required": [
+        "aa",
+        "bb"
+      ],
+      "type": "object"
+    }
+  },
+  "required": [
+    "a",
+    "c",
+    "b",
+    "e",
+    "d",
+    "g",
+    "f"
+  ],
+  "type": "object"
+}

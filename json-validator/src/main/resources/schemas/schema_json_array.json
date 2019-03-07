@@ -1,0 +1,120 @@
+{
+  "$id": "http://example.com/example.json",
+  "type": "array",
+  "definitions": {},
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "items": {
+    "$id": "http://example.com/example.json/items",
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "a": {
+        "$id": "http://example.com/example.json/items/properties/a",
+        "type": "integer",
+        "title": "The A Schema ",
+        "default": 0,
+        "examples": [
+          1
+        ]
+      },
+      "b": {
+        "$id": "http://example.com/example.json/items/properties/b",
+        "type": "null",
+        "title": "The B Schema ",
+        "default": null,
+        "examples": [
+          null
+        ]
+      },
+      "c": {
+        "$id": "http://example.com/example.json/items/properties/c",
+        "type": "string",
+        "title": "The C Schema ",
+        "default": "",
+        "examples": [
+          "1"
+        ]
+      },
+      "d": {
+        "$id": "http://example.com/example.json/items/properties/d",
+        "type": "array"
+      },
+      "e": {
+        "$id": "http://example.com/example.json/items/properties/e",
+        "type": "object",
+        "additionalProperties": false
+      },
+      "f": {
+        "$id": "http://example.com/example.json/items/properties/f",
+        "type": "array",
+        "items": {
+          "$id": "http://example.com/example.json/items/properties/f/items",
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "aa": {
+              "$id": "http://example.com/example.json/items/properties/f/items/properties/aa",
+              "type": "integer",
+              "title": "The Aa Schema ",
+              "default": 0,
+              "examples": [
+                1
+              ]
+            }
+          },
+          "required": [
+            "aa"
+          ]
+        }
+      },
+      "g": {
+        "$id": "http://example.com/example.json/items/properties/g",
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "aa": {
+            "$id": "http://example.com/example.json/items/properties/g/properties/aa",
+            "type": "integer",
+            "title": "The Aa Schema ",
+            "default": 0,
+            "examples": [
+              1
+            ]
+          },
+          "bb": {
+            "$id": "http://example.com/example.json/items/properties/g/properties/bb",
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "aaa": {
+                "$id": "http://example.com/example.json/items/properties/g/properties/bb/properties/aaa",
+                "type": "integer",
+                "title": "The Aaa Schema ",
+                "default": 0,
+                "examples": [
+                  1
+                ]
+              }
+            },
+            "required": [
+              "aaa"
+            ]
+          }
+        },
+        "required": [
+          "aa",
+          "bb"
+        ]
+      }
+    },
+    "required": [
+      "a",
+      "b",
+      "c",
+      "d",
+      "e",
+      "f",
+      "g"
+    ]
+  }
+}
