@@ -194,4 +194,70 @@ public class SerializerTest {
 
         assertTrue(updateJson(json, Map.of("a", "updated", "q", "new 2", "c", "new")).similar(expected));
     }
+
+    @Test
+    public void testUpdateFieldInJsonObject() {
+        var json = new JSONObject();
+        json.put("a", 1);
+        json.put("b", 2);
+
+        var r = updateJson(json, "a", 3);
+
+        assertTrue(r.similar(json.put("a", 3)));
+    }
+
+    @Test
+    public void testUpdateSkippedIfNoField() {
+        var json = new JSONObject();
+        json.put("a", 1);
+        json.put("b", 2);
+
+        var r = updateJson(json, "aa", 3);
+
+        assertTrue(r.similar(json));
+    }
+
+    @Test
+    public void testUpdateFieldInInnerJsonObject() {
+        var json = new JSONObject();
+        json.put("c", 1);
+        json.put("b", new JSONObject().put("c", 1).put("d", 1));
+
+        var r = updateJson(json, "b.c", 3);
+
+        assertTrue(r.similar(json.put("b", new JSONObject().put("c", 3).put("d", 1))));
+    }
+
+    @Test
+    public void testUpdateFieldInInnerJsonArray() {
+        var json = new JSONObject();
+        json.put("c", 1);
+        json.put("b", new JSONArray().put(new JSONObject().put("c", 1)).put(new JSONObject().put("c", 2)));
+
+        var r = updateJson(json, "b[1].c", 3);
+
+        assertTrue(r.similar(json.put("b", new JSONArray().put(new JSONObject().put("c", 1)).put(new JSONObject().put("c", 3)))));
+    }
+
+    @Test
+    public void testUpdateObjectFieldInJsonArray() {
+        var json = new JSONArray();
+        json.put(new JSONObject().put("c", 1));
+        json.put(new JSONObject().put("c", 2));
+
+        var r = updateJson(json, "[1].c", 3);
+
+        assertTrue(r.similar(new JSONArray().put(new JSONObject().put("c", 1)).put(new JSONObject().put("c", 3))));
+    }
+
+    @Test
+    public void testUpdateObjectFieldInJsonArrayIfNoField() {
+        var json = new JSONArray();
+        json.put(new JSONObject().put("c", 1));
+        json.put(new JSONObject().put("c", 2));
+
+        var r = updateJson(json, "[1].a", 3);
+
+        assertTrue(r.similar(json));
+    }
 }
