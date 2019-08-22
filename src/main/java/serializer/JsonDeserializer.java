@@ -123,7 +123,7 @@ public final class JsonDeserializer {
      * Updates values of json by passed values in map.
      *
      * @param json Json object to be updated.
-     * @param map  Map of json field name as a key and json field value as a value
+     * @param map  Map of json field name as a key and json field value as a value.
      * @return Json object.
      */
     public static JSONObject updateJson(final JSONObject json, final Map<String, Object> map) {
@@ -157,5 +157,62 @@ public final class JsonDeserializer {
         }
 
         return new JSONObject(JsonUnflattener.unflatten(flattened.toString()));
+    }
+
+    /**
+     * Updates values of json.
+     *
+     * @param json   json to be updated.
+     * @param field  field to be updated.
+     * @param update new value of field.
+     * @return updated json.
+     */
+    public static JSONObject updateJson(final JSONObject json, final String field, final Object update) {
+        final var res = flatten(json.toString());
+
+        if (isFieldExist(res, field)) {
+            res.put(field, update);
+        }
+
+        return new JSONObject(unflatten(res));
+    }
+
+    /**
+     * Updates values of json.
+     *
+     * @param json   json to be updated.
+     * @param field  field to be updated.
+     * @param update new value of field.
+     * @return updated json.
+     */
+    public static JSONArray updateJson(final JSONArray json, final String field, final Object update) {
+        final var res = flatten(json.toString());
+
+        if (isFieldExist(res, field)) {
+            res.put(field, update);
+        }
+
+        return new JSONArray(unflatten(res));
+    }
+
+    private static boolean isFieldExist(final JSONObject json, final String field) {
+        boolean fieldExists;
+        try {
+            json.get(field);
+            fieldExists = true;
+        } catch (JSONException ignored) {
+            fieldExists = false;
+        }
+
+        return fieldExists;
+    }
+
+    private static JSONObject flatten(final String resource) {
+        final var flattener = new JsonFlattener(resource);
+        return new JSONObject(flattener.flatten());
+    }
+
+    private static String unflatten(final JSONObject resource) {
+        return new JsonUnflattener(resource.toString()).unflatten();
     }
 }
