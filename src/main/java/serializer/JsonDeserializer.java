@@ -1,6 +1,5 @@
 package serializer;
 
-import com.github.wnameless.json.flattener.FlattenMode;
 import com.github.wnameless.json.flattener.JsonFlattener;
 import com.github.wnameless.json.unflattener.JsonUnflattener;
 import com.mbi.Faker;
@@ -16,15 +15,45 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.BiFunction;
+import java.util.function.BiPredicate;
 
 /**
  * Read content from src/main/resources/ file and map to org.json.JSONObject/JSONArray.
  */
 public final class JsonDeserializer {
 
+    /**
+     * Fields separator in flattened json.
+     */
+    private static final String FIELDS_SEPARATOR = ".";
     private static final Faker FAKER = new JsonFaker();
+
+    /**
+     * Checks if field is present in flattened json.
+     */
+    private static BiPredicate<String, Set<String>> testKeyIsParent = (parentKey, children) -> children
+            .stream()
+            .anyMatch(parentField -> parentField.startsWith(parentKey.concat(FIELDS_SEPARATOR))
+                    || parentField.equalsIgnoreCase(parentKey)
+                    || parentField.startsWith(parentKey.concat("[")));
+
+    /**
+     * Returns children of parent from set.
+     */
+    private static BiFunction<Set<String>, String, List<String>> getChildren = (parentFields, parent) -> {
+        final List<String> list = new ArrayList<>();
+        parentFields.forEach(s -> {
+            if (s.startsWith(parent)) {
+                list.add(s);
+            }
+        });
+        return list;
+    };
 
     /**
      * Prohibits object initialization.
@@ -127,36 +156,13 @@ public final class JsonDeserializer {
      * @return Json object.
      */
     public static JSONObject updateJson(final JSONObject json, final Map<String, Object> map) {
-        // Get flattened JSON
-        final String flattenStr = new JsonFlattener(json.toString())
-                .withFlattenMode(FlattenMode.NORMAL)
-                .flatten();
-        final JSONObject flattened = new JSONObject(flattenStr);
+        var res = new JSONObject(json.toString());
 
-        // Update every value in map
-        for (Map.Entry<String, Object> entry : map.entrySet()) {
-            // Go throw all flattened keys: {"a": {"b":1}, "c":2} -> ["a.b", "c"]
-            for (String flattenedKey : Set.copyOf(flattened.keySet())) {
-                // Go throw all flattened keys parts: {"a": {"b":1}, "c":2} -> [["a", "b"], "c"]
-                for (String flattenedKeyPart : flattenedKey.split("\\.")) {
-                    // Handle json arrays. Flattened keys can contain "[]": {"a":[{"c":1}]} -> {"a[0].c":1}.
-                    // "[0]" will be removed.
-                    final String atomicKey = (flattenedKeyPart.matches("^.*\\[[0-9]+]$"))
-                            ? flattenedKeyPart.substring(0, flattenedKeyPart.indexOf('['))
-                            : flattenedKeyPart;
-                    // Update value
-                    if (atomicKey.equals(entry.getKey())) {
-                        flattened.remove(flattenedKey);
-                        final String newKey = flattenedKey
-                                .substring(0, flattenedKey.indexOf(atomicKey))
-                                .concat(atomicKey);
-                        flattened.put(newKey, entry.getValue());
-                    }
-                }
-            }
+        for (var entry : map.entrySet()) {
+            res = updateJson(res, entry.getKey(), entry.getValue());
         }
 
-        return new JSONObject(JsonUnflattener.unflatten(flattened.toString()));
+        return new JSONObject(unflatten(res));
     }
 
     /**
@@ -170,7 +176,10 @@ public final class JsonDeserializer {
     public static JSONObject updateJson(final JSONObject json, final String field, final Object update) {
         final var res = flatten(json.toString());
 
-        if (isFieldExist(res, field)) {
+        if (testKeyIsParent.test(field, res.keySet())) {
+            for (var key : getChildren.apply(res.keySet(), field)) {
+                res.remove(key);
+            }
             res.put(field, update);
         }
 
