@@ -1,6 +1,7 @@
 package controllers;
 
 import org.joda.time.DateTime;
+import org.slf4j.LoggerFactory;
 
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -9,34 +10,65 @@ import java.util.function.Supplier;
 /**
  * Waiting for special object condition. Condition is checked every 1 sec.
  *
- * @param <T> type of result of function to execute.
+ * @param <T> supplier result.
  */
 public final class Waiter<T> {
 
     /**
      * Time in seconds to be spent on waiting of condition.
      */
-    private final int waitingTime;
+    private int waitingTime;
 
     /**
      * Function to execute.
      */
-    private final Supplier<T> function;
+    private Supplier<T> supplier;
 
     /**
      * Function execution result to be thrown if expected condition will not be met.
      */
-    private final Function<T, String> result;
+    private Function<T, String> resultToString;
 
     /**
-     * @param function    function to execute.
-     * @param result      string representation of function result to be used in exception if occurs.
-     * @param waitingTime how many seconds waiter will wait until throw exception.
+     * Idle duration in ms. 1 sec by default.
      */
-    public Waiter(final Supplier<T> function, final Function<T, String> result, final int waitingTime) {
-        this.function = function;
-        this.result = result;
-        this.waitingTime = waitingTime;
+    private int idleDuration = 1000;
+
+    /**
+     * Whether print intermediate response or not. False by default.
+     */
+    private boolean debug;
+
+    private Waiter() {
+        // Disabled
+    }
+
+    /**
+     * @param <T> supplier result.
+     * @return builder
+     */
+    public static <T> Waiter<T>.Builder newBuilder() {
+        return new Waiter<T>().new Builder();
+    }
+
+    private int getWaitingTime() {
+        return waitingTime;
+    }
+
+    private Supplier<T> getSupplier() {
+        return supplier;
+    }
+
+    private Function<T, String> getResultToString() {
+        return resultToString;
+    }
+
+    private int getIdleDuration() {
+        return idleDuration;
+    }
+
+    private boolean isDebug() {
+        return debug;
     }
 
     /**
@@ -47,16 +79,23 @@ public final class Waiter<T> {
     @SuppressWarnings("PMD.AvoidThrowingRawExceptionTypes")
     public T waitCondition(final Predicate<T> expectedCondition) {
         final long startTime = DateTime.now().getMillis();
-        final long endTime = startTime + waitingTime * 1000L;
+        final long endTime = startTime + getWaitingTime() * 1000L;
         boolean timeExceeded = false;
-        T response = function.get();
+        T response = getSupplier().get();
 
         while (!timeExceeded && !expectedCondition.test(response)) {
             timeExceeded = DateTime.now().getMillis() >= endTime;
-            response = function.get();
+            response = getSupplier().get();
 
+            // Print intermediate response
+            if (isDebug()) {
+                final var logger = LoggerFactory.getLogger(Waiter.class);
+                logger.info(getResultToString().apply(response));
+            }
+
+            // Idle
             try {
-                Thread.sleep(1000);
+                Thread.sleep(getIdleDuration());
             } catch (InterruptedException ignored) {
                 // Ignored
             }
@@ -64,9 +103,49 @@ public final class Waiter<T> {
 
         if (timeExceeded) {
             throw new Error(String.format("Expected condition not met. Max waiting time exceeded%n%nResult: %s%n",
-                    result.apply(response)));
+                    getResultToString().apply(response)));
         }
 
         return response;
+    }
+
+    /**
+     * Waiter builder class.
+     */
+    @SuppressWarnings("PMD.LinguisticNaming")
+    public final class Builder {
+
+        private Builder() {
+            // Disabled
+        }
+
+        public Builder setWaitingTime(final int waitingTime) {
+            Waiter.this.waitingTime = waitingTime;
+            return this;
+        }
+
+        public Builder setSupplier(final Supplier<T> supplier) {
+            Waiter.this.supplier = supplier;
+            return this;
+        }
+
+        public Builder setResultToString(final Function<T, String> resultToString) {
+            Waiter.this.resultToString = resultToString;
+            return this;
+        }
+
+        public Builder setIdleDuration(final int idleDuration) {
+            Waiter.this.idleDuration = idleDuration;
+            return this;
+        }
+
+        public Builder setDebug(final boolean debug) {
+            Waiter.this.debug = debug;
+            return this;
+        }
+
+        public Waiter<T> build() {
+            return Waiter.this;
+        }
     }
 }
