@@ -78,9 +78,8 @@ artifacts {
 quality {
     checkstyle = true
     pmd = true
-    findbugs = true
     codenarc = true
-    spotbugs = true
+    spotbugs = false
 }
 
 check.dependsOn jacocoTestReport
