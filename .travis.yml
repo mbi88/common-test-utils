@@ -4,7 +4,8 @@ jdk:
   - openjdk11
 
 script:
-  - ./gradlew clean build jacocoFullReport
+  - ./gradlew clean build
+#  - ./gradlew clean build jacocoFullReport
 
-after_success:
-  - bash <(curl -s https://codecov.io/bash)
+#after_success:
+#  - bash <(curl -s https://codecov.io/bash)
