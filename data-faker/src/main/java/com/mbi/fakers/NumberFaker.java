@@ -38,7 +38,7 @@ public class NumberFaker implements Fakeable {
      * @return number
      */
     private long getRandomNum() {
-        return System.currentTimeMillis() + new Random().nextInt(100000) + 1;
+        return System.currentTimeMillis() + new Random().nextInt(100_000) + 1;
     }
 
     @Override

@@ -8,14 +8,14 @@ buildscript {
 }
 
 plugins {
-    id 'ru.vyarus.quality' version '3.3.0'
+    id 'ru.vyarus.quality' version '4.1.0'
 }
 
 allprojects {
     apply plugin: 'ru.vyarus.quality'
     apply plugin: 'java-library'
-    apply plugin: 'com.palantir.jacoco-coverage'
-    apply plugin: 'com.palantir.jacoco-full-report'
+//    apply plugin: 'com.palantir.jacoco-coverage'
+//    apply plugin: 'com.palantir.jacoco-full-report'
 
     repositories {
         mavenCentral()
@@ -64,12 +64,9 @@ subprojects {
     quality {
         checkstyle = true
         pmd = true
-        findbugs = true
         codenarc = true
-        spotbugs = true
+        spotbugs = false
     }
 }
 
-tasks.jacocoFullReport.dependsOn subprojects.collect { it.tasks.test }
-
-wrapper.gradleVersion = '5.2.1'
+//tasks.jacocoFullReport.dependsOn subprojects.collect { it.tasks.test }

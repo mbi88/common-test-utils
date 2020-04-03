@@ -1,3 +1,5 @@
+apply plugin: 'java-library'
+
 dependencies {
     implementation project(':data-faker')
     implementation project(':date-handler')
