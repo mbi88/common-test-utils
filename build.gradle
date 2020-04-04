@@ -1,12 +1,3 @@
-buildscript {
-    repositories {
-        jcenter()
-    }
-    dependencies {
-        classpath 'com.palantir:jacoco-coverage:0.4.0'
-    }
-}
-
 plugins {
     id 'ru.vyarus.quality' version '4.1.0'
 }
@@ -14,8 +5,7 @@ plugins {
 allprojects {
     apply plugin: 'ru.vyarus.quality'
     apply plugin: 'java-library'
-//    apply plugin: 'com.palantir.jacoco-coverage'
-//    apply plugin: 'com.palantir.jacoco-full-report'
+    apply plugin: 'jacoco'
 
     repositories {
         mavenCentral()
@@ -29,19 +19,9 @@ allprojects {
         api group: 'io.rest-assured', name: 'rest-assured', version: '3.3.0'
     }
 
-    task sourcesJar(type: Jar, dependsOn: classes) {
-        classifier = 'sources'
-        from sourceSets.main.allSource
-    }
-
-    task javadocJar(type: Jar, dependsOn: javadoc) {
-        classifier = 'javadoc'
-        from javadoc.destinationDir
-    }
-
-    artifacts {
-        archives sourcesJar
-        archives javadocJar
+    java {
+        withSourcesJar()
+        withJavadocJar()
     }
 }
 
@@ -68,5 +48,3 @@ subprojects {
         spotbugs = false
     }
 }
-
-//tasks.jacocoFullReport.dependsOn subprojects.collect { it.tasks.test }
