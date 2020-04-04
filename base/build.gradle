@@ -1,11 +1,9 @@
-apply plugin: 'java-library'
-
 dependencies {
-    implementation project(':data-faker')
-    implementation project(':date-handler')
-    implementation project(':http-request')
-    implementation project(':json-assert')
-    implementation project(':json-validator')
+    api project(':data-faker')
+    api project(':date-handler')
+    api project(':http-request')
+    api project(':json-assert')
+    api project(':json-validator')
     implementation group: 'io.jsonwebtoken', name: 'jjwt', version: '0.9.0'
     implementation group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.3'
     implementation group: 'com.amazonaws', name: 'aws-java-sdk-ssm', version: '1.11.312'
