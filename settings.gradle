@@ -1,2 +1,2 @@
 rootProject.name = 'common-test-utils'
-include('base', 'data-faker', 'date-handler', 'http-request', 'json-assert', 'json-validator')
+include('base')
