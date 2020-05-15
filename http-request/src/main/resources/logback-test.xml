@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration debug="false">
+
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <root level="info">
+        <appender-ref ref="STDOUT"/>
+    </root>
+
+    <appender name="FILE" class="ch.qos.logback.core.FileAppender">
+        <file>build/logs/http-request.log</file>
+        <append>false</append>
+        <encoder>
+            <pattern>%date %-4relative %-5level - %msg %n</pattern>
+        </encoder>
+    </appender>
+
+    <logger name="file-logger" level="DEBUG" additivity="false">
+        <appender-ref ref="FILE"/>
+    </logger>
+
+    <root level="info">
+        <appender-ref ref="FILE"/>
+    </root>
+</configuration>

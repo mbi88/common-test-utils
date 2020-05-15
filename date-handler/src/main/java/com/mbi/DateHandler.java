@@ -55,7 +55,7 @@ public final class DateHandler {
      * @return current date.
      */
     public String getCurrentDate() {
-        final DateTime dateTime = new DateTime(dateTimeZone);
+        final var dateTime = new DateTime(dateTimeZone);
         return dateFormatter.print(dateTime);
     }
 
@@ -65,7 +65,7 @@ public final class DateHandler {
      * @return current date time.
      */
     public String getCurrentDateTime() {
-        final DateTime dateTime = new DateTime(dateTimeZone);
+        final var dateTime = new DateTime(dateTimeZone);
         return dateTimeFormatter.print(dateTime);
     }
 
@@ -96,8 +96,8 @@ public final class DateHandler {
      * @return the absolute value of 1st date minus 2nd.
      */
     public int daysBetweenDates(final String startDate, final String endDate) {
-        final DateTime start = dateFormatter.parseDateTime(startDate);
-        final DateTime end = dateFormatter.parseDateTime(endDate);
+        final var start = dateFormatter.parseDateTime(startDate);
+        final var end = dateFormatter.parseDateTime(endDate);
 
         return Math.abs(Days.daysBetween(start.withTimeAtStartOfDay(), end.withTimeAtStartOfDay()).getDays());
     }
@@ -119,17 +119,17 @@ public final class DateHandler {
      *                                  period if unknown.
      */
     public String plus(final String formula) {
-        final CustomDateTime dt = new DateTimeParser().parse(formula);
-        final DateTimeFormatter resultFormatter = isDate(dt) ? dateFormatter : dateTimeFormatter;
-        final DateTime dateTime = new DateTime(dateTimeZone);
+        final var customDateTime = new DateTimeParser().parse(formula);
+        final var resultFormatter = isDate(customDateTime) ? dateFormatter : dateTimeFormatter;
+        final var dateTime = new DateTime(dateTimeZone);
 
         return resultFormatter.print(dateTime
-                .plusYears(dt.getY())
-                .plusMonths(dt.getMo())
-                .plusDays(dt.getD())
-                .plusHours(dt.getH())
-                .plusMinutes(dt.getM())
-                .plusSeconds(dt.getS()));
+                .plusYears(customDateTime.getY())
+                .plusMonths(customDateTime.getMo())
+                .plusDays(customDateTime.getD())
+                .plusHours(customDateTime.getH())
+                .plusMinutes(customDateTime.getM())
+                .plusSeconds(customDateTime.getS()));
     }
 
     /**
@@ -150,11 +150,11 @@ public final class DateHandler {
      *                                  period if unknown.
      */
     public String plus(final String start, final String formula) {
-        final DateTimeFormatter startFormatter = isDate(start) ? dateFormatter : dateTimeFormatter;
-        final DateTime startDateTime = startFormatter.parseDateTime(start);
+        final var startFormatter = isDate(start) ? dateFormatter : dateTimeFormatter;
+        final var startDateTime = startFormatter.parseDateTime(start);
 
-        final CustomDateTime dt = new DateTimeParser().parse(formula);
-        final DateTimeFormatter resultFormatter = (isDate(dt) && isDate(start)) ? dateFormatter : dateTimeFormatter;
+        final var dt = new DateTimeParser().parse(formula);
+        final var resultFormatter = (isDate(dt) && isDate(start)) ? dateFormatter : dateTimeFormatter;
 
         return resultFormatter.print(startDateTime
                 .plusYears(dt.getY())
@@ -182,17 +182,17 @@ public final class DateHandler {
      *                                  period if unknown.
      */
     public String minus(final String formula) {
-        final CustomDateTime dt = new DateTimeParser().parse(formula);
-        final DateTimeFormatter resultFormatter = isDate(dt) ? dateFormatter : dateTimeFormatter;
-        final DateTime dateTime = new DateTime(dateTimeZone);
+        final var customDateTime = new DateTimeParser().parse(formula);
+        final var resultFormatter = isDate(customDateTime) ? dateFormatter : dateTimeFormatter;
+        final var dateTime = new DateTime(dateTimeZone);
 
         return resultFormatter.print(dateTime
-                .minusYears(dt.getY())
-                .minusMonths(dt.getMo())
-                .minusDays(dt.getD())
-                .minusHours(dt.getH())
-                .minusMinutes(dt.getM())
-                .minusSeconds(dt.getS()));
+                .minusYears(customDateTime.getY())
+                .minusMonths(customDateTime.getMo())
+                .minusDays(customDateTime.getD())
+                .minusHours(customDateTime.getH())
+                .minusMinutes(customDateTime.getM())
+                .minusSeconds(customDateTime.getS()));
     }
 
     /**
@@ -213,11 +213,11 @@ public final class DateHandler {
      *                                  period if unknown.
      */
     public String minus(final String start, final String formula) {
-        final DateTimeFormatter startFormatter = isDate(start) ? dateFormatter : dateTimeFormatter;
-        final DateTime startDateTime = startFormatter.parseDateTime(start);
+        final var startFormatter = isDate(start) ? dateFormatter : dateTimeFormatter;
+        final var startDateTime = startFormatter.parseDateTime(start);
 
-        final CustomDateTime dt = new DateTimeParser().parse(formula);
-        final DateTimeFormatter resultFormatter = (isDate(dt) && isDate(start)) ? dateFormatter : dateTimeFormatter;
+        final var dt = new DateTimeParser().parse(formula);
+        final var resultFormatter = (isDate(dt) && isDate(start)) ? dateFormatter : dateTimeFormatter;
 
         return resultFormatter.print(startDateTime
                 .minusYears(dt.getY())
@@ -247,7 +247,7 @@ public final class DateHandler {
     public int getYear(final String date) {
         assertTrue(isDate(date) || isDateTime(date), INVALID_DATE_FORMAT_ERROR_MESSAGE);
 
-        final DateTimeFormatter formatter = isDate(date) ? dateFormatter : dateTimeFormatter;
+        final var formatter = isDate(date) ? dateFormatter : dateTimeFormatter;
 
         return formatter.parseDateTime(date).getYear();
     }
@@ -271,7 +271,7 @@ public final class DateHandler {
     public int getMonth(final String date) {
         assertTrue(isDate(date) || isDateTime(date), INVALID_DATE_FORMAT_ERROR_MESSAGE);
 
-        final DateTimeFormatter formatter = isDate(date) ? dateFormatter : dateTimeFormatter;
+        final var formatter = isDate(date) ? dateFormatter : dateTimeFormatter;
 
         return formatter.parseDateTime(date).getMonthOfYear();
     }
@@ -295,7 +295,7 @@ public final class DateHandler {
     public int getDay(final String date) {
         assertTrue(isDate(date) || isDateTime(date), INVALID_DATE_FORMAT_ERROR_MESSAGE);
 
-        final DateTimeFormatter formatter = isDate(date) ? dateFormatter : dateTimeFormatter;
+        final var formatter = isDate(date) ? dateFormatter : dateTimeFormatter;
 
         return formatter.parseDateTime(date).getDayOfMonth();
     }
@@ -319,7 +319,7 @@ public final class DateHandler {
     public int getHour(final String date) {
         assertTrue(isDate(date) || isDateTime(date), INVALID_DATE_FORMAT_ERROR_MESSAGE);
 
-        final DateTimeFormatter formatter = isDate(date) ? dateFormatter : dateTimeFormatter;
+        final var formatter = isDate(date) ? dateFormatter : dateTimeFormatter;
 
         return formatter.parseDateTime(date).getHourOfDay();
     }
@@ -343,7 +343,7 @@ public final class DateHandler {
     public int getMinute(final String date) {
         assertTrue(isDate(date) || isDateTime(date), INVALID_DATE_FORMAT_ERROR_MESSAGE);
 
-        final DateTimeFormatter formatter = isDate(date) ? dateFormatter : dateTimeFormatter;
+        final var formatter = isDate(date) ? dateFormatter : dateTimeFormatter;
 
         return formatter.parseDateTime(date).getMinuteOfHour();
     }
@@ -367,7 +367,7 @@ public final class DateHandler {
     public int getSecond(final String date) {
         assertTrue(isDate(date) || isDateTime(date), INVALID_DATE_FORMAT_ERROR_MESSAGE);
 
-        final DateTimeFormatter formatter = isDate(date) ? dateFormatter : dateTimeFormatter;
+        final var formatter = isDate(date) ? dateFormatter : dateTimeFormatter;
 
         return formatter.parseDateTime(date).getSecondOfMinute();
     }

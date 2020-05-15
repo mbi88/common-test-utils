@@ -5,7 +5,7 @@ import java.util.Map;
 /**
  * YAML configuration.
  */
-public final class YamlConfiguration {
+public class YamlConfiguration {
 
     private Integer connectionTimeout;
     private Map<String, String> headers;

@@ -16,39 +16,39 @@ public class DateHandlerTest {
 
     @Test
     public void testDefaultConstructor() {
-        DateHandler date = new DateHandler();
-        DateTimeFormatter dateFormatter = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss");
-        DateTime dt = new DateTime(DateTimeZone.UTC);
+        var date = new DateHandler();
+        var dateFormatter = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss");
+        var dt = new DateTime(DateTimeZone.UTC);
 
         assertEquals(date.getCurrentDateTime(), dateFormatter.print(dt));
     }
 
     @Test
     public void testConstructorWithTimeZone() {
-        DateHandler date = new DateHandler(DateTimeZone.getDefault());
-        DateTimeFormatter dateFormatter = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss");
-        DateTime dt = new DateTime(DateTimeZone.getDefault());
+        var date = new DateHandler(DateTimeZone.getDefault());
+        var dateFormatter = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss");
+        var dt = new DateTime(DateTimeZone.getDefault());
 
         assertEquals(date.getCurrentDateTime(), dateFormatter.print(dt));
     }
 
     @Test
     public void testCurrentDate() {
-        DateTimeFormatter dateFormatter = DateTimeFormat.forPattern("yyyy-MM-dd");
-        DateTime dt = new DateTime(DateTimeZone.UTC);
+        var dateFormatter = DateTimeFormat.forPattern("yyyy-MM-dd");
+        var dt = new DateTime(DateTimeZone.UTC);
 
         assertEquals(date.getCurrentDate(), dateFormatter.print(dt));
     }
 
     @Test
     public void testCurrentDateTime() {
-        DateTimeFormatter dateFormatter = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss");
-        DateTime dt = new DateTime(DateTimeZone.UTC);
+        var dateFormatter = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss");
+        var dt = new DateTime(DateTimeZone.UTC);
 
         assertEquals(date.getCurrentDateTime(), dateFormatter.print(dt));
 
         dt = new DateTime(DateTimeZone.forTimeZone(TimeZone.getTimeZone("Europe/Kiev")));
-        DateHandler dh = new DateHandler(DateTimeZone.forTimeZone(TimeZone.getTimeZone("Europe/Kiev")));
+        var dh = new DateHandler(DateTimeZone.forTimeZone(TimeZone.getTimeZone("Europe/Kiev")));
 
         assertEquals(dh.getCurrentDateTime(), dateFormatter.print(dt));
     }
@@ -56,7 +56,7 @@ public class DateHandlerTest {
     @Test
     public void testDateTimeIsCurrent() throws InterruptedException {
         Thread.sleep(3000);
-        DateHandler dateHandler = new DateHandler();
+        var dateHandler = new DateHandler();
 
         assertEquals(dateHandler.getCurrentDateTime(), date.getCurrentDateTime());
     }
@@ -76,9 +76,9 @@ public class DateHandlerTest {
 
     @Test
     public void testPlus() {
-        DateHandler dateHandler = new DateHandler(DateTimeZone.forTimeZone(TimeZone.getTimeZone("Europe/Kiev")));
-        String currentDt = dateHandler.getCurrentDateTime();
-        String newDt = dateHandler.plus("2y2m1s");
+        var dateHandler = new DateHandler(DateTimeZone.forTimeZone(TimeZone.getTimeZone("Europe/Kiev")));
+        var currentDt = dateHandler.getCurrentDateTime();
+        var newDt = dateHandler.plus("2y2m1s");
 
         assertEquals(DateTime.parse(newDt).getYear(), DateTime.parse(currentDt).getYear() + 2);
         assertEquals(DateTime.parse(newDt).getMonthOfYear(), DateTime.parse(currentDt).getMonthOfYear());
@@ -106,8 +106,8 @@ public class DateHandlerTest {
 
     @Test
     public void testPlusMonth() {
-        DateHandler dateHandler = new DateHandler(DateTimeZone.forTimeZone(TimeZone.getTimeZone("Europe/Kiev")));
-        String currentDt = dateHandler.getCurrentDateTime();
+        var dateHandler = new DateHandler(DateTimeZone.forTimeZone(TimeZone.getTimeZone("Europe/Kiev")));
+        var currentDt = dateHandler.getCurrentDateTime();
         String newDt;
 
         for (int plusMonth = 0; plusMonth < 50; plusMonth++) {
@@ -152,9 +152,9 @@ public class DateHandlerTest {
 
     @Test
     public void testMinus() {
-        DateHandler dateHandler = new DateHandler(DateTimeZone.forTimeZone(TimeZone.getTimeZone("Europe/Kiev")));
-        String currentDt = dateHandler.getCurrentDateTime();
-        String newDt = dateHandler.minus("2y2m1s");
+        var dateHandler = new DateHandler(DateTimeZone.forTimeZone(TimeZone.getTimeZone("Europe/Kiev")));
+        var currentDt = dateHandler.getCurrentDateTime();
+        var newDt = dateHandler.minus("2y2m1s");
 
         assertEquals(DateTime.parse(newDt).getYear(), DateTime.parse(currentDt).getYear() - 2);
         assertEquals(DateTime.parse(newDt).getMonthOfYear(), DateTime.parse(currentDt).getMonthOfYear());
@@ -175,8 +175,8 @@ public class DateHandlerTest {
 
     @Test
     public void testMinusMonth() {
-        DateHandler dateHandler = new DateHandler(DateTimeZone.forTimeZone(TimeZone.getTimeZone("Europe/Kiev")));
-        String currentDt = dateHandler.getCurrentDateTime();
+        var dateHandler = new DateHandler(DateTimeZone.forTimeZone(TimeZone.getTimeZone("Europe/Kiev")));
+        var currentDt = dateHandler.getCurrentDateTime();
         String newDt;
 
         for (int minusMonth = 0; minusMonth < 50; minusMonth++) {

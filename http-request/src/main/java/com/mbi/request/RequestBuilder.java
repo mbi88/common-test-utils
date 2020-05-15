@@ -1,11 +1,11 @@
 package com.mbi.request;
 
 import com.mbi.HttpRequest;
+import com.mbi.config.Header;
+import com.mbi.config.Method;
+import com.mbi.config.RequestConfig;
 import com.mbi.config.RequestDirector;
-import io.restassured.http.Header;
-import io.restassured.http.Method;
-import io.restassured.response.Response;
-import io.restassured.specification.RequestSpecification;
+import com.mbi.response.Response;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +19,7 @@ import java.util.Objects;
  * May create memory leak.
  */
 @SuppressWarnings("PMD.LinguisticNaming")
-public final class RequestBuilder implements HttpRequest, Performable {
+public class RequestBuilder implements HttpRequest, Performable {
 
     private final ThreadLocal<String> urlThreadLocal = new ThreadLocal<>();
     private final ThreadLocal<Method> methodsThreadLocal = new ThreadLocal<>();
@@ -27,13 +27,12 @@ public final class RequestBuilder implements HttpRequest, Performable {
     private final ThreadLocal<Integer> statusCodeThreadLocal = new ThreadLocal<>();
     private final ThreadLocal<String> tokenThreadLocal = new ThreadLocal<>();
     private final ThreadLocal<List<Header>> headersThreadLocal = new ThreadLocal<>();
-    private final ThreadLocal<RequestSpecification> specificationThreadLocal = new ThreadLocal<>();
-    private final ThreadLocal<Boolean> debugThreadLocal = new ThreadLocal<>();
+    private final ThreadLocal<RequestConfig> configThreadLocal = new ThreadLocal<>();
     private final ThreadLocal<Object[]> pathParamsThreadLocal = new ThreadLocal<>();
 
     @Override
     public HttpRequest setHeader(final String header, final String value) {
-        final List<Header> list = Objects.isNull(getHeaders()) ? new ArrayList<>() : getHeaders();
+        final var list = Objects.isNull(getHeaders()) ? new ArrayList<Header>() : getHeaders();
         list.add(new Header(header, value));
         headersThreadLocal.set(list);
         return this;
@@ -80,13 +79,13 @@ public final class RequestBuilder implements HttpRequest, Performable {
     }
 
     @Override
-    public HttpRequest setRequestSpecification(final RequestSpecification specification) {
-        specificationThreadLocal.set(specification);
+    public HttpRequest setConfig(final RequestConfig config) {
+        configThreadLocal.set(config);
         return this;
     }
 
-    public RequestSpecification getSpecification() {
-        return specificationThreadLocal.get();
+    public RequestConfig getConfig() {
+        return configThreadLocal.get();
     }
 
     @Override
@@ -97,21 +96,6 @@ public final class RequestBuilder implements HttpRequest, Performable {
 
     public String getUrl() {
         return urlThreadLocal.get();
-    }
-
-    public Boolean getDebug() {
-        return !Objects.isNull(debugThreadLocal.get()) && !debugThreadLocal.get().equals(false);
-    }
-
-    @Override
-    public HttpRequest debug() {
-        debugThreadLocal.set(true);
-        return this;
-    }
-
-    private HttpRequest debug(final boolean isDebug) {
-        debugThreadLocal.set(isDebug);
-        return this;
     }
 
     public Method getMethod() {
@@ -144,10 +128,11 @@ public final class RequestBuilder implements HttpRequest, Performable {
         setMethod(method);
         setPathParams(pathParams);
 
-        final RequestDirector requestDirector = new RequestDirector(this);
-        requestDirector.constructRequest();
+        final var requestDirector = new RequestDirector();
+        requestDirector.setYamlConfigFile("http-request.yml");
+        requestDirector.constructRequest(this);
 
-        final HttpRequestPerformer httpRequest = new HttpRequestPerformer();
+        final var httpRequest = new HttpRequestPerformer();
         httpRequest.addRequestListener(httpRequest::onRequest);
         httpRequest.addRequestListener(this::onRequest);
 
@@ -190,7 +175,6 @@ public final class RequestBuilder implements HttpRequest, Performable {
         setToken(null);
         setHeaders(null);
         setMethod(null);
-        setRequestSpecification(null);
-        debug(false);
+        setConfig(null);
     }
 }

@@ -1,16 +1,16 @@
 import com.mbi.JsonAssert;
-import io.restassured.response.Response;
+import com.mbi.request.RequestBuilder;
+import com.mbi.response.Response;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.testng.annotations.Test;
 
-import static io.restassured.RestAssured.get;
 
 public class JsonAssertArgumentsTest {
 
     private JsonAssert assertion = new JsonAssert();
-    private Response responseArray = get("http://www.mocky.io/v2/580e019b120000880d078776");
-    private Response responseObject = get("http://www.mocky.io/v2/580e0867120000e20d07878c");
+    private Response responseObject = new RequestBuilder().get("http://www.mocky.io/v2/580e0867120000e20d07878c");
+    private Response responseArray = new RequestBuilder().get("http://www.mocky.io/v2/580e019b120000880d078776");
     private JSONObject object1 = new JSONObject(
             "{\"widget\": { \"debug\": \"on\", \"window\": { \"title\": \"Sample Konfabulator Widget1\", \"name\": \"main_window1\", \"width\": 1500, \"height\": 1500 }, \"image\": { \"src\": \"Images/Sun.png\", \"name\": \"sun1\", \"hOffset\": 250, \"vOffset\": 250, \"alignment\": \"center\" }, \"text\": { \"data\": \"Click Here\", \"size\": 36, \"style\": \"bold\", \"name\": \"text1\", \"hOffset\": 250, \"vOffset\": 100, \"alignment\": \"center\", \"onMouseUp\": \"sun1.opacity = (sun1.opacity / 100) * 90;\" } }}");
     private JSONObject object2 = new JSONObject(
@@ -20,6 +20,11 @@ public class JsonAssertArgumentsTest {
     private JSONArray array = new JSONArray(
             "[ {\"widget\": { \"debug\": \"on\", \"window\": { \"title\": \"Sample Konfabulator Widget1\", \"name\": \"main_window1\", \"width\": 1500, \"height\": 1500 }, \"image\": { \"src\": \"Images/Sun.png\", \"name\": \"sun1\", \"hOffset\": 250, \"vOffset\": 250, \"alignment\": \"center\" }, \"text\": { \"data\": \"Click Here\", \"size\": 36, \"style\": \"bold\", \"name\": \"text1\", \"hOffset\": 250, \"vOffset\": 100, \"alignment\": \"center\", \"onMouseUp\": \"sun1.opacity = (sun1.opacity / 100) * 90;\" } }}, {\"widget\": { \"debug\": \"on\", \"window\": { \"title\": \"Sample Konfabulator Widget2\", \"name\": \"main_window2\", \"width\": 2500, \"height\": 2500 }, \"image\": { \"src\": \"Images/Sun.png\", \"name\": \"sun2\", \"hOffset\": 250, \"vOffset\": 250, \"alignment\": \"center\" }, \"text\": { \"data\": \"Click Here\", \"size\": 36, \"style\": \"bold\", \"name\": \"text2\", \"hOffset\": 250, \"vOffset\": 100, \"alignment\": \"center\", \"onMouseUp\": \"sun2.opacity = (sun1.opacity / 100) * 90;\" } }}, {\"widget\": { \"debug\": \"on\", \"window\": { \"title\": \"Sample Konfabulator Widget3\", \"name\": \"main_window3\", \"width\": 3500, \"height\": 3500 }, \"image\": { \"src\": \"Images/Sun.png\", \"name\": \"sun3\", \"hOffset\": 250, \"vOffset\": 250, \"alignment\": \"center\" }, \"text\": { \"data\": \"Click Here\", \"size\": 36, \"style\": \"bold\", \"name\": \"text3\", \"hOffset\": 250, \"vOffset\": 100, \"alignment\": \"center\", \"onMouseUp\": \"sun3.opacity = (sun1.opacity / 100) * 90;\" } }} ]");
     private JSONObject[] objects = {object1, object2, object3};
+
+    @Test
+    public void testName() {
+        System.out.println(1);
+    }
 
     @Test
     public void testResponseWithObject() {

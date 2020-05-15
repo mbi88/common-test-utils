@@ -1,7 +1,8 @@
 package test.tests;
 
 import com.mbi.JsonValidator;
-import io.restassured.response.Response;
+
+import com.mbi.response.Response;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.testng.annotations.Test;

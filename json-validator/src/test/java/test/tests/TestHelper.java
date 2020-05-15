@@ -1,13 +1,13 @@
 package test.tests;
 
 import com.mbi.JsonValidator;
-import io.restassured.response.Response;
+import com.mbi.response.Response;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 class TestHelper {
 
-    private JsonValidator validator = new JsonValidator();
+    private final JsonValidator validator = new JsonValidator();
 
     <T> void checkFail(final JSONObject j1, final T j2) {
         boolean failed = true;

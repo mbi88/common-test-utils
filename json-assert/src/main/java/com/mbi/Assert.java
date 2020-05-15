@@ -1,6 +1,6 @@
 package com.mbi;
 
-import io.restassured.response.Response;
+import com.mbi.response.Response;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -12,7 +12,7 @@ import org.json.JSONObject;
  * Acceptable actual object:
  * {@link org.json.JSONObject}
  * {@link org.json.JSONArray}
- * {@link io.restassured.response.Response}
+ * {@link Response}
  * <p>
  * Acceptable expected object:
  * {@link org.json.JSONObject}
@@ -51,7 +51,7 @@ import org.json.JSONObject;
  * Sometimes expected json array may not contain all the actual json array objects.
  * Use CompareMode.NOT_ORDERED_EXTENSIBLE_ARRAY or CompareMode.ORDERED_EXTENSIBLE_ARRAY.
  * <p>
- * Use a {@link io.restassured.response.Response} as an "actual" argument.
+ * Use a {@link Response} as an "actual" argument.
  * <p>
  * For more usages see tests.
  */
@@ -111,7 +111,7 @@ public interface Assert {
      * String[] whiteList = new String[]{""};
      * <p>
      *
-     * @param actual   actual object {@link io.restassured.response.Response}
+     * @param actual   actual object {@link Response}
      * @param expected expected object {@link org.json.JSONArray}
      * @throws AssertionError if assertion failed.
      */
@@ -126,7 +126,7 @@ public interface Assert {
      * String[] whiteList = new String[]{""};
      * <p>
      *
-     * @param actual   actual object {@link io.restassured.response.Response}
+     * @param actual   actual object {@link Response}
      * @param expected expected object {@link org.json.JSONObject}
      * @throws AssertionError if assertion failed.
      */
@@ -141,7 +141,7 @@ public interface Assert {
      * String[] whiteList = new String[]{""};
      * <p>
      *
-     * @param actual   actual object {@link io.restassured.response.Response}
+     * @param actual   actual object {@link Response}
      * @param expected expected object {@link org.json.JSONObject}
      * @throws AssertionError if assertion failed.
      */

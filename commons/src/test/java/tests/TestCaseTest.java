@@ -1,6 +1,5 @@
 package tests;
 
-import io.restassured.response.Response;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.testng.annotations.Test;
@@ -49,14 +48,14 @@ public class TestCaseTest extends BaseTestCase {
 
     @Test
     public void testToJson() {
-        Response r = http.get("http://www.mocky.io/v2/5ab8a4952c00005700186093");
-        toJson(r);
+        com.mbi.response.Response r = http.get("http://www.mocky.io/v2/5ab8a4952c00005700186093");
+        r.toJson();
     }
 
     @Test
     public void testToJsonArray() {
-        Response r = http.get("http://www.mocky.io/v2/5ab8a4fa2c00005400186097");
-        toJsonArray(r);
+        com.mbi.response.Response r = http.get("http://www.mocky.io/v2/5ab8a4fa2c00005400186097");
+        r.toJsonArray();
     }
 
     @Test

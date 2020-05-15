@@ -89,7 +89,7 @@ public class SerializerTest {
         expected.put("a", "updated");
         expected.getJSONObject("c").put("a", "updated");
 
-        assertTrue(updateJson(json, Map.of("a", "updated")).similar(expected));
+        assertTrue(updateJson(json, Map.of("a", "updated", "c.a", "updated")).similar(expected));
     }
 
     @Test
@@ -107,7 +107,7 @@ public class SerializerTest {
         JSONObject expected = new JSONObject(json.toString());
         expected.getJSONObject("c").put("bb", "updated");
 
-        assertTrue(updateJson(json, Map.of("bb", "updated")).similar(expected));
+        assertTrue(updateJson(json, Map.of("c.bb", "updated")).similar(expected));
     }
 
     @Test
@@ -116,7 +116,7 @@ public class SerializerTest {
         JSONObject expected = new JSONObject(json.toString());
         expected.getJSONObject("c").getJSONObject("bb").put("q", "updated");
 
-        assertTrue(updateJson(json, Map.of("q", "updated")).similar(expected));
+        assertTrue(updateJson(json, Map.of("c.bb.q", "updated")).similar(expected));
     }
 
     @Test
@@ -128,7 +128,7 @@ public class SerializerTest {
         expected.getJSONObject("c").put("a", "updated");
         expected.put("a", "updated");
 
-        assertTrue(updateJson(json, Map.of("q", "updated", "w", "updated", "a", "updated")).similar(expected));
+        assertTrue(updateJson(json, Map.of("c.bb.q", "updated", "c.bb.w", "updated", "c.a", "updated", "a", "updated")).similar(expected));
     }
 
     @Test
@@ -153,7 +153,7 @@ public class SerializerTest {
         JSONObject expected = new JSONObject(json.toString());
         expected.getJSONArray("c").getJSONObject(0).put("bb", "updated");
 
-        assertTrue(updateJson(json, Map.of("bb", "updated")).similar(expected));
+        assertTrue(updateJson(json, Map.of("c[0].bb", "updated")).similar(expected));
     }
 
     @Test
@@ -162,7 +162,7 @@ public class SerializerTest {
         JSONObject expected = new JSONObject(json.toString());
         expected.getJSONArray("c").getJSONObject(0).getJSONObject("bb").put("q", "updated");
 
-        assertTrue(updateJson(json, Map.of("q", "updated")).similar(expected));
+        assertTrue(updateJson(json, Map.of("c[0].bb.q", "updated")).similar(expected));
     }
 
     @Test
@@ -172,7 +172,7 @@ public class SerializerTest {
         expected.put("a", "updated");
         expected.getJSONArray("c").getJSONObject(0).put("a", "updated");
 
-        assertTrue(updateJson(json, Map.of("a", "updated")).similar(expected));
+        assertTrue(updateJson(json, Map.of("a", "updated", "c[0].a", "updated")).similar(expected));
     }
 
     @Test
@@ -193,5 +193,71 @@ public class SerializerTest {
         expected.put("c", "new");
 
         assertTrue(updateJson(json, Map.of("a", "updated", "q", "new 2", "c", "new")).similar(expected));
+    }
+
+    @Test
+    public void testUpdateFieldInJsonObject() {
+        var json = new JSONObject();
+        json.put("a", 1);
+        json.put("b", 2);
+
+        var r = updateJson(json, "a", 3);
+
+        assertTrue(r.similar(json.put("a", 3)));
+    }
+
+    @Test
+    public void testUpdateSkippedIfNoField() {
+        var json = new JSONObject();
+        json.put("a", 1);
+        json.put("b", 2);
+
+        var r = updateJson(json, "aa", 3);
+
+        assertTrue(r.similar(json));
+    }
+
+    @Test
+    public void testUpdateFieldInInnerJsonObject() {
+        var json = new JSONObject();
+        json.put("c", 1);
+        json.put("b", new JSONObject().put("c", 1).put("d", 1));
+
+        var r = updateJson(json, "b.c", 3);
+
+        assertTrue(r.similar(json.put("b", new JSONObject().put("c", 3).put("d", 1))));
+    }
+
+    @Test
+    public void testUpdateFieldInInnerJsonArray() {
+        var json = new JSONObject();
+        json.put("c", 1);
+        json.put("b", new JSONArray().put(new JSONObject().put("c", 1)).put(new JSONObject().put("c", 2)));
+
+        var r = updateJson(json, "b[1].c", 3);
+
+        assertTrue(r.similar(json.put("b", new JSONArray().put(new JSONObject().put("c", 1)).put(new JSONObject().put("c", 3)))));
+    }
+
+    @Test
+    public void testUpdateObjectFieldInJsonArray() {
+        var json = new JSONArray();
+        json.put(new JSONObject().put("c", 1));
+        json.put(new JSONObject().put("c", 2));
+
+        var r = updateJson(json, "[1].c", 3);
+
+        assertTrue(r.similar(new JSONArray().put(new JSONObject().put("c", 1)).put(new JSONObject().put("c", 3))));
+    }
+
+    @Test
+    public void testUpdateObjectFieldInJsonArrayIfNoField() {
+        var json = new JSONArray();
+        json.put(new JSONObject().put("c", 1));
+        json.put(new JSONObject().put("c", 2));
+
+        var r = updateJson(json, "[1].a", 3);
+
+        assertTrue(r.similar(json));
     }
 }

@@ -1,0 +1,9 @@
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd" >
+<suite name="Tests" parallel="methods" thread-count="8">
+
+    <test name="Assertion tests">
+        <classes>
+            <class name="DateHandlerTest"/>
+        </classes>
+    </test>
+</suite>

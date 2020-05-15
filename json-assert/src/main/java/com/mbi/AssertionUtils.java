@@ -250,7 +250,7 @@ final class AssertionUtils {
         final var commonArray = new JSONArray();
 
         // Get a set of expected objects that are common for actual
-        final var commonSet = new LinkedHashSet<ComparableObject>();
+        final Set<ComparableObject> commonSet = new LinkedHashSet<>();
         for (var expectedObj : expected) {
             final var expectedJson = new ComparableObject(expectedObj);
             for (var actualObj : actual) {

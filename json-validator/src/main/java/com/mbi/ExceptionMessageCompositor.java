@@ -20,15 +20,15 @@ final class ExceptionMessageCompositor {
     @SuppressWarnings("PMD.SimplifyStartsWith")
     public <T> String getMessage(final ValidationException exception, final T json) {
         // Add error message
-        String msg = exception.getMessage();
+        var msg = exception.getMessage();
 
         // Add all violations
-        for (String s : exception.getAllMessages()) {
+        for (var s : exception.getAllMessages()) {
             msg = msg.concat("\n" + s);
         }
 
         // Add validated object as string with indentations
-        final String jsonString = json.toString().startsWith("{")
+        final var jsonString = json.toString().startsWith("{")
                 ? new JSONObject(json.toString()).toString(4)
                 : new JSONArray(json.toString()).toString(4);
         msg = msg.concat("\n\nResponse: " + jsonString);

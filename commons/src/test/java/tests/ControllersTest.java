@@ -1,13 +1,14 @@
 package tests;
 
 import com.mbi.request.RequestBuilder;
-import controllers.*;
-import io.restassured.response.Response;
-import io.restassured.response.ResponseBodyData;
+import com.mbi.response.Response;
+import controllers.Controller;
+import controllers.Creatable;
+import controllers.QueryParameter;
+import controllers.Waiter;
 import org.testng.annotations.Test;
 
 import java.util.function.Function;
-import java.util.function.Predicate;
 
 import static org.testng.Assert.*;
 import static testcase.BaseTestCase.toJson;
@@ -42,26 +43,73 @@ public class ControllersTest {
 
     @Test
     public void testWaiterIfConditionIsMet() {
-        Waiter<Response> waiter = new Waiter<>(() -> new RequestBuilder().get("https://www.google.com.ua/"),
-                ResponseBodyData::asString,
-                10);
-        Predicate<Response> predicate = response -> response.statusCode() == 200;
+        var waiter = Waiter.<Response>newBuilder()
+                .setSupplier(() -> new RequestBuilder().get("http://www.mocky.io/v2/5ab8a4952c00005700186093/"))
+                .setResultToString(Response::toString)
+                .setWaitingTime(10)
+                .build();
 
-        waiter.waitCondition(predicate);
+        waiter.waitCondition(response -> response.getStatusCode() == 200);
     }
 
     @Test
     public void testWaiterIfConditionIsNoMet() {
-        Waiter<Response> waiter = new Waiter<>(() -> new RequestBuilder().get("http://www.mocky.io/v2/5ab8a4952c00005700186093"),
-                ResponseBodyData::asString,
-                10);
-        Predicate<Response> predicate = response -> response.statusCode() == 20;
+        var waiter = Waiter.<Response>newBuilder()
+                .setSupplier(() -> new RequestBuilder().get("http://www.mocky.io/v2/5ab8a4952c00005700186093/"))
+                .setResultToString(Response::toString)
+                .setWaitingTime(10)
+                .build();
 
         try {
-            waiter.waitCondition(predicate);
+            waiter.waitCondition(response -> response.getStatusCode() == 20);
         } catch (Throwable t) {
             assertTrue(t.getMessage().contains("Max waiting time exceeded"));
         }
+    }
+
+    @Test
+    public void testCanSetIdleDuration() {
+        var waiter = Waiter.<Response>newBuilder()
+                .setSupplier(() -> new RequestBuilder().get("http://www.mocky.io/v2/5ab8a4952c00005700186093//"))
+                .setResultToString(Response::toString)
+                .setWaitingTime(10)
+                .setIdleDuration(5000)
+                .build();
+
+        try {
+            waiter.waitCondition(response -> response.getStatusCode() == 20);
+        } catch (Throwable t) {
+            assertTrue(t.getMessage().contains("Max waiting time exceeded"));
+        }
+    }
+
+    @Test
+    public void testCanSetDebug() {
+        var waiter = Waiter.<Response>newBuilder()
+                .setSupplier(() -> new RequestBuilder().get("http://www.mocky.io/v2/5ab8a4952c00005700186093//"))
+                .setResultToString(Response::toString)
+                .setWaitingTime(3)
+                .setDebug(true)
+                .build();
+
+        try {
+            waiter.waitCondition(response -> response.getStatusCode() == 20);
+        } catch (Throwable t) {
+            assertTrue(t.getMessage().contains("Max waiting time exceeded"));
+        }
+    }
+
+    @Test
+    public void testCanReadWaiterResponse() {
+        var waiter = Waiter.<Response>newBuilder()
+                .setSupplier(() -> new RequestBuilder().get("http://www.mocky.io/v2/5ab8a4952c00005700186093/"))
+                .setResultToString(Response::toString)
+                .setWaitingTime(10)
+                .build();
+
+        var r = waiter.waitCondition(response -> response.getStatusCode() == 200);
+
+        assertEquals(r.toJson().getInt("a"), 1);
     }
 
     @Test
@@ -111,8 +159,8 @@ public class ControllersTest {
         assertEquals(testClass.getId(), 1);
     }
 
-    class TestClass extends Controller<TestClass> implements Creatable {
-        private final Function<Response, Integer> getIdFunction = response -> toJson(response).optInt("a");
+    static class TestClass extends Controller<TestClass> implements Creatable {
+        private final Function<Response, Integer> getIdFunction = response -> response.toJson().optInt("a");
 
         TestClass() {
         }

@@ -1,7 +1,7 @@
 package com.mbi.utils;
 
+import com.mbi.config.Header;
 import com.mbi.config.RequestConfig;
-import io.restassured.http.Header;
 
 import java.util.List;
 

@@ -1,3 +1,7 @@
+[![Build Status](https://travis-ci.org/mbi88/json-validator.svg?branch=master)](https://travis-ci.org/mbi88/json-validator)
+[![codecov](https://codecov.io/gh/mbi88/json-validator/branch/master/graph/badge.svg)](https://codecov.io/gh/mbi88/json-validator)
+
+
 ## About
 Based on <a href="https://github.com/everit-org/json-schema">JSON Schema Validator</a>.
 

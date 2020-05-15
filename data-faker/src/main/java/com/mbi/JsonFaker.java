@@ -89,7 +89,7 @@ public class JsonFaker implements Faker {
             } else if (beUpdated instanceof JSONArray) {
                 resultArray.put(fakeJsonArrayData((JSONArray) beUpdated));
             } else {
-                resultArray.put(beUpdated);
+                resultArray.put(objectFaker.fakeData(beUpdated));
             }
         }
 

@@ -1,0 +1,2 @@
+connectionTimeout: 600000
+maxResponseLength: 100

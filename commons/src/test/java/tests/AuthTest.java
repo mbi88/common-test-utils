@@ -7,12 +7,12 @@ import org.testng.annotations.Test;
 
 public class AuthTest {
 
-    private final TokenGenerator generator = new TokenGenerator("Secret", true);
+    private final TokenGenerator generator = new TokenGenerator("secret212312312312312312312312312313123123123123123123", true);
 
     @Test
     public void testName() {
         System.out.println(generator.generateToken(new JSONObject().put("a", 1)));
-        System.out.println(new TokenGenerator("secret", false).generateToken(new JSONObject().put("a", 1)));
+        System.out.println(new TokenGenerator("secret212312312312312312312312312313123123123123123123", false).generateToken(new JSONObject().put("a", 1)));
     }
 
     @Test

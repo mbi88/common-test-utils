@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -42,7 +41,7 @@ final class DateTimeParser {
 
         final Map<String, Integer> map = new HashMap<>();
         // Split by digits and letters
-        final List<String> list = Arrays.asList(dt.split("(?<=\\D)(?=\\d)|(?<=\\d)(?=\\D)"));
+        final var list = Arrays.asList(dt.split("(?<=\\D)(?=\\d)|(?<=\\d)(?=\\D)"));
         for (int i = 0; i < list.size(); i = i + 2) {
             // Odd = key, even = value
             map.put(list.get(i + 1), Integer.valueOf(list.get(i)));

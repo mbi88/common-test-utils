@@ -1,0 +1,5 @@
+connectionTimeout: 600000
+maxResponseLength: 100
+headers:
+  Test: header
+  Header: test header

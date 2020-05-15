@@ -10,7 +10,7 @@ public class ObjectFakerTest {
 
     @Test
     public void testSeveralParameters() {
-        String s = faker.fakeData("asd {$uid} asd {$caller} ddd");
+        var s = faker.fakeData("asd {$uid} asd {$caller} ddd");
 
         assertFalse(s.contains("{$"));
         assertTrue(s.contains(" asd ObjectFakerTest.testSeveralParameters ddd"));
@@ -18,7 +18,7 @@ public class ObjectFakerTest {
 
     @Test
     public void testNoParameters() {
-        String s = faker.fakeData("asd ddd");
+        var s = faker.fakeData("asd ddd");
 
         assertEquals(s, "asd ddd");
     }

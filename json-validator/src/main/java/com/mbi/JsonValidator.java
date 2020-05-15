@@ -1,10 +1,11 @@
 package com.mbi;
 
-import io.restassured.response.Response;
-import org.apache.commons.lang3.Validate;
+import com.mbi.response.Response;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.Objects;
 
 import static com.mbi.Constants.*;
 
@@ -13,7 +14,7 @@ import static com.mbi.Constants.*;
  * Validates json schema with something of:
  * {@link org.json.JSONObject},
  * {@link org.json.JSONArray},
- * {@link io.restassured.response.Response},
+ * {@link Response},
  * {@link java.lang.String}
  *
  * @see <a href="http://json-schema.org/">What is json schema</a>
@@ -30,8 +31,8 @@ public final class JsonValidator {
      * @throws AssertionError if null passed
      */
     public void validate(final JSONObject schema, final JSONObject json) {
-        Validate.notNull(schema, JSON_SCHEMA_NULL_ERROR_MESSAGE);
-        Validate.notNull(json, VALIDATION_JSON_NULL_ERROR_MESSAGE);
+        Objects.requireNonNull(schema, JSON_SCHEMA_NULL_ERROR_MESSAGE);
+        Objects.requireNonNull(json, VALIDATION_JSON_NULL_ERROR_MESSAGE);
 
         final Comparator<JSONObject> comparator = new SchemaValidator()::validateSchema;
 
@@ -46,8 +47,8 @@ public final class JsonValidator {
      * @throws AssertionError if null passed
      */
     public void validate(final JSONObject schema, final JSONArray json) {
-        Validate.notNull(schema, JSON_SCHEMA_NULL_ERROR_MESSAGE);
-        Validate.notNull(json, VALIDATION_JSON_NULL_ERROR_MESSAGE);
+        Objects.requireNonNull(schema, JSON_SCHEMA_NULL_ERROR_MESSAGE);
+        Objects.requireNonNull(json, VALIDATION_JSON_NULL_ERROR_MESSAGE);
 
         final Comparator<JSONArray> comparator = new SchemaValidator()::validateSchema;
 
@@ -55,7 +56,7 @@ public final class JsonValidator {
     }
 
     /**
-     * Validates {@link io.restassured.response.Response} according to json schema.
+     * Validates {@link Response} according to json schema.
      * Converts rest-assured response to JSONObject/JSONArray. Throws JSONException if conversion fails.
      *
      * @param schema   schema.
@@ -64,16 +65,16 @@ public final class JsonValidator {
      * @throws AssertionError if null passed
      */
     public void validate(final JSONObject schema, final Response response) {
-        Validate.notNull(schema, JSON_SCHEMA_NULL_ERROR_MESSAGE);
-        Validate.notNull(response, VALIDATION_JSON_NULL_ERROR_MESSAGE);
+        Objects.requireNonNull(schema, JSON_SCHEMA_NULL_ERROR_MESSAGE);
+        Objects.requireNonNull(response, VALIDATION_JSON_NULL_ERROR_MESSAGE);
 
         final Comparator<Response> comparator = (schm, rsp) -> {
-            if (isJsonObject(rsp.asString())) {
-                validate(schm, new JSONObject(rsp.asString()));
-            } else if (isJsonArray(rsp.asString())) {
-                validate(schm, new JSONArray(rsp.asString()));
+            if (isJsonObject(rsp.toString())) {
+                validate(schm, rsp.toJson());
+            } else if (isJsonArray(rsp.toString())) {
+                validate(schm, rsp.toJsonArray());
             } else {
-                throw new JSONException(INVALID_JSON_ERROR_MESSAGE + rsp.asString());
+                throw new JSONException(INVALID_JSON_ERROR_MESSAGE + rsp.toString());
             }
         };
 
@@ -90,8 +91,8 @@ public final class JsonValidator {
      * @throws AssertionError if null passed
      */
     public void validate(final JSONObject schema, final String string) {
-        Validate.notNull(schema, JSON_SCHEMA_NULL_ERROR_MESSAGE);
-        Validate.notNull(string, VALIDATION_JSON_NULL_ERROR_MESSAGE);
+        Objects.requireNonNull(schema, JSON_SCHEMA_NULL_ERROR_MESSAGE);
+        Objects.requireNonNull(string, VALIDATION_JSON_NULL_ERROR_MESSAGE);
 
         final Comparator<String> comparator = (schm, str) -> {
             if (isJsonObject(str)) {

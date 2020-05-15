@@ -1,6 +1,7 @@
 package com.mbi;
 
-import io.restassured.response.Response;
+
+import com.mbi.response.Response;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -88,7 +89,7 @@ public final class JsonAssert implements Assert {
     public void jsonEquals(final Response actual, final JSONArray expected) {
         try {
             final var asserter = new EqualityAsserter();
-            asserter.assertEquals(new JSONArray(actual.asString()), expected, mode, blackList, whiteList);
+            asserter.assertEquals(actual.toJsonArray(), expected, mode, blackList, whiteList);
         } finally {
             // Set default mode, ignore
             setDefaultState();
@@ -99,7 +100,7 @@ public final class JsonAssert implements Assert {
     public void jsonEquals(final Response actual, final JSONObject expected) {
         try {
             final var asserter = new EqualityAsserter();
-            asserter.assertEquals(new JSONObject(actual.asString()), expected, mode, blackList, whiteList);
+            asserter.assertEquals(actual.toJson(), expected, mode, blackList, whiteList);
         } finally {
             // Set default mode, ignore
             setDefaultState();
@@ -110,7 +111,7 @@ public final class JsonAssert implements Assert {
     public void jsonEquals(final Response actual, final JSONObject... expected) {
         try {
             final var asserter = new EqualityAsserter();
-            asserter.assertEquals(new JSONArray(actual.asString()), objectsToArray(expected),
+            asserter.assertEquals(actual.toJsonArray(), objectsToArray(expected),
                     mode, blackList, whiteList);
         } finally {
             // Set default mode, ignore

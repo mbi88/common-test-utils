@@ -1,3 +1,8 @@
+[![Build Status](https://travis-ci.org/mbi88/http-request.svg?branch=master)](https://travis-ci.org/mbi88/http-request)
+[![codecov](https://codecov.io/gh/mbi88/http-request/branch/master/graph/badge.svg)](https://codecov.io/gh/mbi88/http-request)
+[![](https://jitpack.io/v/mbi88/http-request.svg)](https://jitpack.io/#mbi88/http-request)
+
+
 ## About
  * Perform http requests and get rest-assured response.
  * Check response status code equals to expected.

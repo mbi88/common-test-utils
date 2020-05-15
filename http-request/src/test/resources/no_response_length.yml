@@ -1,0 +1,4 @@
+connectionTimeout: 10000
+headers:
+  Test: header
+  Header: test header

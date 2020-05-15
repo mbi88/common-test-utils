@@ -5,7 +5,7 @@ import com.mbi.HttpRequest;
 import com.mbi.JsonAssert;
 import com.mbi.JsonValidator;
 import com.mbi.request.RequestBuilder;
-import io.restassured.response.Response;
+import com.mbi.response.Response;
 import org.apache.commons.lang3.Validate;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -21,7 +21,7 @@ import java.util.Random;
 public abstract class BaseTestCase {
 
     /**
-     * Http requests based on rest-assured framework.
+     * Http requests.
      */
     protected final HttpRequest http = new RequestBuilder();
 
@@ -95,21 +95,21 @@ public abstract class BaseTestCase {
     /**
      * Converts response to json object.
      *
-     * @param response rest-assured response
+     * @param response response.
      * @return json object.
      */
     public static JSONObject toJson(final Response response) {
-        return new JSONObject(response.asString());
+        return response.toJson();
     }
 
     /**
      * Converts response to json array.
      *
-     * @param response rest-assured response
+     * @param response response.
      * @return json array.
      */
     public static JSONArray toJsonArray(final Response response) {
-        return new JSONArray(response.asString());
+        return response.toJsonArray();
     }
 
     /**

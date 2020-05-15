@@ -3,7 +3,8 @@ package com.mbi.fakers;
 import com.mbi.parameters.Parameter;
 import org.apache.commons.lang3.Validate;
 
-import java.util.Objects;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 /**
@@ -18,18 +19,31 @@ public class NumberFaker implements Fakeable {
      * @return number
      */
     private long getRandomNum(final int count) {
-        final String s = String.valueOf(getRandomNum());
+        // Valid range
+        final int start = 1;
+        final int end = 18;
+        // Validate digits count is in a supported range
+        Validate.exclusiveBetween(start - 1, end + 1, count,
+                String.format("Value %d is not in the specified exclusive range of %d to %d", count, start, end));
 
-        Validate.exclusiveBetween(0, s.length() + 1, count,
-                String.format("Value %d is not in the specified exclusive range of %d to %d", count, 1, s.length()));
+        final List<Integer> integers = new ArrayList<>();
+        final var randomGenerator = new Random();
 
-        // Replace 0 in the beginning
-        String result = s.substring(s.length() - count);
-        if (Objects.equals(result.charAt(0), '0')) {
-            result = result.replaceFirst("^.", "8");
+        for (int i = 0; i < count; i++) {
+            integers.add(randomGenerator.nextInt(10));
         }
 
-        return Long.parseLong(result);
+        // Replace 0 in the beginning
+        if (integers.get(0).equals(0)) {
+            integers.set(0, 1);
+        }
+
+        final var randomString = new StringBuilder();
+        for (var i : integers) {
+            randomString.append(i);
+        }
+
+        return Long.parseLong(String.valueOf(randomString));
     }
 
     /**
@@ -38,16 +52,16 @@ public class NumberFaker implements Fakeable {
      * @return number
      */
     private long getRandomNum() {
-        return System.currentTimeMillis() + new Random().nextInt(100_000) + 1;
+        return getRandomNum(13);
     }
 
     @Override
     public Object fake(final String sourceString, final Parameter parameter) {
-        final String randomNumber = (parameter.getArguments().isEmpty())
+        final var randomNumber = (parameter.getArguments().isEmpty())
                 ? String.valueOf(getRandomNum())
                 : String.valueOf(getRandomNum(getDigitsCount(parameter)));
 
-        final String result = sourceString.replace(parameter.getFullParameter(), randomNumber);
+        final var result = sourceString.replace(parameter.getFullParameter(), randomNumber);
 
         try {
             Long.parseLong(result);

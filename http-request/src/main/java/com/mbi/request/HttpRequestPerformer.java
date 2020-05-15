@@ -1,16 +1,26 @@
 package com.mbi.request;
 
+import com.mbi.config.Header;
 import com.mbi.config.RequestConfig;
+import com.mbi.response.Response;
 import com.mbi.utils.MessageComposer;
-import io.restassured.response.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
+import static com.mbi.utils.Commons.buildPathParams;
 import static org.testng.Assert.assertEquals;
+
 
 /**
  * Performs request.
@@ -18,7 +28,8 @@ import static org.testng.Assert.assertEquals;
 final class HttpRequestPerformer implements Performable {
 
     private final List<OnRequestPerformedListener> requestListeners = new ArrayList<>();
-    private Response response;
+    private final Response response = new Response();
+    private final Logger logger = LoggerFactory.getLogger("file-logger");
     private RequestConfig config;
 
     /**
@@ -35,10 +46,10 @@ final class HttpRequestPerformer implements Performable {
         }
 
         try {
-            assertEquals(response.statusCode(), config.getExpectedStatusCode().intValue());
+            assertEquals(response.getStatusCode(), config.getExpectedStatusCode());
         } catch (AssertionError assertionError) {
-            final String msg = new MessageComposer(assertionError, config, response).composeMessage();
-            throw new AssertionError(msg, assertionError);
+            final var message = new MessageComposer(assertionError, config, response).composeMessage();
+            throw new AssertionError(message, assertionError);
         }
     }
 
@@ -50,12 +61,42 @@ final class HttpRequestPerformer implements Performable {
      * @throws AssertionError on errors. Exception message contains url, response and request as a curl.
      */
     public Response request(final RequestConfig requestConfig) {
+        final var httpClient = HttpClient.newBuilder().build();
+        config = requestConfig;
+
+        final var timeout = Duration.ofMillis(requestConfig.getRequestTimeOut() == null
+                ? 600_000
+                : requestConfig.getRequestTimeOut());
+        final var requestData = requestConfig.getData() == null
+                ? HttpRequest.BodyPublishers.noBody()
+                : HttpRequest.BodyPublishers.ofString(requestConfig.getData().toString());
+
         try {
-            this.config = requestConfig;
-            this.response = requestConfig
-                    .getRequestSpecification()
-                    .request(requestConfig.getMethod(), requestConfig.getUrl(), requestConfig.getPathParams());
+            final var request = HttpRequest.newBuilder()
+                    .timeout(timeout)
+                    .method(requestConfig.getMethod().name(), requestData)
+                    .uri(URI.create(buildPathParams(requestConfig.getUrl(), requestConfig.getPathParams())));
+
+            if (requestConfig.getHeaders() != null && !requestConfig.getHeaders().isEmpty()) {
+                final var list = new ArrayList<String>();
+                requestConfig.getHeaders().forEach(header -> {
+                    list.add(header.getName());
+                    list.add(header.getValue());
+                });
+
+                request.headers(list.toArray(new String[0]));
+            }
+
+            final var httpResponse = httpClient.send(request.build(), HttpResponse.BodyHandlers.ofString());
+
+            response.setBody(httpResponse.body());
+            response.setHeaders(httpResponse.headers().map().entrySet().stream()
+                    .map(m -> new Header(m.getKey(), m.getValue().get(0))).collect(Collectors.toList()));
+            response.setStatusCode(httpResponse.statusCode());
+
             checkStatusCode(response, requestConfig);
+        } catch (InterruptedException | IOException error) {
+            logger.error(error.getMessage());
         } finally {
             requestListeners.forEach(OnRequestPerformedListener::onRequestPerformed);
         }
@@ -74,9 +115,8 @@ final class HttpRequestPerformer implements Performable {
 
     @Override
     public void onRequest() {
-        final Logger logger = LoggerFactory.getLogger("file-logger");
         logger.info(String.format("Request: %s%nResponse: %s%n",
                 config.toString(),
-                Objects.isNull(response) ? "null" : response.asString()));
+                Objects.isNull(response.getBody()) ? "null" : response.getBody().toString()));
     }
 }

@@ -1,6 +1,6 @@
 package controllers;
 
-import io.restassured.response.Response;
+import com.mbi.response.Response;
 
 import java.util.function.Function;
 
@@ -13,7 +13,7 @@ public interface Creatable {
     /**
      * Extracts id from response.
      *
-     * @param response rest-assured response
+     * @param response response.
      * @param function extract function.
      * @param <T>      id class.
      * @return id.

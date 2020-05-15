@@ -42,11 +42,11 @@ final class SchemaValidator {
      */
     @SuppressWarnings("PMD.PreserveStackTrace")
     private <T> void validate(final JSONObject schemaJson, final T json) {
-        final Schema schema = getSchema(schemaJson);
+        final var schema = getSchema(schemaJson);
         try {
             schema.validate(json);
         } catch (ValidationException ve) {
-            final String msg = new ExceptionMessageCompositor().getMessage(ve, json);
+            final var msg = new ExceptionMessageCompositor().getMessage(ve, json);
 
             throw new ValidationException(ve.getViolatedSchema(), msg, ve.getKeyword(), ve.getSchemaLocation());
         }
@@ -61,7 +61,7 @@ final class SchemaValidator {
      */
     private Schema getSchema(final JSONObject schemaJson) {
         if (schemaJson.toString().equalsIgnoreCase("{}")) {
-            final String message = String.format("Invalid schema!%nSchema:%n%s", schemaJson.toString(4));
+            final var message = String.format("Invalid schema!%nSchema:%n%s", schemaJson.toString(4));
 
             throw new JSONException(message);
         }

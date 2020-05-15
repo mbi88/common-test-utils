@@ -1,125 +1,99 @@
 package com.mbi.config;
 
 import com.mbi.request.RequestBuilder;
-import io.restassured.RestAssured;
-import io.restassured.config.HttpClientConfig;
-import io.restassured.config.RestAssuredConfig;
-import io.restassured.http.Header;
-import io.restassured.specification.FilterableRequestSpecification;
-import io.restassured.specification.RequestSpecification;
-import org.yaml.snakeyaml.Yaml;
+import org.slf4j.LoggerFactory;
 
-import java.io.InputStream;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
-
-import static io.restassured.RestAssured.given;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Configures request.
  */
 public class RequestDirector {
 
-    private final RequestBuilder requestBuilder;
-    private final YamlConfiguration yamlConfiguration;
     private final RequestConfig requestConfig = new RequestConfig();
+    private final ConfigMapper mapper = new ConfigMapper();
+    private String yamlConfigFile;
 
-    public RequestDirector(final RequestBuilder requestBuilder) {
-        this.requestBuilder = requestBuilder;
-        yamlConfiguration = readYamlConfiguration();
+    public void setYamlConfigFile(final String yamlConfigFile) {
+        this.yamlConfigFile = yamlConfigFile;
     }
 
     public RequestConfig getRequestConfig() {
         return this.requestConfig;
     }
 
-    public void constructRequest() {
-        final RequestSpecification spec = configureRequest();
+    public void constructRequest(final RequestBuilder requestBuilder) {
+        // Load values from yaml config file
+        final var fileConfig = mapper.getValuesFromConfigFile(getDataFromYamlFile(yamlConfigFile));
+        mapper.map(fileConfig, requestConfig);
 
-        requestConfig.setRequestSpecification(spec);
-        requestConfig.setMethod(requestBuilder.getMethod());
-        requestConfig.setUrl(requestBuilder.getUrl());
-        requestConfig.setData(((FilterableRequestSpecification) spec).getBody());
-        requestConfig.setHeaders(new ArrayList<>(((FilterableRequestSpecification) spec).getHeaders().asList()));
-        requestConfig.setExpectedStatusCode(requestBuilder.getStatusCode());
-        requestConfig.setPathParams(requestBuilder.getPathParams());
-        requestConfig.setDebug(requestBuilder.getDebug());
-        requestConfig.setMaxResponseLength(getMaxResponseLength());
-    }
-
-    private RequestSpecification configureRequest() {
-        final RequestSpecification spec = given();
-
-        setDefaultHeaders(spec);
-        setRequestTimeout(spec);
-        setSpecification(spec);
-        setToken(spec);
-        setData(spec);
-        appendHeaders(spec);
-        setDebug(spec);
-
-        return spec;
-    }
-
-    private YamlConfiguration readYamlConfiguration() {
-        final InputStream in = getClass().getClassLoader().getResourceAsStream("http-request.yml");
-        if (Objects.isNull(in)) {
-            return new YamlConfiguration();
+        // Get values from passed request configuration
+        var builderConfig = new RequestConfig();
+        if (requestBuilder.getConfig() != null) {
+            builderConfig = mapper.getValuesFromConfigObject(requestBuilder.getConfig());
+            mapper.map(builderConfig, requestConfig);
         }
 
-        return new Yaml().loadAs(in, YamlConfiguration.class);
+        // Get values from passed arguments
+        final var argumentsConfig = mapper.getValuesFromBuilder(requestBuilder);
+        mapper.map(argumentsConfig, requestConfig);
+
+        // Merge headers
+        requestConfig.setHeaders(mergeHeaders(fileConfig, builderConfig, argumentsConfig));
+
+        // Add authorization
+        setToken(requestBuilder);
     }
 
-    private void setDefaultHeaders(final RequestSpecification spec) {
-        if (!Objects.isNull(yamlConfiguration.getHeaders())) {
-            spec.headers(yamlConfiguration.getHeaders());
+    private List<Header> mergeHeaders(final RequestConfig fileConfig, final RequestConfig builderConfig,
+                                      final RequestConfig argumentsConfig) {
+        final Function<RequestConfig, List<Header>> extractHeaders = config -> config.getHeaders() == null
+                ? List.of() : config.getHeaders();
+
+        final var fileHeaders = extractHeaders.apply(fileConfig);
+        final var builderHeaders = extractHeaders.apply(builderConfig);
+        final var argHeaders = extractHeaders.apply(argumentsConfig);
+
+        final var headers = new ArrayList<Header>();
+        if (builderHeaders.isEmpty()) {
+            headers.addAll(fileHeaders);
         }
+        headers.addAll(builderHeaders);
+        headers.addAll(argHeaders);
+
+        return headers;
     }
 
-    private void setRequestTimeout(final RequestSpecification spec) {
-        if (!Objects.isNull(yamlConfiguration.getConnectionTimeout())) {
-            final RestAssuredConfig config = RestAssured.config().httpClient(HttpClientConfig.httpClientConfig()
-                    .setParam("http.connection.timeout", yamlConfiguration.getConnectionTimeout())
-                    .setParam("http.socket.timeout", yamlConfiguration.getConnectionTimeout()));
-            spec.config(config);
+    private String getDataFromYamlFile(final String fileName) {
+        if (Objects.isNull(fileName) || Objects.isNull(getClass().getClassLoader().getResource(fileName))) {
+            return null;
         }
-    }
 
-    private void setSpecification(final RequestSpecification spec) {
-        if (requestBuilder.getSpecification() != null) {
-            spec.spec(requestBuilder.getSpecification());
+        final var url = getClass().getClassLoader().getResource(fileName);
+        Stream<String> lines = null;
+        try {
+            final var path = Paths.get(Objects.requireNonNull(url, "yaml config not found").toURI());
+            lines = Files.lines(path);
+        } catch (IOException | URISyntaxException error) {
+            final var log = LoggerFactory.getLogger(this.getClass());
+            log.error(error.getMessage());
         }
+
+        return Objects.requireNonNull(lines).collect(Collectors.joining("\n"));
     }
 
-    private void setToken(final RequestSpecification spec) {
+    private void setToken(final RequestBuilder requestBuilder) {
         if (requestBuilder.getToken() != null) {
-            spec.header("Authorization", requestBuilder.getToken());
+            requestConfig.getHeaders().add(new Header("Authorization", requestBuilder.getToken()));
         }
-    }
-
-    private void setData(final RequestSpecification spec) {
-        if (requestBuilder.getData() != null) {
-            spec.body(requestBuilder.getData().toString());
-        }
-    }
-
-    private void appendHeaders(final RequestSpecification spec) {
-        if (requestBuilder.getHeaders() != null) {
-            for (Header header : requestBuilder.getHeaders()) {
-                spec.header(header);
-            }
-        }
-    }
-
-    private void setDebug(final RequestSpecification spec) {
-        if (requestBuilder.getDebug()) {
-            spec.log().everything();
-        }
-    }
-
-    private int getMaxResponseLength() {
-        return (!Objects.isNull(yamlConfiguration.getMaxResponseLength()))
-                ? yamlConfiguration.getMaxResponseLength()
-                : 0;
     }
 }
