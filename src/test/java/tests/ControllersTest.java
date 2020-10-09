@@ -42,6 +42,38 @@ public class ControllersTest {
     }
 
     @Test
+    public void testCanRemoveAllParameters() {
+        var parameter = new QueryParameter("q", 1);
+        parameter.addParameter("q", 2);
+
+        parameter.removeParameter("q");
+
+        assertEquals(parameter.getParametersString(), "");
+    }
+
+    @Test
+    public void testCanRemoveParameterByValue() {
+        var parameter = new QueryParameter("q", 1);
+        parameter.addParameter("q", 2);
+        parameter.addParameter("w", 1);
+
+        parameter.removeParameter("q", 1);
+
+        assertEquals(parameter.getParametersString(), "?q=2&w=1");
+    }
+
+    @Test
+    public void testCanRemoveParameter() {
+        var parameter = new QueryParameter("q", 1);
+        parameter.addParameter("q", 2);
+        parameter.addParameter("w", 1);
+
+        parameter.removeParameter("q");
+
+        assertEquals(parameter.getParametersString(), "?w=1");
+    }
+
+    @Test
     public void testWaiterIfConditionIsMet() {
         var waiter = Waiter.<Response>newBuilder()
                 .setSupplier(() -> new RequestBuilder().get("http://www.mocky.io/v2/5ab8a4952c00005700186093/"))

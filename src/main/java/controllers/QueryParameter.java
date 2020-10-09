@@ -44,6 +44,25 @@ public final class QueryParameter {
     }
 
     /**
+     * Removes parameter by key.
+     *
+     * @param key key.
+     */
+    public void removeParameter(final String key) {
+        this.params.removeAll(key);
+    }
+
+    /**
+     * Removes parameter by key and value.
+     *
+     * @param key   key.
+     * @param value value.
+     */
+    public void removeParameter(final String key, final Object value) {
+        this.params.remove(key, value.toString());
+    }
+
+    /**
      * Returns query parameters in format <!--?k1=v1&k2=v2<-->.
      *
      * @return query parameters
