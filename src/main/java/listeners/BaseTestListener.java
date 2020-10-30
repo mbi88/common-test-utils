@@ -40,13 +40,12 @@ public class BaseTestListener implements ITestListener {
      * @return command.
      */
     private String getMessage(final ITestResult iTestResult) {
-        return String.valueOf(new StringBuilder()
-                .append(" [ ")
-                .append("gradle clean test --tests ")
-                .append(iTestResult.getTestClass().getName())
-                .append(".")
-                .append(iTestResult.getMethod().getMethodName())
-                .append(" ]"));
+        return " [ "
+                + "gradle clean test --tests "
+                + iTestResult.getTestClass().getName()
+                + "."
+                + iTestResult.getMethod().getMethodName()
+                + " ]";
     }
 
     @Override
