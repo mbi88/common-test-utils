@@ -28,7 +28,7 @@ dependencies {
     api group: 'com.github.mbi88', name: 'data-faker', version: 'master-SNAPSHOT', changing: true
     api group: 'org.testng', name: 'testng', version: '7.3.0'
     api group: 'org.json', name: 'json', version: '20200518'
-    api group: 'io.rest-assured', name: 'rest-assured', version: '4.3.1'
+    api group: 'io.rest-assured', name: 'rest-assured', version: '4.3.2'
     implementation group: 'io.jsonwebtoken', name: 'jjwt', version: '0.9.1'
     implementation group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.3'
     implementation group: 'com.amazonaws', name: 'aws-java-sdk-ssm', version: '1.11.892'
