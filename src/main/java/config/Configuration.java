@@ -1,6 +1,5 @@
 package config;
 
-import com.amazonaws.services.simplesystemsmanagement.AWSSimpleSystemsManagement;
 import com.amazonaws.services.simplesystemsmanagement.AWSSimpleSystemsManagementClientBuilder;
 import com.amazonaws.services.simplesystemsmanagement.model.GetParametersRequest;
 import com.amazonaws.services.simplesystemsmanagement.model.GetParametersResult;
@@ -36,6 +35,14 @@ public interface Configuration {
         return result;
     }
 
+    private GetParametersResult getSsmParameters(final String... paramNames) {
+        final var client = AWSSimpleSystemsManagementClientBuilder.defaultClient();
+        final var request = new GetParametersRequest();
+        request.withNames(paramNames).setWithDecryption(true);
+
+        return client.getParameters(request);
+    }
+
     /**
      * Reads parameters from Amazon EC2 Systems Manager (SSM).
      *
@@ -43,13 +50,10 @@ public interface Configuration {
      * @return parameters and its values.
      */
     default Map<String, String> readSsmParameters(final String... paramNames) {
-        final AWSSimpleSystemsManagement client = AWSSimpleSystemsManagementClientBuilder.defaultClient();
-        final GetParametersRequest request = new GetParametersRequest();
-        request.withNames(paramNames).setWithDecryption(true);
-        final GetParametersResult result = client.getParameters(request);
-
         final Map<String, String> store = new HashMap<>();
-        result.getParameters().forEach(parameter -> store.put(parameter.getName(), parameter.getValue()));
+        getSsmParameters(paramNames)
+                .getParameters()
+                .forEach(parameter -> store.put(parameter.getName(), parameter.getValue()));
 
         return store;
     }
@@ -61,13 +65,10 @@ public interface Configuration {
      * @return parameters and its values.
      */
     default String readSsmParameter(final String paramName) {
-        final AWSSimpleSystemsManagement client = AWSSimpleSystemsManagementClientBuilder.defaultClient();
-        final GetParametersRequest request = new GetParametersRequest();
-        request.withNames(paramName).setWithDecryption(true);
-        final GetParametersResult result = client.getParameters(request);
-
-        final AtomicReference<String> value = new AtomicReference<>();
-        result.getParameters().forEach(parameter -> value.set(parameter.getValue()));
+        final var value = new AtomicReference<>();
+        getSsmParameters(paramName)
+                .getParameters()
+                .forEach(parameter -> value.set(parameter.getValue()));
 
         return value.toString();
     }
