@@ -4,6 +4,8 @@ import com.amazonaws.services.simplesystemsmanagement.AWSSimpleSystemsManagement
 import com.amazonaws.services.simplesystemsmanagement.AWSSimpleSystemsManagementClientBuilder;
 import com.amazonaws.services.simplesystemsmanagement.model.GetParametersRequest;
 import com.amazonaws.services.simplesystemsmanagement.model.GetParametersResult;
+import com.mbi.request.RequestBuilder;
+import io.restassured.response.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -82,5 +84,14 @@ public interface Configuration {
                 .map(s -> s.split("-"))
                 .map(string -> string[0])
                 .collect(Collectors.joining());
+    }
+
+    default Response getApiStatus(final String apiUrl) {
+        try {
+            return new RequestBuilder().setExpectedStatusCode(200).get(apiUrl);
+        } catch (Throwable e) {
+            e.addSuppressed(new Throwable("API is not available: " + apiUrl));
+            throw e;
+        }
     }
 }
