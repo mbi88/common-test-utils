@@ -10,7 +10,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import javax.crypto.spec.SecretKeySpec;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.security.Key;
 
 /**
@@ -84,7 +84,7 @@ public final class TokenGenerator {
      * @return key.
      */
     private Key getKey(final String scr, final boolean encoded) {
-        final byte[] secretBytes = encoded ? Base64Utils.decode(scr) : scr.getBytes(Charset.forName("UTF-8"));
+        final byte[] secretBytes = encoded ? Base64Utils.decode(scr) : scr.getBytes(StandardCharsets.UTF_8);
 
         return new SecretKeySpec(secretBytes, SignatureAlgorithm.HS256.getJcaName());
     }

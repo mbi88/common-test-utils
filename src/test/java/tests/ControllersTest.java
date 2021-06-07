@@ -94,7 +94,7 @@ public class ControllersTest {
 
         try {
             waiter.waitCondition(response -> response.statusCode() == 20);
-        } catch (Throwable t) {
+        } catch (RuntimeException t) {
             assertTrue(t.getMessage().contains("Max waiting time exceeded"));
         }
     }
@@ -110,7 +110,7 @@ public class ControllersTest {
 
         try {
             waiter.waitCondition(response -> response.statusCode() == 20);
-        } catch (Throwable t) {
+        } catch (RuntimeException t) {
             assertTrue(t.getMessage().contains("Max waiting time exceeded"));
         }
     }
@@ -126,7 +126,7 @@ public class ControllersTest {
 
         try {
             waiter.waitCondition(response -> response.statusCode() == 20);
-        } catch (Throwable t) {
+        } catch (RuntimeException t) {
             assertTrue(t.getMessage().contains("Max waiting time exceeded"));
         }
     }

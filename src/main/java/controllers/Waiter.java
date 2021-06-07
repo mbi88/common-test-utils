@@ -74,9 +74,8 @@ public final class Waiter<T> {
     /**
      * @param expectedCondition condition.
      * @return result response.
-     * @throws Error if expected condition not met during waiting time.
+     * @throws TimeExceededRuntimeException if expected condition not met during waiting time.
      */
-    @SuppressWarnings("PMD.AvoidThrowingRawExceptionTypes")
     public T waitCondition(final Predicate<T> expectedCondition) {
         final long startTime = DateTime.now().getMillis();
         final long endTime = startTime + getWaitingTime() * 1000L;
@@ -94,6 +93,7 @@ public final class Waiter<T> {
             }
 
             // Idle
+            // TODO: avoid using sleep
             try {
                 Thread.sleep(getIdleDuration());
             } catch (InterruptedException ignored) {
@@ -102,8 +102,9 @@ public final class Waiter<T> {
         }
 
         if (timeExceeded) {
-            throw new Error(String.format("Expected condition not met. Max waiting time exceeded%n%nResult: %s%n",
-                    getResultToString().apply(response)));
+            final var message = String.format("Expected condition not met. Max waiting time exceeded%n%nResult: %s%n",
+                    getResultToString().apply(response));
+            throw new TimeExceededRuntimeException(message);
         }
 
         return response;

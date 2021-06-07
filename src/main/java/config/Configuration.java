@@ -91,7 +91,7 @@ public interface Configuration {
         try {
             return new RequestBuilder().setExpectedStatusCode(200).get(apiUrl);
         } catch (Throwable e) {
-            e.addSuppressed(new Throwable("API is not available: " + apiUrl));
+            e.addSuppressed(new RuntimeException("API is not available: " + apiUrl));
             throw e;
         }
     }

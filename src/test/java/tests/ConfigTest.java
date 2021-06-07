@@ -28,7 +28,7 @@ public class ConfigTest implements Configuration {
     }
 
     @Test
-    public void testName() {
+    public void testCanReadEnvVar() {
         assertTrue(readVar("HOME").length() > 0);
     }
 
