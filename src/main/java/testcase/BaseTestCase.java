@@ -20,6 +20,8 @@ import java.util.Random;
  */
 public abstract class BaseTestCase {
 
+    private static final Random RANDOM = new Random();
+
     /**
      * Http requests based on rest-assured framework.
      */
@@ -55,10 +57,8 @@ public abstract class BaseTestCase {
                 String.format("Value %d is not in the specified exclusive range of %d to %d", count, start, end));
 
         final List<Integer> integers = new ArrayList<>();
-        final Random randomGenerator = new Random();
-
         for (int i = 0; i < count; i++) {
-            integers.add(randomGenerator.nextInt(10));
+            integers.add(RANDOM.nextInt(10));
         }
 
         // Replace 0 in the beginning
