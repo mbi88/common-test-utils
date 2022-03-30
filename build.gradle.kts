@@ -20,14 +20,16 @@ dependencies {
     api("com.github.mbi88", "http-request", "master-SNAPSHOT", dependencyConfiguration = { isChanging = true })
     api("com.github.mbi88", "date-handler", "master-SNAPSHOT", dependencyConfiguration = { isChanging = true })
     api("com.github.mbi88", "data-faker", "master-SNAPSHOT", dependencyConfiguration = { isChanging = true })
-    api("org.testng", "testng", "7.3.0")
-    api("org.json", "json", "20211205")
-    api("io.rest-assured", "rest-assured", "4.4.0")
-    implementation("io.jsonwebtoken", "jjwt", "0.9.1")
-    implementation("com.amazonaws", "aws-java-sdk-ssm", "1.12.141")
-    implementation("ch.qos.logback", "logback-classic", "1.2.10")
-    implementation("com.google.guava", "guava", "31.0.1-jre")
-    implementation("com.github.wnameless", "json-flattener", "0.7.1")
+    api("org.testng:testng:7.3.0")
+    api("org.json:json:20211205")
+    api("io.rest-assured:rest-assured:4.4.0")
+    implementation("io.jsonwebtoken:jjwt:0.9.1") {
+        implementation("javax.xml.bind:jaxb-api:2.3.1")
+    }
+    implementation("com.amazonaws:aws-java-sdk-ssm:1.12.187")
+    implementation("ch.qos.logback:logback-classic:1.2.11")
+    implementation("com.google.guava:guava:31.1-jre")
+    implementation("com.github.wnameless.json:json-flattener:0.13.0")
 }
 
 tasks.test {

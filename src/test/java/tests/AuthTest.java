@@ -5,36 +5,53 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.testng.annotations.Test;
 
+import static org.testng.Assert.assertNotEquals;
+import static org.testng.Assert.assertTrue;
+
 public class AuthTest {
 
     private final TokenGenerator generator = new TokenGenerator("Secret", true);
 
     @Test
-    public void testName() {
-        System.out.println(generator.generateToken(new JSONObject().put("a", 1)));
-        System.out.println(new TokenGenerator("secret", false).generateToken(new JSONObject().put("a", 1)));
+    public void testCanRegenerateToken() {
+        var json = new JSONObject().put("a", 1);
+
+        assertNotEquals(generator.generateToken(json), new TokenGenerator("secret", false).generateToken(json));
     }
 
     @Test
-    public void testUpdatedClaim1() {
-        JSONObject claim = new JSONObject().put("a", 1);
-        System.out.println(generator.updateClaim(claim, "a", 2).toString(2));
+    public void testCanUpdateObjectByNumber() {
+        var claim = new JSONObject().put("a", 1);
+        var r = generator.updateClaim(claim, "a", 2);
+
+        assertTrue(r.similar(new JSONObject("""
+                {"a": 2}""")));
     }
 
     @Test
-    public void testUpdatedClaim2() {
-        JSONObject claim = new JSONObject().put("a", new JSONArray().put(1));
-        System.out.println(generator.updateClaim(claim, "a", 2).toString(2));
+    public void testCanUpdateArrayByNumber() {
+        var claim = new JSONObject().put("a", new JSONArray().put(1));
+        var r = generator.updateClaim(claim, "a", 2);
+
+        assertTrue(r.similar(new JSONObject("""
+                {"a": [2]}""")));
     }
 
     @Test
-    public void testUpdatedClaim3() {
-        JSONObject claim = new JSONObject().put("a", 1);
-        System.out.println(generator.updateClaim(claim, "a", new JSONArray().put(2)).toString(2));
+    public void testCanUpdateObject() {
+        var claim = new JSONObject().put("a", 1);
+        var r = generator.updateClaim(claim, "a", new JSONArray().put(2));
+
+        assertTrue(r.similar(new JSONObject("""
+                {"a": [2]}""")));
     }
+
     @Test
-    public void testUpdatedClaim4() {
-        JSONObject claim = new JSONObject().put("a", new JSONArray().put(1));
-        System.out.println(generator.updateClaim(claim, "a", new JSONArray().put(2)).toString(2));
+    public void testCanUpdateArray() {
+        var claim = new JSONObject().put("a", new JSONArray().put(1));
+        var r = generator.updateClaim(claim, "a", new JSONArray().put(2));
+
+        assertTrue(r.similar(new JSONObject("""
+                {"a": [2]}""")));
     }
 }
