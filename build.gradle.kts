@@ -22,7 +22,7 @@ dependencies {
     api("com.github.mbi88", "data-faker", "master-SNAPSHOT", dependencyConfiguration = { isChanging = true })
     api("org.testng:testng:7.5")
     api("org.json:json:20220320")
-    api("io.rest-assured:rest-assured:5.0.0")
+    api("io.rest-assured:rest-assured:5.0.1")
     implementation("io.jsonwebtoken:jjwt:0.9.1") {
         implementation("javax.xml.bind:jaxb-api:2.3.1")
     }
