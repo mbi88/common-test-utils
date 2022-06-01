@@ -20,7 +20,7 @@ dependencies {
     api("com.github.mbi88", "http-request", "master-SNAPSHOT", dependencyConfiguration = { isChanging = true })
     api("com.github.mbi88", "date-handler", "master-SNAPSHOT", dependencyConfiguration = { isChanging = true })
     api("com.github.mbi88", "data-faker", "master-SNAPSHOT", dependencyConfiguration = { isChanging = true })
-    api("org.testng:testng:7.5")
+    api("org.testng:testng:7.6.0")
     api("org.json:json:20220320")
     api("io.rest-assured:rest-assured:5.0.1")
     implementation("io.jsonwebtoken:jjwt:0.9.1") {
