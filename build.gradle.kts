@@ -26,7 +26,7 @@ dependencies {
     implementation("io.jsonwebtoken:jjwt:0.9.1") {
         implementation("javax.xml.bind:jaxb-api:2.3.1")
     }
-    implementation("com.amazonaws:aws-java-sdk-ssm:1.12.353")
+    implementation("com.amazonaws:aws-java-sdk-ssm:1.12.355")
     implementation("ch.qos.logback:logback-classic:1.4.5")
     implementation("com.google.guava:guava:31.1-jre")
     implementation("com.github.wnameless.json:json-flattener:0.16.0")
