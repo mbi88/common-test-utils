@@ -61,7 +61,7 @@ public class ConfigTest implements Configuration {
             var r = getApiStatus("http://www.mocky.io/v2/5ab8a4952c00005700");
             assertEquals(r.statusCode(), 404);
         } catch (AssertionError ae) {
-            assertTrue(ae.getMessage().contains("expected [200] but found [404]"));
+            assertTrue(ae.getMessage().contains("expected [[200]] but found [404]"));
         }
     }
 
