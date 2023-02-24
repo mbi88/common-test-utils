@@ -87,6 +87,12 @@ public interface Configuration {
                 .collect(Collectors.joining());
     }
 
+    /**
+     * Returns API status.
+     *
+     * @param apiUrl api url.
+     * @return response.
+     */
     default Response getApiStatus(final String apiUrl) {
         try {
             return new RequestBuilder().setExpectedStatusCode(200).get(apiUrl);

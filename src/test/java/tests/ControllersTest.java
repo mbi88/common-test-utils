@@ -208,4 +208,22 @@ public class ControllersTest {
             return response;
         }
     }
+
+    @Test
+    public void testCanSetTimeExceededMessage() {
+        var waiter = Waiter.<Response>newBuilder()
+                .setSupplier(() -> new RequestBuilder().get("http://www.mocky.io/v2/5ab8a4952c00005700186093//"))
+                .setResultToString(Response::asString)
+                .setWaitingTime(3)
+                .setDebug(true)
+                .setTimeExceededMessage("hello! time exceeded")
+                .build();
+
+        try {
+            waiter.waitCondition(response -> response.statusCode() == 20);
+        } catch (RuntimeException t) {
+            t.printStackTrace();
+            assertTrue(t.getMessage().contains("hello! time exceeded"));
+        }
+    }
 }

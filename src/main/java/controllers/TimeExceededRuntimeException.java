@@ -5,6 +5,9 @@ package controllers;
  */
 public class TimeExceededRuntimeException extends RuntimeException {
 
+    /**
+     * @param message time exceeded message.
+     */
     public TimeExceededRuntimeException(final String message) {
         super(message);
     }

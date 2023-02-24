@@ -39,6 +39,11 @@ public final class Waiter<T> {
      */
     private boolean debug;
 
+    /**
+     * Shown when time exceeded.
+     */
+    private String timeExceededMessage;
+
     private Waiter() {
         // Disabled
     }
@@ -102,8 +107,10 @@ public final class Waiter<T> {
         }
 
         if (timeExceeded) {
-            final var message = String.format("Expected condition not met. Max waiting time exceeded%n%nResult: %s%n",
-                    getResultToString().apply(response));
+            final var message = timeExceededMessage == null
+                    ? String.format("Expected condition not met. Max waiting time exceeded%n%nResult: %s%n",
+                    getResultToString().apply(response))
+                    : timeExceededMessage;
             throw new TimeExceededRuntimeException(message);
         }
 
@@ -142,6 +149,11 @@ public final class Waiter<T> {
 
         public Builder setDebug(final boolean debug) {
             Waiter.this.debug = debug;
+            return this;
+        }
+
+        public Builder setTimeExceededMessage(final String message) {
+            Waiter.this.timeExceededMessage = message;
             return this;
         }
 
