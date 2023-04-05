@@ -100,7 +100,7 @@ public final class TokenGenerator {
     private String buildToken(final JSONObject claims, final String secret, final boolean encoded) {
         return "Bearer " + Jwts.builder()
                 .setClaims(claims.toMap())
-                .signWith(SignatureAlgorithm.HS256, getKey(secret, encoded))
+                .signWith(getKey(secret, encoded), SignatureAlgorithm.HS256)
                 .setExpiration(new DateTime(DateTimeZone.UTC).plusHours(TTL).toDate())
                 .compact();
     }

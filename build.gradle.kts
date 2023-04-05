@@ -23,9 +23,9 @@ dependencies {
     api("org.testng:testng:7.7.1")
     api("org.json:json:20230227")
     api("io.rest-assured:rest-assured:5.3.0")
-    implementation("io.jsonwebtoken:jjwt:0.9.1") {
-        implementation("javax.xml.bind:jaxb-api:2.3.1")
-    }
+    implementation("io.jsonwebtoken:jjwt-api:0.11.5")
+    runtimeOnly("io.jsonwebtoken:jjwt-impl:0.11.5")
+    runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.11.5")
     implementation("com.amazonaws:aws-java-sdk-ssm:1.12.442")
     implementation("ch.qos.logback:logback-classic:1.4.6")
     implementation("com.google.guava:guava:31.1-jre")

@@ -10,13 +10,14 @@ import static org.testng.Assert.assertTrue;
 
 public class AuthTest {
 
-    private final TokenGenerator generator = new TokenGenerator("Secret", true);
+    private static final String SECRET = "884c9ffe08894610be77854f889f5b1d8a7a38253102486d96";
+    private final TokenGenerator generator = new TokenGenerator(SECRET, true);
 
     @Test
     public void testCanRegenerateToken() {
         var json = new JSONObject().put("a", 1);
 
-        assertNotEquals(generator.generateToken(json), new TokenGenerator("secret", false).generateToken(json));
+        assertNotEquals(generator.generateToken(json), new TokenGenerator("884C9ffe08894610be77854f889f5b1d8a7a38253102486d96", false).generateToken(json));
     }
 
     @Test
