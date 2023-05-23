@@ -4,23 +4,20 @@ import com.github.wnameless.json.flattener.JsonFlattener;
 import com.github.wnameless.json.unflattener.JsonUnflattener;
 import com.mbi.Faker;
 import com.mbi.JsonFaker;
-import org.apache.commons.lang3.Validate;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
 import java.io.IOException;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.io.InputStreamReader;
+import java.nio.charset.Charset;
+import java.util.*;
 import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 /**
  * Read content from src/main/resources/ file and map to org.json.JSONObject/JSONArray.
@@ -36,7 +33,7 @@ public final class JsonDeserializer {
     /**
      * Checks if field is present in flattened json.
      */
-    private static BiPredicate<String, Set<String>> testKeyIsParent = (parentKey, children) -> children
+    private static final BiPredicate<String, Set<String>> TEST_KEY_IS_PARENT = (parentKey, children) -> children
             .stream()
             .anyMatch(parentField -> parentField.startsWith(parentKey.concat(FIELDS_SEPARATOR))
                     || parentField.equalsIgnoreCase(parentKey)
@@ -45,7 +42,7 @@ public final class JsonDeserializer {
     /**
      * Returns children of parent from set.
      */
-    private static BiFunction<Set<String>, String, List<String>> getChildren = (parentFields, parent) -> {
+    private static final BiFunction<Set<String>, String, List<String>> GET_CHILDREN = (parentFields, parent) -> {
         final List<String> list = new ArrayList<>();
         parentFields.forEach(s -> {
             if (s.startsWith(parent)) {
@@ -54,6 +51,8 @@ public final class JsonDeserializer {
         });
         return list;
     };
+
+    private static final Logger LOGGER = Logger.getLogger(JsonDeserializer.class.getCanonicalName());
 
     /**
      * Prohibits object initialization.
@@ -116,36 +115,26 @@ public final class JsonDeserializer {
     }
 
     /**
-     * Returns a representation of a system dependent file path.
-     * Base url prefix: src/main/resources/
-     *
-     * @param path path to file.
-     * @return represent a system dependent file path.
-     * @throws URISyntaxException   if this URL is not formatted strictly according to
-     *                              to RFC2396 and cannot be converted to a URI.
-     * @throws NullPointerException if can't find a file.
-     */
-    private static Path getSourcePath(final String path) throws URISyntaxException {
-        final URL url = JsonDeserializer.class.getResource(path);
-        Validate.notNull(url, "Can't find a file: " + path);
-        return Paths.get(url.toURI());
-    }
-
-    /**
      * Returns string representation of file content.
      *
      * @param path representation of a system dependent file path.
      * @return content from file as a string.
      */
     private static String readStringFromFile(final String path) {
-        String s = null;
-        try {
-            s = Files.readString(getSourcePath(path));
-        } catch (IOException | URISyntaxException ignored) {
-            // Nothing to do here. Just skip
+        try (
+                var data = JsonDeserializer.class.getResourceAsStream(path);
+                var inputStream = new InputStreamReader(Objects.requireNonNull(data, "Can't find a file: " + path),
+                        Charset.defaultCharset());
+                var bufferedReader = new BufferedReader(inputStream)
+        ) {
+            return bufferedReader
+                    .lines()
+                    .collect(Collectors.joining("\n"));
+        } catch (IOException e) {
+            LOGGER.log(Level.INFO, e.getMessage());
         }
 
-        return s;
+        return null;
     }
 
     /**
@@ -176,8 +165,8 @@ public final class JsonDeserializer {
     public static JSONObject updateJson(final JSONObject json, final String field, final Object update) {
         final var res = flatten(json.toString());
 
-        if (testKeyIsParent.test(field, res.keySet())) {
-            for (var key : getChildren.apply(res.keySet(), field)) {
+        if (TEST_KEY_IS_PARENT.test(field, res.keySet())) {
+            for (var key : GET_CHILDREN.apply(res.keySet(), field)) {
                 res.remove(key);
             }
             res.put(field, update);
