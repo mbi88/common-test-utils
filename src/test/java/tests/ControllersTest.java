@@ -81,7 +81,7 @@ public class ControllersTest {
                 .setWaitingTime(10)
                 .build();
 
-        waiter.waitCondition(response -> response.statusCode() == 200);
+        waiter.waitCondition(response -> response.statusCode() == 200, "response -> response.statusCode() == 200");
     }
 
     @Test
@@ -93,7 +93,7 @@ public class ControllersTest {
                 .build();
 
         try {
-            waiter.waitCondition(response -> response.statusCode() == 20);
+            waiter.waitCondition(response -> response.statusCode() == 20, "response.statusCode() == 20");
         } catch (RuntimeException t) {
             assertTrue(t.getMessage().contains("Max waiting time exceeded"));
         }
@@ -151,7 +151,7 @@ public class ControllersTest {
         TestClass testClass = new TestClass();
 
         assertTrue(testClass.withIncorrectId().getId().toString()
-                .matches("^([0-9A-Fa-f]{8}[-][0-9A-Fa-f]{4}[-][0-9A-Fa-f]{4}[-][0-9A-Fa-f]{4}[-][0-9A-Fa-f]{12})$"));
+                .matches("^([0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12})$"));
     }
 
     @Test

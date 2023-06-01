@@ -82,6 +82,16 @@ public final class Waiter<T> {
      * @throws TimeExceededRuntimeException if expected condition not met during waiting time.
      */
     public T waitCondition(final Predicate<T> expectedCondition) {
+        return waitCondition(expectedCondition, null);
+    }
+
+    /**
+     * @param expectedCondition condition.
+     * @param predicateAsString string representation of the predicate.
+     * @return result response.
+     * @throws TimeExceededRuntimeException if expected condition not met during waiting time.
+     */
+    public T waitCondition(final Predicate<T> expectedCondition, final String predicateAsString) {
         final long startTime = DateTime.now().getMillis();
         final long endTime = startTime + getWaitingTime() * 1000L;
         boolean timeExceeded = false;
@@ -107,10 +117,11 @@ public final class Waiter<T> {
         }
 
         if (timeExceeded) {
-            final var message = timeExceededMessage == null
-                    ? String.format("Expected condition not met. Max waiting time exceeded%n%nResult: %s%n",
-                    getResultToString().apply(response))
-                    : timeExceededMessage;
+            final var predicateMessagePart = predicateAsString == null ? "" : "Predicate: " + predicateAsString + "\n";
+            final var msgTemplate = "%sExpected condition not met. Max waiting time exceeded%n%nResult: %s%n";
+            final var defaultExceededMessage = String.format(msgTemplate, predicateMessagePart,
+                    getResultToString().apply(response));
+            final var message = timeExceededMessage == null ? defaultExceededMessage : timeExceededMessage;
             throw new TimeExceededRuntimeException(message);
         }
 
