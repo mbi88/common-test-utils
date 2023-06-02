@@ -64,6 +64,11 @@ java {
     withSourcesJar()
 }
 
+tasks.withType<Javadoc> {
+    val opts = options as StandardJavadocDocletOptions
+    opts.addBooleanOption("Xdoclint:none", true)
+}
+
 quality {
     checkstyle = true
     pmd = true
