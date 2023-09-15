@@ -29,7 +29,7 @@ dependencies {
     implementation("com.amazonaws:aws-java-sdk-ssm:1.12.547")
     implementation("ch.qos.logback:logback-classic:1.4.11")
     implementation("com.google.guava:guava:32.1.2-jre")
-    implementation("com.github.wnameless.json:json-flattener:0.16.5")
+    implementation("com.github.wnameless.json:json-flattener:0.16.6")
 }
 
 tasks.test {
