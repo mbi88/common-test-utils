@@ -17,7 +17,7 @@ public class ControllersTest {
 
     @Test
     public void testCanAddSameParameters() {
-        QueryParameter parameter = new QueryParameter();
+        var parameter = new QueryParameter();
         parameter.addParameter("q", 1);
         parameter.addParameter("q", 1);
 
@@ -26,7 +26,7 @@ public class ControllersTest {
 
     @Test
     public void testCanSeveralParameters() {
-        QueryParameter parameter = new QueryParameter();
+        var parameter = new QueryParameter();
         parameter.addParameter("q", 1);
         parameter.addParameter("w", 2);
 
@@ -35,7 +35,7 @@ public class ControllersTest {
 
     @Test
     public void testAddParametersViaConstructor() {
-        QueryParameter parameter = new QueryParameter("q", 1);
+        var parameter = new QueryParameter("q", 1);
         parameter.addParameter("w", 2);
 
         assertEquals(parameter.getParametersString(), "?q=1&w=2");
@@ -76,7 +76,7 @@ public class ControllersTest {
     @Test
     public void testWaiterIfConditionIsMet() {
         var waiter = Waiter.<Response>newBuilder()
-                .setSupplier(() -> new RequestBuilder().get("http://www.mocky.io/v2/5ab8a4952c00005700186093/"))
+                .setSupplier(() -> new RequestBuilder().get("https://run.mocky.io/v3/c4da5edc-27e6-4fe3-92d6-92d9e6ddf36a/"))
                 .setResultToString(Response::asString)
                 .setWaitingTime(10)
                 .build();
@@ -87,7 +87,7 @@ public class ControllersTest {
     @Test
     public void testWaiterIfConditionIsNoMet() {
         var waiter = Waiter.<Response>newBuilder()
-                .setSupplier(() -> new RequestBuilder().get("http://www.mocky.io/v2/5ab8a4952c00005700186093/"))
+                .setSupplier(() -> new RequestBuilder().get("https://run.mocky.io/v3/c4da5edc-27e6-4fe3-92d6-92d9e6ddf36a/"))
                 .setResultToString(Response::asString)
                 .setWaitingTime(10)
                 .build();
@@ -102,7 +102,7 @@ public class ControllersTest {
     @Test
     public void testCanSetIdleDuration() {
         var waiter = Waiter.<Response>newBuilder()
-                .setSupplier(() -> new RequestBuilder().get("http://www.mocky.io/v2/5ab8a4952c00005700186093//"))
+                .setSupplier(() -> new RequestBuilder().get("https://run.mocky.io/v3/c4da5edc-27e6-4fe3-92d6-92d9e6ddf36a//"))
                 .setResultToString(Response::asString)
                 .setWaitingTime(10)
                 .setIdleDuration(5000)
@@ -118,7 +118,7 @@ public class ControllersTest {
     @Test
     public void testCanSetDebug() {
         var waiter = Waiter.<Response>newBuilder()
-                .setSupplier(() -> new RequestBuilder().get("http://www.mocky.io/v2/5ab8a4952c00005700186093//"))
+                .setSupplier(() -> new RequestBuilder().get("https://run.mocky.io/v3/c4da5edc-27e6-4fe3-92d6-92d9e6ddf36a//"))
                 .setResultToString(Response::asString)
                 .setWaitingTime(3)
                 .setDebug(true)
@@ -134,7 +134,7 @@ public class ControllersTest {
     @Test
     public void testCanReadWaiterResponse() {
         var waiter = Waiter.<Response>newBuilder()
-                .setSupplier(() -> new RequestBuilder().get("http://www.mocky.io/v2/5ab8a4952c00005700186093/"))
+                .setSupplier(() -> new RequestBuilder().get("https://run.mocky.io/v3/c4da5edc-27e6-4fe3-92d6-92d9e6ddf36a/"))
                 .setResultToString(Response::asString)
                 .setWaitingTime(10)
                 .build();
@@ -148,7 +148,7 @@ public class ControllersTest {
     public void testWithIncorrectId() {
         class TestClass extends Controller<TestClass> {
         }
-        TestClass testClass = new TestClass();
+        var testClass = new TestClass();
 
         assertTrue(testClass.withIncorrectId().getId().toString()
                 .matches("^([0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12})$"));
@@ -156,21 +156,21 @@ public class ControllersTest {
 
     @Test
     public void testWithoutId() {
-        TestClass testClass = new TestClass();
+        var testClass = new TestClass();
 
         assertEquals(testClass.withoutId().getId().toString().length(), 0);
     }
 
     @Test
     public void testSettingIdViaConstructor() {
-        TestClass testClass = new TestClass(1);
+        var testClass = new TestClass(1);
 
         assertEquals(testClass.getId(), 1);
     }
 
     @Test
     public void testErrorMessageOnNullId() {
-        TestClass testClass = new TestClass(null);
+        var testClass = new TestClass(null);
 
         boolean passed;
         try {
@@ -185,7 +185,7 @@ public class ControllersTest {
 
     @Test
     public void testExtractingIdFromResponse() {
-        TestClass testClass = new TestClass();
+        var testClass = new TestClass();
         testClass.getResponse();
 
         assertEquals(testClass.getId(), 1);
@@ -202,7 +202,7 @@ public class ControllersTest {
         }
 
         Response getResponse() {
-            Response response = http.get("http://www.mocky.io/v2/5ab8a4952c00005700186093");
+            Response response = http.get("https://run.mocky.io/v3/c4da5edc-27e6-4fe3-92d6-92d9e6ddf36a");
             setId(extractId(response, getIdFunction));
 
             return response;
@@ -212,7 +212,7 @@ public class ControllersTest {
     @Test
     public void testCanSetTimeExceededMessage() {
         var waiter = Waiter.<Response>newBuilder()
-                .setSupplier(() -> new RequestBuilder().get("http://www.mocky.io/v2/5ab8a4952c00005700186093//"))
+                .setSupplier(() -> new RequestBuilder().get("https://run.mocky.io/v3/c4da5edc-27e6-4fe3-92d6-92d9e6ddf36a//"))
                 .setResultToString(Response::asString)
                 .setWaitingTime(3)
                 .setDebug(true)
