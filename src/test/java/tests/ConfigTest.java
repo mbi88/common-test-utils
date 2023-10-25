@@ -1,9 +1,9 @@
 package tests;
 
-import com.amazonaws.SdkClientException;
 import config.Configuration;
 import org.json.JSONObject;
 import org.testng.annotations.Test;
+import software.amazon.awssdk.services.ssm.model.ParameterNotFoundException;
 
 import java.util.Arrays;
 
@@ -35,15 +35,7 @@ public class ConfigTest implements Configuration {
     public void tesGetSSMParameter() {
         try {
             readSsmParameter("ddd");
-        } catch (SdkClientException ignored) {
-        }
-    }
-
-    @Test
-    public void tesGetSSMParameters() {
-        try {
-            readSsmParameters("ddd", "ddda");
-        } catch (SdkClientException ignored) {
+        } catch (ParameterNotFoundException ignored) {
         }
     }
 
@@ -67,10 +59,11 @@ public class ConfigTest implements Configuration {
     @Test
     public void testCantGetApiStatusIfInvalidUrl() {
         try {
-            var r = getApiStatus("mocky");
+            var r = getApiStatus("http://run.mocky.io/v3/1");
             assertEquals(r.statusCode(), 404);
         } catch (Throwable t) {
-            assertEquals(Arrays.stream(t.getSuppressed()).findAny().get().getMessage(), "API is not available: mocky");
+            assertEquals(Arrays.stream(t.getSuppressed()).findAny().get()
+                    .getMessage(), "API is not available: http://run.mocky.io/v3/1");
         }
     }
 }

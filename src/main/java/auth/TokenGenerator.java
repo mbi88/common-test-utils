@@ -2,7 +2,6 @@ package auth;
 
 import encoding.Base64Utils;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import org.apache.commons.lang3.Validate;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
@@ -86,7 +85,7 @@ public final class TokenGenerator {
     private Key getKey(final String scr, final boolean encoded) {
         final byte[] secretBytes = encoded ? Base64Utils.decode(scr) : scr.getBytes(StandardCharsets.UTF_8);
 
-        return new SecretKeySpec(secretBytes, SignatureAlgorithm.HS256.getJcaName());
+        return new SecretKeySpec(secretBytes, "HmacSHA256");
     }
 
     /**
@@ -99,9 +98,9 @@ public final class TokenGenerator {
      */
     private String buildToken(final JSONObject claims, final String secret, final boolean encoded) {
         return "Bearer " + Jwts.builder()
-                .setClaims(claims.toMap())
-                .signWith(getKey(secret, encoded), SignatureAlgorithm.HS256)
-                .setExpiration(new DateTime(DateTimeZone.UTC).plusHours(TTL).toDate())
+                .claims(claims.toMap())
+                .signWith(getKey(secret, encoded))
+                .expiration(new DateTime(DateTimeZone.UTC).plusHours(TTL).toDate())
                 .compact();
     }
 }

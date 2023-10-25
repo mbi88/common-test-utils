@@ -1,17 +1,13 @@
 package config;
 
-import com.amazonaws.services.simplesystemsmanagement.AWSSimpleSystemsManagementClientBuilder;
-import com.amazonaws.services.simplesystemsmanagement.model.GetParametersRequest;
-import com.amazonaws.services.simplesystemsmanagement.model.GetParametersResult;
 import com.mbi.request.RequestBuilder;
 import io.restassured.response.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import software.amazon.awssdk.services.ssm.SsmClient;
+import software.amazon.awssdk.services.ssm.model.GetParameterRequest;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -35,42 +31,22 @@ public interface Configuration {
         return result;
     }
 
-    private GetParametersResult getSsmParameters(final String... paramNames) {
-        final var client = AWSSimpleSystemsManagementClientBuilder.defaultClient();
-        final var request = new GetParametersRequest();
-        request.withNames(paramNames).setWithDecryption(true);
-
-        return client.getParameters(request);
-    }
-
-    /**
-     * Reads parameters from Amazon EC2 Systems Manager (SSM).
-     *
-     * @param paramNames parameters names.
-     * @return parameters and its values.
-     */
-    default Map<String, String> readSsmParameters(final String... paramNames) {
-        final Map<String, String> store = new HashMap<>();
-        getSsmParameters(paramNames)
-                .getParameters()
-                .forEach(parameter -> store.put(parameter.getName(), parameter.getValue()));
-
-        return store;
-    }
-
     /**
      * Reads parameter from Amazon EC2 Systems Manager (SSM).
      *
      * @param paramName parameters names.
-     * @return parameters and its values.
+     * @return parameter value.
      */
     default String readSsmParameter(final String paramName) {
-        final var value = new AtomicReference<>();
-        getSsmParameters(paramName)
-                .getParameters()
-                .forEach(parameter -> value.set(parameter.getValue()));
+        final var client = SsmClient.builder().build();
+        final var request = GetParameterRequest.builder()
+                .name(paramName)
+                .withDecryption(true)
+                .build();
 
-        return value.toString();
+        final var parameterResponse = client.getParameter(request);
+
+        return parameterResponse.parameter().value();
     }
 
     /**
