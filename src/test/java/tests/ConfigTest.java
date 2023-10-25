@@ -7,8 +7,7 @@ import org.testng.annotations.Test;
 
 import java.util.Arrays;
 
-import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.*;
 
 public class ConfigTest implements Configuration {
 
@@ -29,7 +28,7 @@ public class ConfigTest implements Configuration {
 
     @Test
     public void testCanReadEnvVar() {
-        assertTrue(readVar("HOME").length() > 0);
+        assertFalse(readVar("HOME").isEmpty());
     }
 
     @Test
@@ -50,7 +49,7 @@ public class ConfigTest implements Configuration {
 
     @Test
     public void testCanGetApiStatus() {
-        var response = getApiStatus("http://www.mocky.io/v2/5ab8a4952c00005700186093");
+        var response = getApiStatus("https://run.mocky.io/v3/c4da5edc-27e6-4fe3-92d6-92d9e6ddf36a");
 
         assertEquals(new JSONObject(response.asString()).getInt("a"), 1);
     }
@@ -58,7 +57,7 @@ public class ConfigTest implements Configuration {
     @Test
     public void testCantGetApiStatusIfResourceNotFound() {
         try {
-            var r = getApiStatus("http://www.mocky.io/v2/5ab8a4952c00005700");
+            var r = getApiStatus("http://run.mocky.io/v3/5ab8a4952c00005700");
             assertEquals(r.statusCode(), 404);
         } catch (AssertionError ae) {
             assertTrue(ae.getMessage().contains("expected [[200]] but found [404]"));

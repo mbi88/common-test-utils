@@ -12,7 +12,7 @@ public class TestCaseTest extends BaseTestCase {
 
     @Test
     public void testHttpRequest() {
-        http.setExpectedStatusCode(200).get("http://www.mocky.io/v2/5ab8a4952c00005700186093");
+        http.setExpectedStatusCode(200).get("https://run.mocky.io/v3/c4da5edc-27e6-4fe3-92d6-92d9e6ddf36a");
     }
 
     @Test
@@ -49,13 +49,13 @@ public class TestCaseTest extends BaseTestCase {
 
     @Test
     public void testToJson() {
-        Response r = http.get("http://www.mocky.io/v2/5ab8a4952c00005700186093");
+        var r = http.get("https://run.mocky.io/v3/c4da5edc-27e6-4fe3-92d6-92d9e6ddf36a");
         toJson(r);
     }
 
     @Test
     public void testToJsonArray() {
-        Response r = http.get("http://www.mocky.io/v2/5ab8a4fa2c00005400186097");
+        var r = http.get("https://run.mocky.io/v3/9279e741-d38d-40d9-8c6f-e5aa13005d69");
         toJsonArray(r);
     }
 
@@ -71,7 +71,7 @@ public class TestCaseTest extends BaseTestCase {
 
     @Test
     public void testFindJsonInArray() {
-        JSONObject json = findJsonInArray(getResources("/jsons/ja.json"), "a", 1);
+        var json = findJsonInArray(getResources("/jsons/ja.json"), "a", 1);
 
         assertion.jsonEquals(json, new JSONObject().put("a", 1));
     }
