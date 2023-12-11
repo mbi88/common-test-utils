@@ -22,7 +22,7 @@ dependencies {
     api("com.github.mbi88", "data-faker", "master-SNAPSHOT", dependencyConfiguration = { isChanging = true })
     api("org.testng:testng:7.8.0")
     api("org.json:json:20231013")
-    api("io.rest-assured:rest-assured:5.3.2")
+    api("io.rest-assured:rest-assured:5.4.0")
     api("joda-time:joda-time:2.12.5")
     implementation("io.jsonwebtoken:jjwt-api:0.12.3")
     runtimeOnly("io.jsonwebtoken:jjwt-impl:0.12.3")
