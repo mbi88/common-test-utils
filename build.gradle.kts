@@ -24,7 +24,7 @@ dependencies {
     api("org.json:json:20231013")
     api("io.rest-assured:rest-assured:5.4.0")
     api("joda-time:joda-time:2.12.6")
-    implementation("io.jsonwebtoken:jjwt-api:0.12.3")
+    implementation("io.jsonwebtoken:jjwt-api:0.12.5")
     runtimeOnly("io.jsonwebtoken:jjwt-impl:0.12.3")
     runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.12.3")
     implementation("software.amazon.awssdk:ssm:2.22.12")
