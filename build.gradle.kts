@@ -26,7 +26,7 @@ dependencies {
     api("joda-time:joda-time:2.12.6")
     implementation("io.jsonwebtoken:jjwt-api:0.12.5")
     runtimeOnly("io.jsonwebtoken:jjwt-impl:0.12.3")
-    runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.12.3")
+    runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.12.5")
     implementation("software.amazon.awssdk:ssm:2.22.12")
     implementation("ch.qos.logback:logback-classic:1.4.14")
     implementation("com.google.guava:guava:33.0.0-jre")
