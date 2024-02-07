@@ -23,7 +23,7 @@ dependencies {
     api("org.testng:testng:7.9.0")
     api("org.json:json:20240205")
     api("io.rest-assured:rest-assured:5.4.0")
-    api("joda-time:joda-time:2.12.6")
+    api("joda-time:joda-time:2.12.7")
     implementation("io.jsonwebtoken:jjwt-api:0.12.5")
     runtimeOnly("io.jsonwebtoken:jjwt-impl:0.12.3")
     runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.12.5")
