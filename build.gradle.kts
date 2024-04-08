@@ -20,7 +20,7 @@ dependencies {
     api("com.github.mbi88", "http-request", "master-SNAPSHOT", dependencyConfiguration = { isChanging = true })
     api("com.github.mbi88", "date-handler", "master-SNAPSHOT", dependencyConfiguration = { isChanging = true })
     api("com.github.mbi88", "data-faker", "master-SNAPSHOT", dependencyConfiguration = { isChanging = true })
-    api("org.testng:testng:7.9.0")
+    api("org.testng:testng:7.10.0")
     api("org.json:json:20240303")
     api("io.rest-assured:rest-assured:5.4.0")
     api("joda-time:joda-time:2.12.7")
