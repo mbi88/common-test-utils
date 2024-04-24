@@ -30,8 +30,7 @@ jobs:
           distribution: 'temurin'
       - name: Build with Gradle
         uses: gradle/gradle-build-action@v3
-        with:
-          arguments: clean build jacocoTestReport
+        run: clean build jacocoTestReport
         if: success()
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v4
