@@ -1,13 +1,16 @@
 package tests;
 
 import com.mbi.request.RequestBuilder;
-import controllers.Controller;
-import controllers.Creatable;
-import controllers.QueryParameter;
-import controllers.Waiter;
+import controllers.*;
 import io.restassured.response.Response;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.testng.annotations.Test;
 
+import java.net.URISyntaxException;
+import java.nio.file.Paths;
+import java.util.Map;
+import java.util.Objects;
 import java.util.function.Function;
 
 import static org.testng.Assert.*;
@@ -186,27 +189,13 @@ public class ControllersTest {
     @Test
     public void testExtractingIdFromResponse() {
         var testClass = new TestClass();
-        testClass.getResponse();
+        var r = testClass.getResponse();
 
         assertEquals(testClass.getId(), 1);
-    }
-
-    static class TestClass extends Controller<TestClass> implements Creatable {
-        private final Function<Response, Integer> getIdFunction = response -> toJson(response).optInt("a");
-
-        TestClass() {
-        }
-
-        TestClass(Integer id) {
-            super(id);
-        }
-
-        Response getResponse() {
-            Response response = http.get("https://run.mocky.io/v3/c4da5edc-27e6-4fe3-92d6-92d9e6ddf36a");
-            setId(extractId(response, getIdFunction));
-
-            return response;
-        }
+        assertEquals(r.asString(), """
+                {
+                    "a": 1
+                }""");
     }
 
     @Test
@@ -224,6 +213,189 @@ public class ControllersTest {
         } catch (RuntimeException t) {
             t.printStackTrace();
             assertTrue(t.getMessage().contains("hello! time exceeded"));
+        }
+    }
+
+    @Test
+    public void testCanSendGraphQLRequest() {
+        var graphQL = new GraphQL("https://run.mocky.io/v3/35eba9b2-1a55-4111-a38a-30dc07578273", "CP_ADMIN_TOKEN");
+        var r = graphQL.send(new JSONObject(), false);
+
+        assertEquals(r.asString(), """
+                {
+                  "data": {
+                    "a": 1
+                  }
+                }""");
+    }
+
+    @Test
+    public void testCanSendGraphQLRequestWithNoHasErrors() {
+        var graphQL = new GraphQL("https://run.mocky.io/v3/35eba9b2-1a55-4111-a38a-30dc07578273", "CP_ADMIN_TOKEN");
+        var r = graphQL.send(new JSONObject());
+
+        assertEquals(r.asString(), """
+                {
+                  "data": {
+                    "a": 1
+                  }
+                }""");
+    }
+
+    @Test
+    public void testCanSendGraphQLRequestWithNoHasErrorsIfErrorsInResponse() {
+        var graphQL = new GraphQL("https://run.mocky.io/v3/96af04bc-3f4d-4fa8-be9f-92abb2b43cb5", "CP_ADMIN_TOKEN");
+
+        boolean passed;
+        try {
+            graphQL.send(new JSONObject());
+            passed = true;
+        } catch (AssertionError error) {
+            passed = false;
+            assertTrue(error.getMessage().contains("Response has errors! expected [false] but found [true]"));
+        }
+        assertFalse(passed);
+    }
+
+    @Test
+    public void testCanSendGraphQLRequestWithHasErrorsTrueIfNoErrorsInResponse() {
+        var graphQL = new GraphQL("https://run.mocky.io/v3/35eba9b2-1a55-4111-a38a-30dc07578273", "CP_ADMIN_TOKEN");
+        var r = graphQL.send(new JSONObject(), true);
+
+        assertEquals(r.asString(), """
+                {
+                  "data": {
+                    "a": 1
+                  }
+                }""");
+    }
+
+    @Test
+    public void testCanSendGraphQLRequestWithHasErrorsTrueIfErrorsInResponse() {
+        var graphQL = new GraphQL("https://run.mocky.io/v3/96af04bc-3f4d-4fa8-be9f-92abb2b43cb5", "CP_ADMIN_TOKEN");
+        var r = graphQL.send(new JSONObject(), true);
+
+        assertEquals(r.asString(), """
+                {
+                  "data": {
+                    "a": 1
+                  },
+                  "errors": [
+                    {
+                      "message": "error"
+                    }
+                  ]
+                }""");
+    }
+
+    @Test
+    public void testCanSendGraphQLRequestWithHasErrorsFalseIfErrorsInResponse() {
+        var graphQL = new GraphQL("https://run.mocky.io/v3/96af04bc-3f4d-4fa8-be9f-92abb2b43cb5", "CP_ADMIN_TOKEN");
+
+        boolean passed;
+        try {
+            graphQL.send(new JSONObject(), false);
+            passed = true;
+        } catch (AssertionError error) {
+            passed = false;
+            assertTrue(error.getMessage().contains("Response has errors! expected [false] but found [true]"));
+        }
+        assertFalse(passed);
+    }
+
+    @Test
+    public void testCanSendGraphQLRequestWithToken() {
+        var graphQL = new GraphQL("https://run.mocky.io/v3/35eba9b2-1a55-4111-a38a-30dc07578273", "CP_ADMIN_TOKEN");
+        var r = graphQL.send(new JSONObject(), "token", true);
+
+        assertEquals(r.asString(), """
+                {
+                  "data": {
+                    "a": 1
+                  }
+                }""");
+    }
+
+
+    @Test
+    public void testCanSendGraphQLRequestWithNullToken() {
+        var graphQL = new GraphQL("https://run.mocky.io/v3/35eba9b2-1a55-4111-a38a-30dc07578273", "CP_ADMIN_TOKEN");
+        var r = graphQL.send(new JSONObject(), null, false);
+
+        assertEquals(r.asString(), """
+                {
+                  "data": {
+                    "a": 1
+                  }
+                }""");
+    }
+
+    @Test
+    public void testCanSendGraphQLRequestWithArray() {
+        var graphQL = new GraphQL("https://run.mocky.io/v3/35eba9b2-1a55-4111-a38a-30dc07578273", "CP_ADMIN_TOKEN");
+        var r = graphQL.send(new JSONArray());
+
+        assertEquals(r.asString(), """
+                {
+                  "data": {
+                    "a": 1
+                  }
+                }""");
+    }
+
+    @Test
+    public void testCanGetQuery() {
+        var r = GraphQL.getGraphQLQuery("/jsons/jo.json", new JSONObject().put("a", 1));
+
+        assertEquals(r.toString(2), """
+                {
+                  "variables": {"a": 1},
+                  "query": "{\\n  \\"a\\": 1\\n}"
+                }""");
+    }
+
+    @Test
+    public void testCanSendMultipart() {
+        var graphQL = new GraphQL("https://run.mocky.io/v3/35eba9b2-1a55-4111-a38a-30dc07578273", "CP_ADMIN_TOKEN");
+        var r = graphQL.sendMultipart(Map.of("a", 2), "token");
+
+        assertEquals(r.body(), """
+                {
+                  "data": {
+                    "a": 1
+                  }
+                }""");
+    }
+
+    @Test
+    public void testCanSendMultipartWithPath() throws URISyntaxException {
+        var graphQL = new GraphQL("https://run.mocky.io/v3/35eba9b2-1a55-4111-a38a-30dc07578273", "CP_ADMIN_TOKEN");
+        var path = Paths.get(Objects.requireNonNull(ControllersTest.class.getResource("/jsons/jo.json")).toURI());
+        var r = graphQL.sendMultipart(Map.of("a", path), "token");
+
+        assertEquals(r.body(), """
+                {
+                  "data": {
+                    "a": 1
+                  }
+                }""");
+    }
+
+    static class TestClass extends Controller<TestClass> implements Creatable {
+        private final Function<Response, Integer> getIdFunction = response -> toJson(response).optInt("a");
+
+        TestClass() {
+        }
+
+        TestClass(Integer id) {
+            super(id);
+        }
+
+        Response getResponse() {
+            Response response = http.get("https://run.mocky.io/v3/c4da5edc-27e6-4fe3-92d6-92d9e6ddf36a");
+            setId(extractId(response, getIdFunction));
+
+            return response;
         }
     }
 }

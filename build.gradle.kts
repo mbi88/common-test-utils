@@ -33,7 +33,24 @@ dependencies {
     implementation("com.github.wnameless.json:json-flattener:0.16.6")
 }
 
+tasks.withType<JavaCompile> {
+    options.compilerArgs.add("--enable-preview")
+}
+
+tasks.withType<JavaExec> {
+    jvmArgs("--enable-preview")
+}
+
+tasks.withType<Javadoc> {
+    val opts = options as StandardJavadocDocletOptions
+    opts.addBooleanOption("Xdoclint:none", true)
+    opts.addBooleanOption("-enable-preview", true)
+    opts.addStringOption("-release", "21")
+}
+
 tasks.test {
+    jvmArgs("--enable-preview")
+
     useTestNG {
         // Add test suites
         File(projectDir.absolutePath + "/" + suitesDir)
@@ -71,6 +88,7 @@ tasks.withType<Javadoc> {
 }
 
 quality {
+    checkstyleVersion = "10.16.0"
     checkstyle = true
     pmd = true
     codenarc = true
