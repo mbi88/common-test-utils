@@ -97,7 +97,9 @@ public final class GraphQL extends Controller<GraphQL> {
 
         final var request = HttpRequest.newBuilder()
                 .uri(URI.create(apiUrl))
-                .headers("authorization", token, "content-type", STR."multipart/form-data;boundary=\{boundary}")
+                .headers("authorization", token,
+                        "content-type", STR."multipart/form-data;boundary=\{boundary}",
+                        "GraphQL-Preflight", "1")
                 .POST(ofMimeMultipartData(data, boundary))
                 .build();
 
