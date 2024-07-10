@@ -3,6 +3,7 @@ package tests;
 import config.Configuration;
 import org.json.JSONObject;
 import org.testng.annotations.Test;
+import software.amazon.awssdk.services.ssm.model.ParameterNotFoundException;
 
 import java.util.Arrays;
 
@@ -31,8 +32,16 @@ public class ConfigTest implements Configuration {
     }
 
     @Test
+    public void tesGetSSMParameter() {
+        try {
+            readSsmParameter("ddd");
+        } catch (ParameterNotFoundException ignored) {
+        }
+    }
+
+    @Test
     public void testCanGetApiStatus() {
-        var response = getApiStatus("https://run.mocky.io/v3/c4da5edc-27e6-4fe3-92d6-92d9e6ddf36a");
+        var response = getApiStatus("https://run.mocky.io/v3/2b6e17a9-a348-4211-8c8e-4dbdc151bf9a");
 
         assertEquals(new JSONObject(response.asString()).getInt("a"), 1);
     }

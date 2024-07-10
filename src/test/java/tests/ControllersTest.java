@@ -79,7 +79,7 @@ public class ControllersTest {
     @Test
     public void testWaiterIfConditionIsMet() {
         var waiter = Waiter.<Response>newBuilder()
-                .setSupplier(() -> new RequestBuilder().get("https://run.mocky.io/v3/c4da5edc-27e6-4fe3-92d6-92d9e6ddf36a/"))
+                .setSupplier(() -> new RequestBuilder().get("https://run.mocky.io/v3/2b6e17a9-a348-4211-8c8e-4dbdc151bf9a"))
                 .setResultToString(Response::asString)
                 .setWaitingTime(10)
                 .build();
@@ -90,7 +90,7 @@ public class ControllersTest {
     @Test
     public void testWaiterIfConditionIsNoMet() {
         var waiter = Waiter.<Response>newBuilder()
-                .setSupplier(() -> new RequestBuilder().get("https://run.mocky.io/v3/c4da5edc-27e6-4fe3-92d6-92d9e6ddf36a/"))
+                .setSupplier(() -> new RequestBuilder().get("https://run.mocky.io/v3/2b6e17a9-a348-4211-8c8e-4dbdc151bf9a"))
                 .setResultToString(Response::asString)
                 .setWaitingTime(10)
                 .build();
@@ -105,7 +105,7 @@ public class ControllersTest {
     @Test
     public void testCanSetIdleDuration() {
         var waiter = Waiter.<Response>newBuilder()
-                .setSupplier(() -> new RequestBuilder().get("https://run.mocky.io/v3/c4da5edc-27e6-4fe3-92d6-92d9e6ddf36a//"))
+                .setSupplier(() -> new RequestBuilder().get("https://run.mocky.io/v3/2b6e17a9-a348-4211-8c8e-4dbdc151bf9a/"))
                 .setResultToString(Response::asString)
                 .setWaitingTime(10)
                 .setIdleDuration(5000)
@@ -121,7 +121,7 @@ public class ControllersTest {
     @Test
     public void testCanSetDebug() {
         var waiter = Waiter.<Response>newBuilder()
-                .setSupplier(() -> new RequestBuilder().get("https://run.mocky.io/v3/c4da5edc-27e6-4fe3-92d6-92d9e6ddf36a//"))
+                .setSupplier(() -> new RequestBuilder().get("https://run.mocky.io/v3/2b6e17a9-a348-4211-8c8e-4dbdc151bf9a/"))
                 .setResultToString(Response::asString)
                 .setWaitingTime(3)
                 .setDebug(true)
@@ -137,7 +137,7 @@ public class ControllersTest {
     @Test
     public void testCanReadWaiterResponse() {
         var waiter = Waiter.<Response>newBuilder()
-                .setSupplier(() -> new RequestBuilder().get("https://run.mocky.io/v3/c4da5edc-27e6-4fe3-92d6-92d9e6ddf36a/"))
+                .setSupplier(() -> new RequestBuilder().get("https://run.mocky.io/v3/2b6e17a9-a348-4211-8c8e-4dbdc151bf9a"))
                 .setResultToString(Response::asString)
                 .setWaitingTime(10)
                 .build();
@@ -193,15 +193,13 @@ public class ControllersTest {
 
         assertEquals(testClass.getId(), 1);
         assertEquals(r.asString(), """
-                {
-                    "a": 1
-                }""");
+                {"a":1}""");
     }
 
     @Test
     public void testCanSetTimeExceededMessage() {
         var waiter = Waiter.<Response>newBuilder()
-                .setSupplier(() -> new RequestBuilder().get("https://run.mocky.io/v3/c4da5edc-27e6-4fe3-92d6-92d9e6ddf36a//"))
+                .setSupplier(() -> new RequestBuilder().get("https://run.mocky.io/v3/2b6e17a9-a348-4211-8c8e-4dbdc151bf9a/"))
                 .setResultToString(Response::asString)
                 .setWaitingTime(3)
                 .setDebug(true)
@@ -218,7 +216,7 @@ public class ControllersTest {
 
     @Test
     public void testCanSendGraphQLRequest() {
-        var graphQL = new GraphQL("https://run.mocky.io/v3/35eba9b2-1a55-4111-a38a-30dc07578273", "CP_ADMIN_TOKEN");
+        var graphQL = new GraphQL("https://run.mocky.io/v3/03ecd6a3-2f9f-4e25-86b4-e54d1c37bb13", "CP_ADMIN_TOKEN");
         var r = graphQL.send(new JSONObject(), false);
 
         assertEquals(r.asString(), """
@@ -231,7 +229,7 @@ public class ControllersTest {
 
     @Test
     public void testCanSendGraphQLRequestWithNoHasErrors() {
-        var graphQL = new GraphQL("https://run.mocky.io/v3/35eba9b2-1a55-4111-a38a-30dc07578273", "CP_ADMIN_TOKEN");
+        var graphQL = new GraphQL("https://run.mocky.io/v3/03ecd6a3-2f9f-4e25-86b4-e54d1c37bb13", "CP_ADMIN_TOKEN");
         var r = graphQL.send(new JSONObject());
 
         assertEquals(r.asString(), """
@@ -244,7 +242,7 @@ public class ControllersTest {
 
     @Test
     public void testCanSendGraphQLRequestWithNoHasErrorsIfErrorsInResponse() {
-        var graphQL = new GraphQL("https://run.mocky.io/v3/96af04bc-3f4d-4fa8-be9f-92abb2b43cb5", "CP_ADMIN_TOKEN");
+        var graphQL = new GraphQL("https://run.mocky.io/v3/770eaf24-75c4-4b37-aaee-f80449b7a32a", "CP_ADMIN_TOKEN");
 
         boolean passed;
         try {
@@ -259,7 +257,7 @@ public class ControllersTest {
 
     @Test
     public void testCanSendGraphQLRequestWithHasErrorsTrueIfNoErrorsInResponse() {
-        var graphQL = new GraphQL("https://run.mocky.io/v3/35eba9b2-1a55-4111-a38a-30dc07578273", "CP_ADMIN_TOKEN");
+        var graphQL = new GraphQL("https://run.mocky.io/v3/03ecd6a3-2f9f-4e25-86b4-e54d1c37bb13", "CP_ADMIN_TOKEN");
         var r = graphQL.send(new JSONObject(), true);
 
         assertEquals(r.asString(), """
@@ -272,7 +270,7 @@ public class ControllersTest {
 
     @Test
     public void testCanSendGraphQLRequestWithHasErrorsTrueIfErrorsInResponse() {
-        var graphQL = new GraphQL("https://run.mocky.io/v3/96af04bc-3f4d-4fa8-be9f-92abb2b43cb5", "CP_ADMIN_TOKEN");
+        var graphQL = new GraphQL("https://run.mocky.io/v3/770eaf24-75c4-4b37-aaee-f80449b7a32a", "CP_ADMIN_TOKEN");
         var r = graphQL.send(new JSONObject(), true);
 
         assertEquals(r.asString(), """
@@ -290,7 +288,7 @@ public class ControllersTest {
 
     @Test
     public void testCanSendGraphQLRequestWithHasErrorsFalseIfErrorsInResponse() {
-        var graphQL = new GraphQL("https://run.mocky.io/v3/96af04bc-3f4d-4fa8-be9f-92abb2b43cb5", "CP_ADMIN_TOKEN");
+        var graphQL = new GraphQL("https://run.mocky.io/v3/770eaf24-75c4-4b37-aaee-f80449b7a32a", "CP_ADMIN_TOKEN");
 
         boolean passed;
         try {
@@ -305,7 +303,7 @@ public class ControllersTest {
 
     @Test
     public void testCanSendGraphQLRequestWithToken() {
-        var graphQL = new GraphQL("https://run.mocky.io/v3/35eba9b2-1a55-4111-a38a-30dc07578273", "CP_ADMIN_TOKEN");
+        var graphQL = new GraphQL("https://run.mocky.io/v3/03ecd6a3-2f9f-4e25-86b4-e54d1c37bb13", "CP_ADMIN_TOKEN");
         var r = graphQL.send(new JSONObject(), "token", true);
 
         assertEquals(r.asString(), """
@@ -319,7 +317,7 @@ public class ControllersTest {
 
     @Test
     public void testCanSendGraphQLRequestWithNullToken() {
-        var graphQL = new GraphQL("https://run.mocky.io/v3/35eba9b2-1a55-4111-a38a-30dc07578273", "CP_ADMIN_TOKEN");
+        var graphQL = new GraphQL("https://run.mocky.io/v3/03ecd6a3-2f9f-4e25-86b4-e54d1c37bb13", "CP_ADMIN_TOKEN");
         var r = graphQL.send(new JSONObject(), null, false);
 
         assertEquals(r.asString(), """
@@ -332,7 +330,7 @@ public class ControllersTest {
 
     @Test
     public void testCanSendGraphQLRequestWithArray() {
-        var graphQL = new GraphQL("https://run.mocky.io/v3/35eba9b2-1a55-4111-a38a-30dc07578273", "CP_ADMIN_TOKEN");
+        var graphQL = new GraphQL("https://run.mocky.io/v3/03ecd6a3-2f9f-4e25-86b4-e54d1c37bb13", "CP_ADMIN_TOKEN");
         var r = graphQL.send(new JSONArray());
 
         assertEquals(r.asString(), """
@@ -356,7 +354,7 @@ public class ControllersTest {
 
     @Test
     public void testCanSendMultipart() {
-        var graphQL = new GraphQL("https://run.mocky.io/v3/35eba9b2-1a55-4111-a38a-30dc07578273", "CP_ADMIN_TOKEN");
+        var graphQL = new GraphQL("https://run.mocky.io/v3/03ecd6a3-2f9f-4e25-86b4-e54d1c37bb13", "CP_ADMIN_TOKEN");
         var r = graphQL.sendMultipart(Map.of("a", 2), "token");
 
         assertEquals(r.body(), """
@@ -369,7 +367,7 @@ public class ControllersTest {
 
     @Test
     public void testCanSendMultipartWithPath() throws URISyntaxException {
-        var graphQL = new GraphQL("https://run.mocky.io/v3/35eba9b2-1a55-4111-a38a-30dc07578273", "CP_ADMIN_TOKEN");
+        var graphQL = new GraphQL("https://run.mocky.io/v3/03ecd6a3-2f9f-4e25-86b4-e54d1c37bb13", "CP_ADMIN_TOKEN");
         var path = Paths.get(Objects.requireNonNull(ControllersTest.class.getResource("/jsons/jo.json")).toURI());
         var r = graphQL.sendMultipart(Map.of("a", path), "token");
 
@@ -392,7 +390,7 @@ public class ControllersTest {
         }
 
         Response getResponse() {
-            Response response = http.get("https://run.mocky.io/v3/c4da5edc-27e6-4fe3-92d6-92d9e6ddf36a");
+            Response response = http.get("https://run.mocky.io/v3/2b6e17a9-a348-4211-8c8e-4dbdc151bf9a");
             setId(extractId(response, getIdFunction));
 
             return response;

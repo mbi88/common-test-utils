@@ -11,7 +11,7 @@ public class TestCaseTest extends BaseTestCase {
 
     @Test
     public void testHttpRequest() {
-        http.setExpectedStatusCode(200).get("https://run.mocky.io/v3/c4da5edc-27e6-4fe3-92d6-92d9e6ddf36a");
+        http.setExpectedStatusCode(200).get("https://run.mocky.io/v3/2b6e17a9-a348-4211-8c8e-4dbdc151bf9a");
     }
 
     @Test
@@ -48,13 +48,14 @@ public class TestCaseTest extends BaseTestCase {
 
     @Test
     public void testToJson() {
-        var r = http.get("https://run.mocky.io/v3/c4da5edc-27e6-4fe3-92d6-92d9e6ddf36a");
+        var r = http.get("https://run.mocky.io/v3/2b6e17a9-a348-4211-8c8e-4dbdc151bf9a");
         toJson(r);
     }
 
     @Test
     public void testToJsonArray() {
-        var r = http.get("https://run.mocky.io/v3/9279e741-d38d-40d9-8c6f-e5aa13005d69");
+        var r = http.get("https://run.mocky.io/v3/fa8898cd-81ac-43f7-8601-0c4a49e09fdb");
+
         toJsonArray(r);
     }
 
