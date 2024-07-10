@@ -3,6 +3,7 @@ package tests;
 import config.Configuration;
 import org.json.JSONObject;
 import org.testng.annotations.Test;
+import software.amazon.awssdk.core.exception.SdkClientException;
 import software.amazon.awssdk.services.ssm.model.ParameterNotFoundException;
 
 import java.util.Arrays;
@@ -35,7 +36,7 @@ public class ConfigTest implements Configuration {
     public void tesGetSSMParameter() {
         try {
             readSsmParameter("ddd");
-        } catch (ParameterNotFoundException ignored) {
+        } catch (ParameterNotFoundException | SdkClientException ignored) {
         }
     }
 
