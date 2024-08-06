@@ -11,7 +11,7 @@ public class TestCaseTest extends BaseTestCase {
 
     @Test
     public void testHttpRequest() {
-        http.setExpectedStatusCode(200).get("https://run.mocky.io/v3/2b6e17a9-a348-4211-8c8e-4dbdc151bf9a");
+        http.setExpectedStatusCode(200).get("https://api.npoint.io/3a360af4f1419f85f238");
     }
 
     @Test
@@ -48,13 +48,13 @@ public class TestCaseTest extends BaseTestCase {
 
     @Test
     public void testToJson() {
-        var r = http.get("https://run.mocky.io/v3/2b6e17a9-a348-4211-8c8e-4dbdc151bf9a");
+        var r = http.get("https://api.npoint.io/3a360af4f1419f85f238");
         toJson(r);
     }
 
     @Test
     public void testToJsonArray() {
-        var r = http.get("https://run.mocky.io/v3/fa8898cd-81ac-43f7-8601-0c4a49e09fdb");
+        var r = http.get("https://api.npoint.io/ef1154bf179619bd3d7d");
 
         toJsonArray(r);
     }

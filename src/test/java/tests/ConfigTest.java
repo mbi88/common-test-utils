@@ -42,7 +42,7 @@ public class ConfigTest implements Configuration {
 
     @Test
     public void testCanGetApiStatus() {
-        var response = getApiStatus("https://run.mocky.io/v3/2b6e17a9-a348-4211-8c8e-4dbdc151bf9a");
+        var response = getApiStatus("https://api.npoint.io/3a360af4f1419f85f238");
 
         assertEquals(new JSONObject(response.asString()).getInt("a"), 1);
     }
