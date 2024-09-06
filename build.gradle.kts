@@ -27,7 +27,7 @@ dependencies {
     implementation("io.jsonwebtoken:jjwt-api:0.12.6")
     runtimeOnly("io.jsonwebtoken:jjwt-impl:0.12.6")
     runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.12.6")
-    implementation("software.amazon.awssdk:ssm:2.26.30")
+    implementation("software.amazon.awssdk:ssm:2.27.20")
     implementation("ch.qos.logback:logback-classic:1.5.7")
     implementation("com.google.guava:guava:33.2.1-jre")
     implementation("com.github.wnameless.json:json-flattener:0.16.6")
