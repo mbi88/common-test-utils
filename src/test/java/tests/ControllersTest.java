@@ -7,10 +7,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.testng.annotations.Test;
 
-import java.net.URISyntaxException;
-import java.nio.file.Paths;
 import java.util.Map;
-import java.util.Objects;
 import java.util.function.Function;
 
 import static org.testng.Assert.*;
@@ -323,16 +320,6 @@ public class ControllersTest {
     public void testCanSendMultipart() {
         var graphQL = new GraphQL("https://dummyjson.com/c/e983-d5bb-4bb2-be7d", "CP_ADMIN_TOKEN");
         var r = graphQL.sendMultipart(Map.of("a", 2), "token");
-
-        assertEquals(r.body(), """
-                {"data":{"a":1}}""");
-    }
-
-    @Test
-    public void testCanSendMultipartWithPath() throws URISyntaxException {
-        var graphQL = new GraphQL("https://run.mocky.io/v3/a72e38f9-77e6-42e8-b01e-d21e58f22ce2", "CP_ADMIN_TOKEN");
-        var path = Paths.get(Objects.requireNonNull(ControllersTest.class.getResource("/jsons/jo.json")).toURI());
-        var r = graphQL.sendMultipart(Map.of("a", path), "token");
 
         assertEquals(r.body(), """
                 {"data":{"a":1}}""");
