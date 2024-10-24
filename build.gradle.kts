@@ -29,7 +29,7 @@ dependencies {
     runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.12.6")
     implementation("software.amazon.awssdk:ssm:2.28.1")
     implementation("ch.qos.logback:logback-classic:1.5.8")
-    implementation("com.google.guava:guava:33.3.0-jre")
+    implementation("com.google.guava:guava:33.3.1-jre")
     implementation("com.github.wnameless.json:json-flattener:0.16.6")
 }
 
