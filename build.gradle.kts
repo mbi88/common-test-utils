@@ -30,7 +30,7 @@ dependencies {
     implementation("software.amazon.awssdk:ssm:2.28.29")
     implementation("ch.qos.logback:logback-classic:1.5.11")
     implementation("com.google.guava:guava:33.3.1-jre")
-    implementation("com.github.wnameless.json:json-flattener:0.16.6")
+    implementation("com.github.wnameless.json:json-flattener:0.17.0")
 }
 
 tasks.withType<JavaCompile> {
