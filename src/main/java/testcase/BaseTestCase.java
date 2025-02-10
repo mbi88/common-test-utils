@@ -15,10 +15,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import org.testng.IConfigurable;
+import org.testng.IConfigureCallBack;
+import org.testng.ITestResult;
+
+
 /**
  * Abstract test case.
  */
-public abstract class BaseTestCase {
+public abstract class BaseTestCase implements IConfigurable {
 
     private static final Random RANDOM = new Random();
 
@@ -144,5 +149,21 @@ public abstract class BaseTestCase {
      */
     protected final JSONObject findJsonInArray(final JSONArray sourceArray, final String name, final Object value) {
         return JsonDeserializer.findJsonInArray(sourceArray, name, value);
+    }
+
+    @Override
+    public void run(final IConfigureCallBack callBack, final ITestResult testResult) {
+        final var retryable = testResult.getMethod()
+                .getConstructorOrMethod().getMethod().getAnnotation(Retryable.class);
+        final int attempts = retryable == null ? 0 : retryable.attempts();
+
+        int attempt = 0;
+        do {
+            attempt++;
+            callBack.runConfigurationMethod(testResult);
+            if (testResult.getThrowable() == null) {
+                break;
+            }
+        } while (attempt < attempts);
     }
 }

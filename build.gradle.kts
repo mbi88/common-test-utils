@@ -66,6 +66,15 @@ tasks.test {
             exceptionFormat = TestExceptionFormat.FULL
             showStandardStreams = true
         }
+
+        // Set listeners
+        val myListeners = ArrayList<String>()
+        myListeners.add("tests.AnnotationTransformer")
+        myListeners.add("tests.ListenerTest")
+
+        myListeners.forEach {
+            listeners.add(it)
+        }
     }
 }
 
