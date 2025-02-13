@@ -20,7 +20,7 @@ dependencies {
     api("com.github.mbi88:http-request:8c9e0067ae")
     api("com.github.mbi88:date-handler:f1f3281b31")
     api("com.github.mbi88:data-faker:dba50b30e5")
-    api("org.testng:testng:7.10.2")
+    api("org.testng:testng:7.11.0")
     api("org.json:json:20250107")
     api("io.rest-assured:rest-assured:5.5.0")
     api("joda-time:joda-time:2.13.1")
