@@ -15,11 +15,11 @@ repositories {
 }
 
 dependencies {
-    api("com.github.mbi88", "json-assert", "master-SNAPSHOT", dependencyConfiguration = { isChanging = true })
-    api("com.github.mbi88", "json-validator", "master-SNAPSHOT", dependencyConfiguration = { isChanging = true })
-    api("com.github.mbi88", "http-request", "master-SNAPSHOT", dependencyConfiguration = { isChanging = true })
-    api("com.github.mbi88", "date-handler", "master-SNAPSHOT", dependencyConfiguration = { isChanging = true })
-    api("com.github.mbi88", "data-faker", "master-SNAPSHOT", dependencyConfiguration = { isChanging = true })
+    api("com.github.mbi88:json-assert:37e11468be")
+    api("com.github.mbi88:json-validator:2479f9ebd6")
+    api("com.github.mbi88:http-request:8c9e0067ae")
+    api("com.github.mbi88:date-handler:f1f3281b31")
+    api("com.github.mbi88:data-faker:dba50b30e5")
     api("org.testng:testng:7.10.2")
     api("org.json:json:20250107")
     api("io.rest-assured:rest-assured:5.5.0")
@@ -53,9 +53,7 @@ tasks.test {
 
     useTestNG {
         // Add test suites
-        File(projectDir.absolutePath + "/" + suitesDir)
-            .walk()
-            .forEach {
+        File(projectDir.absolutePath + "/" + suitesDir).walk().forEach {
                 if (it.isFile) {
                     suites(it)
                 }
@@ -82,7 +80,7 @@ tasks.jacocoTestReport {
     reports {
         xml.required.set(true)
         html.required.set(true)
-        html.outputLocation.set(layout.buildDirectory.dir("${buildDir}/reports/coverage").get().asFile)
+        html.outputLocation.set(layout.buildDirectory.dir("reports/coverage"))
     }
 }
 
