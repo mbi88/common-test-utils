@@ -9,4 +9,4 @@ updates:
   ignore:
     - dependency-name: software.amazon.awssdk:ssm
       update-types:
-        - version-update:semver-minor
+        - version-update:semver-patch
