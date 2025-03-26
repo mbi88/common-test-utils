@@ -24,9 +24,11 @@ public class RetryAnalyzer implements IRetryAnalyzer {
             }
         }
 
-        // Do not retry if test failed dut to 504 Gateway Timeout ERROR
+        // Do not retry if test failed due to 504 Gateway Timeout ERROR
         if (result.getStatus() == ITestResult.FAILURE) {
-            if (result.getThrowable().getMessage().contains("504 Gateway Timeout ERROR")) {
+            final var throwable = result.getThrowable();
+            if (throwable != null && throwable.getMessage() != null
+                    && throwable.getMessage().contains("504 Gateway Timeout ERROR")) {
                 shouldRetry = false;
             }
         }

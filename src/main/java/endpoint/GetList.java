@@ -1,22 +1,22 @@
 package endpoint;
 
 /**
- * Created by mbi on 8/15/16.
+ * Contract for testing GET list endpoint behavior.
  */
 public interface GetList {
 
     /**
-     * Check basic endpoint operations.
+     * Tests successful retrieval of an object list.
      */
     void testCanGetList();
 
     /**
-     * Validate response according to specified schema.
+     * Validates the response body against a predefined schema.
      */
     void validateJson();
 
     /**
-     * Check sorting order.
+     * Tests sorting behavior and verifies correct order of results.
      */
     void testSortOrder();
 }

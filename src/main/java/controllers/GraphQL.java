@@ -22,46 +22,57 @@ import java.util.Random;
 import java.util.function.Function;
 
 /**
- * Send GraphQL request.
+ * Controller for sending GraphQL requests.
  */
 public final class GraphQL extends Controller<GraphQL> {
 
-    private static final Function<String, String> GET_STRING_FROM_FILE = pathToFile -> {
-        final var url = GraphQL.class.getResource(pathToFile);
-
-        final String content;
+    private static final Function<String, String> GET_STRING_FROM_FILE = path -> {
         try {
-            final var path = Paths.get(Objects.requireNonNull(url).toURI());
-            content = Files.readString(path);
+            final var url = GraphQL.class.getResource(path);
+            final var filePath = Paths.get(Objects.requireNonNull(url).toURI());
+            return Files.readString(filePath);
         } catch (IOException | URISyntaxException e) {
-            throw new RuntimeException(e);
+            throw new IllegalArgumentException("Can't read file: " + path, e);
         }
-
-        return content;
     };
+    private static final HttpClient CLIENT = HttpClient.newHttpClient();
     private final String token;
     private final String apiUrl;
 
+    /**
+     * Creates a new GraphQL controller.
+     *
+     * @param apiUrl GraphQL endpoint URL.
+     * @param token  Authorization token.
+     */
     public GraphQL(final String apiUrl, final String token) {
         this.apiUrl = apiUrl;
         this.token = token;
     }
 
-    public static JSONObject getGraphQLQuery(String path) {
+    /**
+     * Reads a GraphQL query from the resource file.
+     *
+     * @param path path to query file.
+     * @return query as JSON object.
+     */
+    public static JSONObject getGraphQLQuery(final String path) {
         return new JSONObject().put("query", GET_STRING_FROM_FILE.apply(path));
     }
 
+    /**
+     * Reads a GraphQL query with variables from the resource file.
+     *
+     * @param path      path to query file.
+     * @param variables variables.
+     * @return query + variables.
+     */
     public static JSONObject getGraphQLQuery(final String path, final JSONObject variables) {
         return getGraphQLQuery(path).put("variables", variables);
     }
 
     public Response send(final JSONObject json) {
-        return http
-                .setData(json)
-                .setExpectedStatusCode(200)
-                .setToken(token)
-                .checkNoErrors(true)
-                .post(apiUrl);
+        return send(json, token, false);
     }
 
     public Response send(final JSONArray json) {
@@ -74,12 +85,7 @@ public final class GraphQL extends Controller<GraphQL> {
     }
 
     public Response send(final JSONObject json, final boolean hasErrors) {
-        return http
-                .setData(json)
-                .setExpectedStatusCode(200)
-                .setToken(token)
-                .checkNoErrors(!hasErrors)
-                .post(apiUrl);
+        return send(json, token, hasErrors);
     }
 
     public Response send(final JSONObject json, final String token, final boolean hasErrors) {
@@ -91,6 +97,13 @@ public final class GraphQL extends Controller<GraphQL> {
                 .post(apiUrl);
     }
 
+    /**
+     * Sends a multipart GraphQL request.
+     *
+     * @param data  key-value map for multipart body.
+     * @param token auth token.
+     * @return HTTP response.
+     */
     public HttpResponse<String> sendMultipart(final Map<Object, Object> data, final String token) {
         // Random 256 length string is used as multipart boundary
         final var boundary = new BigInteger(256, new Random()).toString();
@@ -103,26 +116,30 @@ public final class GraphQL extends Controller<GraphQL> {
                 .POST(ofMimeMultipartData(data, boundary))
                 .build();
 
-        final HttpResponse<String> response;
-        try (var client = HttpClient.newHttpClient()) {
-            response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        try {
+            return CLIENT.send(request, HttpResponse.BodyHandlers.ofString());
         } catch (IOException | InterruptedException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Failed to send multipart GraphQL request", e);
         }
-
-        return response;
     }
 
+    /**
+     * Builds multipart form body.
+     *
+     * @param data     form data.
+     * @param boundary boundary string.
+     * @return body publisher.
+     */
     private HttpRequest.BodyPublisher ofMimeMultipartData(final Map<Object, Object> data, final String boundary) {
         // Result request body
         final var byteArrays = new ArrayList<byte[]>();
 
         // Separator with boundary
-        final var separator = (STR."--\{boundary}\r\nContent-Disposition: form-data; name=")
+        final var separator = STR."--\{boundary}\r\nContent-Disposition: form-data; name="
                 .getBytes(StandardCharsets.UTF_8);
 
         // Iterating over data parts
-        for (Map.Entry<Object, Object> entry : data.entrySet()) {
+        for (var entry : data.entrySet()) {
             // Opening boundary
             byteArrays.add(separator);
 
@@ -131,23 +148,22 @@ public final class GraphQL extends Controller<GraphQL> {
             if (entry.getValue() instanceof Path path) {
                 try {
                     final var mimeType = Files.probeContentType(path);
-                    byteArrays.add((STR."\"\{entry.getKey()}\"; filename=\"\{path
-                            .getFileName()}\"\r\nContent-Type: \{mimeType}\r\n\r\n")
+                    byteArrays.add(STR."\"\{entry.getKey()}\"; filename=\"\{path
+                            .getFileName()}\"\r\nContent-Type: \{mimeType}\r\n\r\n"
                             .getBytes(StandardCharsets.UTF_8));
                     byteArrays.add(Files.readAllBytes(path));
                     byteArrays.add("\r\n".getBytes(StandardCharsets.UTF_8));
-                } catch (IOException exception) {
-                    throw new RuntimeException(exception);
+                } catch (IOException e) {
+                    throw new IllegalStateException("Failed to read file: " + path, e);
                 }
             } else {
-                byteArrays.add((STR."\"\{entry.getKey()}\"\r\n\r\n\{entry.getValue()}\r\n")
+                byteArrays.add(STR."\"\{entry.getKey()}\"\r\n\r\n\{entry.getValue()}\r\n"
                         .getBytes(StandardCharsets.UTF_8));
             }
         }
 
         // Closing boundary
-        byteArrays.add((STR."--\{boundary}--").getBytes(StandardCharsets.UTF_8));
-
+        byteArrays.add(STR."--\{boundary}--".getBytes(StandardCharsets.UTF_8));
         // Serializing as byte array
         return HttpRequest.BodyPublishers.ofByteArrays(byteArrays);
     }

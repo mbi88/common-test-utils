@@ -6,9 +6,6 @@
 .gradle/
 out/
 build/
-gradlew
-gradlew.bat
-gradle/
 
 # config files
 src/main/resources/configuration/

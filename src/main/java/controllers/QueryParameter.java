@@ -7,7 +7,7 @@ import com.google.common.collect.Multimap;
 import java.util.stream.Collectors;
 
 /**
- * Build query parameters as a string in format <!--?k1=v1&k2=v2<-->.
+ * Utility for building URL query parameters (e.g., ?key1=val1&key2=val2).
  */
 public final class QueryParameter {
 
@@ -65,11 +65,11 @@ public final class QueryParameter {
     /**
      * Returns query parameters in format <!--?k1=v1&k2=v2<-->.
      *
-     * @return query parameters
+     * @return encoded query parameter string
      */
     public String getParametersString() {
         final String tmp = "?" + params.entries().stream()
-                .map(m -> m.getKey().concat("=").concat(m.getValue()).concat("&"))
+                .map(m -> m.getKey() + "=" + m.getValue() + "&")
                 .collect(Collectors.joining());
 
         return tmp.substring(0, tmp.length() - 1);

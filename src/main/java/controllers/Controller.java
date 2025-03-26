@@ -7,9 +7,9 @@ import org.apache.commons.lang3.Validate;
 import static testcase.BaseTestCase.getRandomUID;
 
 /**
- * Base controller class.
+ * Abstract base controller class for managing API resources.
  *
- * @param <T> controller inheritor.
+ * @param <T> the type of the controller
  */
 public abstract class Controller<T> {
 
@@ -60,7 +60,7 @@ public abstract class Controller<T> {
     }
 
     /**
-     * Is needed for test cases that check performing requests without object id in URL.
+     * Returns a controller with empty ID (for testing endpoints without ID).
      *
      * @return ""
      */
@@ -74,7 +74,7 @@ public abstract class Controller<T> {
     }
 
     /**
-     * Is needed for test cases that check performing requests with incorrect object id in URL.
+     * Returns a controller with a random UUID as ID (for testing invalid ID cases).
      *
      * @return UUID
      */

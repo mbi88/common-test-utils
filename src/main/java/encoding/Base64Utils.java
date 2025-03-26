@@ -1,10 +1,9 @@
 package encoding;
 
-import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 
 /**
- * Base64 code/decode.
+ * Utility for Base64 encoding and decoding.
  */
 public final class Base64Utils {
 
@@ -15,22 +14,22 @@ public final class Base64Utils {
     }
 
     /**
-     * Encodes bytes to string.
+     * Encodes byte array to Base64 string using UTF-8 charset.
      *
-     * @param bytes bytes
-     * @return string
+     * @param bytes byte array to encode
+     * @return Base64-encoded string
      */
     public static String encode(final byte[] bytes) {
-        return new String(Base64.getEncoder().encode(bytes), StandardCharsets.UTF_8);
+        return Base64.getEncoder().encodeToString(bytes);
     }
 
     /**
-     * Decodes string to bytes.
+     * Decodes Base64-encoded string to byte array.
      *
-     * @param s string
-     * @return bytes
+     * @param string Base64 string
+     * @return decoded byte array
      */
-    public static byte[] decode(final String s) {
-        return Base64.getDecoder().decode(s);
+    public static byte[] decode(final String string) {
+        return Base64.getDecoder().decode(string);
     }
 }

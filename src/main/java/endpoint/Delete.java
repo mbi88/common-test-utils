@@ -1,30 +1,30 @@
 package endpoint;
 
 /**
- * Created by mbi on 8/15/16.
+ * Contract for testing DELETE endpoint behavior.
  */
 public interface Delete {
 
     /**
-     * Check basic endpoint operations.
+     * Tests successful deletion of an object.
      */
     void testCanDelete();
 
     /**
-     * Check there is impossible to delete already deleted object.
-     * Expected 404.
+     * Ensures deletion of the same object twice is not allowed.
+     * Expected: 404 Not Found.
      */
     void testCantDeleteTwice();
 
     /**
-     * Perform request without object id in url.
-     * Expected 404.
+     * Ensures deletion fails when object ID is missing in the URL.
+     * Expected: 404 Not Found.
      */
     void testCantDeleteWithoutId();
 
     /**
-     * Perform request with incorrect object id in url.
-     * Expected 404.
+     * Ensures deletion fails with an incorrect or non-existing object ID.
+     * Expected: 404 Not Found.
      */
     void testCantDeleteWithIncorrectId();
 }

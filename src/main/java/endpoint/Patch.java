@@ -1,29 +1,29 @@
 package endpoint;
 
 /**
- * Created by mbi on 8/15/16.
+ * Contract for testing PATCH endpoint behavior.
  */
 public interface Patch {
 
     /**
-     * Check basic endpoint operations.
+     * Tests successful update of an existing object.
      */
     void testCanPatch();
 
     /**
-     * Perform request without object id in url.
-     * Expected 404.
+     * Ensures PATCH request fails when object ID is missing in the URL.
+     * Expected: 404 Not Found.
      */
     void testCantPatchWithoutId();
 
     /**
-     * Perform request with incorrect object id in url
-     * Expected 404.
+     * Ensures PATCH request fails with an incorrect object ID.
+     * Expected: 404 Not Found.
      */
     void testCantPatchWithIncorrectId();
 
     /**
-     * Check there were no fields that became null after update.
+     * Ensures no fields become null after applying a patch.
      */
     void testNothingChangedAfterPatch();
 }

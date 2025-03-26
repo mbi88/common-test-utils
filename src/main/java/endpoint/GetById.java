@@ -1,23 +1,23 @@
 package endpoint;
 
 /**
- * Created by mbi on 8/15/16.
+ * Contract for testing GET-by-ID endpoint behavior.
  */
 public interface GetById {
 
     /**
-     * Check basic endpoint operations.
+     * Tests successful retrieval of an object by ID.
      */
     void testCanGetById();
 
     /**
-     * Perform request with incorrect object id in url.
-     * Expected 404.
+     * Ensures request fails with incorrect or non-existing object ID.
+     * Expected: 404 Not Found.
      */
     void testCantGetWithIncorrectId();
 
     /**
-     * Validate response according to specified schema.
+     * Validates the response body against a predefined schema.
      */
     void validateJson();
 }

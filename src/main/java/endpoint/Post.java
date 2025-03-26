@@ -1,27 +1,27 @@
 package endpoint;
 
 /**
- * Created by mbi on 8/15/16.
+ * Contract for testing POST endpoint behavior.
  */
 public interface Post {
 
     /**
-     * Check basic endpoint operations.
+     * Tests successful creation of a new object.
      */
     void testCanPost();
 
     /**
-     * Check object creation with required fields only.
+     * Tests object creation using only required fields.
      */
     void testPostOnlyRequiredFields();
 
     /**
-     * Check content of Location header.
+     * Validates that the Location header is present and correct.
      */
     void testLocationHeader();
 
     /**
-     * Validate response according to specified schema.
+     * Validates the response body against a predefined schema.
      */
     void validateJson();
 }

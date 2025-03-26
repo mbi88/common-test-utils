@@ -3,14 +3,17 @@ package controllers;
 import org.joda.time.DateTime;
 import org.slf4j.LoggerFactory;
 
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.LockSupport;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 /**
- * Waiting for special object condition. Condition is checked every 1 sec.
+ * Waits for a specific condition to be met for a provided object.
+ * Condition is checked every `idleDuration` milliseconds, with a default of 1 second.
  *
- * @param <T> supplier result.
+ * @param <T> the type of the object being checked.
  */
 public final class Waiter<T> {
 
@@ -49,8 +52,10 @@ public final class Waiter<T> {
     }
 
     /**
-     * @param <T> supplier result.
-     * @return builder
+     * Creates a new Waiter builder.
+     *
+     * @param <T> the type of the object being waited for.
+     * @return a new Builder instance.
      */
     public static <T> Waiter<T>.Builder newBuilder() {
         return new Waiter<T>().new Builder();
@@ -77,29 +82,41 @@ public final class Waiter<T> {
     }
 
     /**
-     * @param expectedCondition condition.
-     * @return result response.
-     * @throws TimeExceededRuntimeException if expected condition not met during waiting time.
+     * Waits for the specified condition to be met.
+     *
+     * @param expectedCondition the condition to be satisfied.
+     * @return the object returned by the supplier once the condition is satisfied.
+     * @throws TimeExceededRuntimeException if the condition is not satisfied within the wait time.
      */
     public T waitCondition(final Predicate<T> expectedCondition) {
         return waitCondition(expectedCondition, null);
     }
 
     /**
-     * @param expectedCondition condition.
-     * @param predicateAsString string representation of the predicate.
-     * @return result response.
-     * @throws TimeExceededRuntimeException if expected condition not met during waiting time.
+     * Waits for the specified condition to be met.
+     *
+     * @param expectedCondition the condition to be satisfied.
+     * @param predicateAsString the string representation of the predicate, optional.
+     * @return the object returned by the supplier once the condition is satisfied.
+     * @throws TimeExceededRuntimeException if the condition is not satisfied within the wait time.
      */
     public T waitCondition(final Predicate<T> expectedCondition, final String predicateAsString) {
+        if (supplier == null || resultToString == null || expectedCondition == null) {
+            throw new IllegalStateException("Supplier, resultToString, and expectedCondition must not be null");
+        }
+
+        if (idleDuration < 1) {
+            idleDuration = 1000;
+        }
+
         final long startTime = DateTime.now().getMillis();
         final long endTime = startTime + getWaitingTime() * 1000L;
-        boolean timeExceeded = false;
         T response = getSupplier().get();
 
-        while (!timeExceeded && !expectedCondition.test(response)) {
-            timeExceeded = DateTime.now().getMillis() >= endTime;
-            response = getSupplier().get();
+        while (DateTime.now().getMillis() < endTime) {
+            if (expectedCondition.test(response)) {
+                return response;
+            }
 
             // Print intermediate response
             if (isDebug()) {
@@ -108,28 +125,23 @@ public final class Waiter<T> {
             }
 
             // Idle
-            // TODO: avoid using sleep
-            try {
-                Thread.sleep(getIdleDuration());
-            } catch (InterruptedException ignored) {
-                // Ignored
-            }
+            LockSupport.parkNanos(TimeUnit.MILLISECONDS.toNanos(getIdleDuration()));
+
+            response = supplier.get();
         }
 
-        if (timeExceeded) {
-            final var predicateMessagePart = predicateAsString == null ? "" : "Predicate: " + predicateAsString + "\n";
-            final var msgTemplate = "%sExpected condition not met. Max waiting time exceeded%n%nResult: %s%n";
-            final var defaultExceededMessage = String.format(msgTemplate, predicateMessagePart,
-                    getResultToString().apply(response));
-            final var message = timeExceededMessage == null ? defaultExceededMessage : timeExceededMessage;
-            throw new TimeExceededRuntimeException(message);
-        }
+        final var predicatePart = predicateAsString == null ? "" : "Predicate: " + predicateAsString + "\n";
+        final var defaultMsg = STR."""
+                \{predicatePart}Expected condition not met. Max waiting time exceeded
 
-        return response;
+                Result: \{resultToString.apply(response)}
+                """;
+
+        throw new TimeExceededRuntimeException(timeExceededMessage != null ? timeExceededMessage : defaultMsg);
     }
 
     /**
-     * Waiter builder class.
+     * Builder class for {@link Waiter}.
      */
     @SuppressWarnings("PMD.LinguisticNaming")
     public final class Builder {

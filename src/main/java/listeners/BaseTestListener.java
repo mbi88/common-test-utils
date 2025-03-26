@@ -2,84 +2,34 @@ package listeners;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.testng.ITestContext;
 import org.testng.ITestListener;
 import org.testng.ITestResult;
 
 /**
- * Custom TestNG listener for test running.
+ * Custom TestNG listener for enhanced test failure logging.
+ * Logs failed tests with duration and re-run command.
  */
 public class BaseTestListener implements ITestListener {
 
-    /**
-     * Prints test results.
-     *
-     * @param iTestResult result.
-     * @param status      test status.
-     * @param message     message to print.
-     */
-    private void logTestResult(final ITestResult iTestResult, final String status, final String message) {
-        final Logger log = LoggerFactory.getLogger(BaseTestListener.class);
-        log.error(status + getTime(iTestResult) + message);
-    }
+    private static final Logger LOG = LoggerFactory.getLogger(BaseTestListener.class);
 
-    /**
-     * Get elapsed test case time.
-     *
-     * @param iTestResult result.
-     * @return elapsed time.
-     */
-    private String getTime(final ITestResult iTestResult) {
-        return "[ " + (iTestResult.getEndMillis() - iTestResult.getStartMillis()) + "ms ]";
+    @Override
+    public void onTestFailure(final ITestResult result) {
+        LOG.error(formatMessage(result));
     }
 
     /**
      * Returns terminal command to rerun test.
      *
-     * @param iTestResult result.
+     * @param result ITestResult test result.
      * @return command.
      */
-    private String getMessage(final ITestResult iTestResult) {
-        return " [ "
-                + "gradle clean test --tests "
-                + iTestResult.getTestClass().getName()
-                + "."
-                + iTestResult.getMethod().getMethodName()
-                + " ]";
-    }
-
-    @Override
-    public void onTestStart(final ITestResult iTestResult) {
-        // Not used
-    }
-
-    @Override
-    public void onTestSuccess(final ITestResult iTestResult) {
-        // Not used
-    }
-
-    @Override
-    public void onTestFailure(final ITestResult iTestResult) {
-        logTestResult(iTestResult, " [ FAILED ] ", getMessage(iTestResult));
-    }
-
-    @Override
-    public void onTestSkipped(final ITestResult iTestResult) {
-        // Not used
-    }
-
-    @Override
-    public void onStart(final ITestContext iTestContext) {
-        // Not used
-    }
-
-    @Override
-    public void onFinish(final ITestContext iTestContext) {
-        // Not used
-    }
-
-    @Override
-    public void onTestFailedButWithinSuccessPercentage(final ITestResult iTestResult) {
-        // Not used
+    private String formatMessage(final ITestResult result) {
+        return String.format(
+                " [ FAILED ] [ %dms ] [ gradle clean test --tests %s.%s ]",
+                result.getEndMillis() - result.getStartMillis(),
+                result.getTestClass().getName(),
+                result.getMethod().getMethodName()
+        );
     }
 }

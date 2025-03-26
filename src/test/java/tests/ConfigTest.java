@@ -17,6 +17,9 @@ public class ConfigTest implements Configuration {
         assertEquals(getCurrentEnv("https://www.qa1-asdasd.com"), "www.qa1");
         assertEquals(getCurrentEnv("https://qa1-asdasd.com"), "qa1");
         assertEquals(getCurrentEnv("www.qa1-asdasd.com"), "www.qa1");
+        assertEquals(getCurrentEnv("qa1.domain.com"), "qa1.domain.com");
+        assertEquals(getCurrentEnv("www.qa1-asdasd"), "www.qa1");
+        assertEquals(getCurrentEnv("http://qa1-asdasd"), "qa1");
         assertEquals(getCurrentEnv("qa1asdasd.com"), "qa1asdasd.com");
         assertEquals(getCurrentEnv("qa1asdasd"), "qa1asdasd");
         assertEquals(getCurrentEnv("qa1asdasd"), "qa1asdasd");
@@ -49,22 +52,13 @@ public class ConfigTest implements Configuration {
 
     @Test
     public void testCantGetApiStatusIfResourceNotFound() {
-        try {
-            var r = getApiStatus("http://run.mocky.io/v3/5ab8a4952c00005700");
-            assertEquals(r.statusCode(), 404);
-        } catch (AssertionError ae) {
-            assertTrue(ae.getMessage().contains("expected [[200]] but found [404]"));
-        }
+        var ex = expectThrows(IllegalStateException.class, () -> getApiStatus("http://run.mocky.io/v3/5ab8a4952c00005700"));
+        assertTrue(ex.getMessage().contains("API is not available: http://run.mocky.io/v3/5ab8a4952c00005700"));
     }
 
     @Test
     public void testCantGetApiStatusIfInvalidUrl() {
-        try {
-            var r = getApiStatus("http://run.mocky.io/v3/1");
-            assertEquals(r.statusCode(), 404);
-        } catch (Throwable t) {
-            assertEquals(Arrays.stream(t.getSuppressed()).findAny().get()
-                    .getMessage(), "API is not available: http://run.mocky.io/v3/1");
-        }
+        var ex = expectThrows(IllegalStateException.class, () -> getApiStatus("http://run.mocky"));
+        assertTrue(ex.getMessage().contains("API is not available: http://run.mocky"));
     }
 }

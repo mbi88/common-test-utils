@@ -2,7 +2,6 @@ package auth;
 
 import encoding.Base64Utils;
 import io.jsonwebtoken.Jwts;
-import org.apache.commons.lang3.Validate;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.json.JSONArray;
@@ -11,9 +10,11 @@ import org.json.JSONObject;
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
+import java.util.Date;
+import java.util.Objects;
 
 /**
- * Generates tokens.
+ * Utility for generating JWT tokens with custom claims.
  */
 public final class TokenGenerator {
 
@@ -33,74 +34,61 @@ public final class TokenGenerator {
     private final boolean encoded;
 
     /**
-     * Creates a token generator objects.
+     * Creates a new token generator.
      *
-     * @param secret  secret for token generation.
-     * @param encoded if the secret is base64 encoded.
-     * @throws AssertionError if secret/encoded is null.
+     * @param secret  the secret for signing the token
+     * @param encoded whether the secret is base64 encoded
+     * @throws NullPointerException if any argument is null
      */
     public TokenGenerator(final String secret, final Boolean encoded) {
-        Validate.notNull(secret, "'Secret' can't be null. Set appropriate environment variable");
-        Validate.notNull(encoded, "'Encoded' can't be null. Set appropriate environment variable");
-
-        this.secret = secret;
-        this.encoded = encoded;
+        this.secret = Objects.requireNonNull(secret, "'secret' must not be null");
+        this.encoded = Objects.requireNonNull(encoded, "'encoded' must not be null");
     }
 
     /**
-     * @param claims Claims
-     * @return JWT token
+     * Generates a signed JWT token with the provided claims.
+     *
+     * @param claims the claims to embed in the token
+     * @return a signed token with Bearer prefix
      */
     public String generateToken(final JSONObject claims) {
-        return buildToken(claims, secret, encoded);
+        return "Bearer " + Jwts.builder()
+                .claims(claims.toMap())
+                .signWith(getKey())
+                .expiration(expirationDate())
+                .compact();
     }
 
     /**
-     * @param json  claims as json object that will be updated
-     * @param key   key to be updated
-     * @param value value to be set
-     * @return updated claims
+     * Updates the provided claim in a JSON object.
+     * <p>
+     * Automatically wraps the value in JSONArray if the current field is an array.
+     *
+     * @param json  the claims object
+     * @param key   the key to update
+     * @param value the value to set
+     * @return the updated claims object
      */
     public JSONObject updateClaim(final JSONObject json, final String key, final Object value) {
         // In case if I forget that the key accepts JSONArray instead of object or string
-        final Object object = json.get(key);
-        if (object instanceof JSONArray && !(value instanceof JSONArray)) {
-            final JSONArray putJson = new JSONArray();
-            putJson.put(value);
-            json.put(key, putJson);
-
-            return json;
+        final var current = json.get(key);
+        if (current instanceof JSONArray && !(value instanceof JSONArray)) {
+            return json.put(key, new JSONArray().put(value));
         }
-
         return json.put(key, value);
     }
 
     /**
      * Returns signed key. Decoded if the secret is base64 encoded.
      *
-     * @param scr     secret for token generation.
-     * @param encoded if the secret is base64 encoded.
      * @return key.
      */
-    private Key getKey(final String scr, final boolean encoded) {
-        final byte[] secretBytes = encoded ? Base64Utils.decode(scr) : scr.getBytes(StandardCharsets.UTF_8);
-
+    private Key getKey() {
+        final byte[] secretBytes = encoded ? Base64Utils.decode(secret) : secret.getBytes(StandardCharsets.UTF_8);
         return new SecretKeySpec(secretBytes, "HmacSHA256");
     }
 
-    /**
-     * Token builder.
-     *
-     * @param claims  claims.
-     * @param secret  secret for token generation.
-     * @param encoded if the secret is base64 encoded.
-     * @return string token in format 'Bearer ...'.
-     */
-    private String buildToken(final JSONObject claims, final String secret, final boolean encoded) {
-        return "Bearer " + Jwts.builder()
-                .claims(claims.toMap())
-                .signWith(getKey(secret, encoded))
-                .expiration(new DateTime(DateTimeZone.UTC).plusHours(TTL).toDate())
-                .compact();
+    private Date expirationDate() {
+        return new DateTime(DateTimeZone.UTC).plusHours(TTL).toDate();
     }
 }

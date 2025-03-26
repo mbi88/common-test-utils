@@ -7,6 +7,9 @@ plugins {
     id("maven-publish")
 }
 
+group = "com.mbi"
+version = "1.0"
+
 val suitesDir = "src/test/resources/suites/"
 
 repositories {
@@ -52,27 +55,14 @@ tasks.test {
     jvmArgs("--enable-preview")
 
     useTestNG {
-        // Add test suites
-        File(projectDir.absolutePath + "/" + suitesDir).walk().forEach {
-                if (it.isFile) {
-                    suites(it)
-                }
-            }
+        // Automatically include all XML test suite files from suitesDir
+        fileTree(suitesDir).matching { include("*.xml") }.files.forEach { suites(it) }
+    }
 
-        testLogging {
-            events("passed", "skipped", "failed")
-            exceptionFormat = TestExceptionFormat.FULL
-            showStandardStreams = true
-        }
-
-        // Set listeners
-        val myListeners = ArrayList<String>()
-        myListeners.add("tests.AnnotationTransformer")
-        myListeners.add("tests.ListenerTest")
-
-        myListeners.forEach {
-            listeners.add(it)
-        }
+    testLogging {
+        events("passed", "skipped", "failed")
+        exceptionFormat = TestExceptionFormat.FULL
+        showStandardStreams = true
     }
 }
 
@@ -90,11 +80,11 @@ java {
 }
 
 tasks.withType<Javadoc> {
-    val opts = options as StandardJavadocDocletOptions
-    opts.addBooleanOption("Xdoclint:none", true)
+    (options as StandardJavadocDocletOptions).addBooleanOption("Xdoclint:none", true)
 }
 
 quality {
+    // Enable all supported static analysis tools
     checkstyleVersion = "10.16.0"
     checkstyle = true
     pmd = true
@@ -109,10 +99,7 @@ tasks.check {
 publishing {
     publications {
         create<MavenPublication>("maven") {
-            groupId = "com.mbi"
             artifactId = "common-test-utils"
-            version = "1.0"
-
             from(components["java"])
         }
     }

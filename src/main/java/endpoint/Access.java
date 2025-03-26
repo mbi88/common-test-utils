@@ -1,26 +1,25 @@
 package endpoint;
 
 /**
- * Created by mbi on 10/6/16.
+ * Contract for access control checks using auth tokens.
  */
 public interface Access {
 
     /**
-     * Assure access is granted with valid auth token.
-     * "allowAll": true
-     * Expected status code: 2XX
+     * Ensures access is granted with a valid auth token.
+     * Expected: 2xx status code.
      */
     void testCanGetAccess();
 
     /**
-     * Assure access is denied if token is invalid.
-     * Expected status code: 401
+     * Ensures access is denied with an invalid auth token.
+     * Expected: 401 Unauthorized.
      */
     void testCantGetAccessWithInvalidToken();
 
     /**
-     * Assure no access if request performed without Authorization header.
-     * Expected status code: 401
+     * Ensures access is denied when Authorization header is missing.
+     * Expected: 401 Unauthorized.
      */
     void testCantGetAccessWithoutAuth();
 }

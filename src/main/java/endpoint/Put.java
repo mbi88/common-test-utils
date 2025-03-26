@@ -1,24 +1,24 @@
 package endpoint;
 
 /**
- * Created by mbi on 8/15/16.
+ * Contract for testing PUT endpoint behavior.
  */
 public interface Put {
 
     /**
-     * Check basic endpoint operations.
+     * Tests successful full update (PUT) of an object.
      */
     void testCanPut();
 
     /**
-     * Perform request without object id in url.
-     * Expected 404.
+     * Ensures PUT request fails when object ID is missing in the URL.
+     * Expected: 404 Not Found.
      */
     void testCantPutWithoutId();
 
     /**
-     * Perform request with incorrect object id in url.
-     * Expected 404.
+     * Ensures PUT request fails with an incorrect object ID.
+     * Expected: 404 Not Found.
      */
     void testCantPutWithIncorrectId();
 }

@@ -5,18 +5,18 @@ import io.restassured.response.Response;
 import java.util.function.Function;
 
 /**
- * Endpoints that have methods to create objects (POST, PUT) should implement this interface for accessing created
- * objects by its id.
+ * Interface for controllers that create resources via POST or PUT requests.
+ * Provides utility for extracting ID from the response.
  */
 public interface Creatable {
 
     /**
-     * Extracts id from response.
+     * Extracts an object ID from the given response using the provided function.
      *
-     * @param response rest-assured response
-     * @param function extract function.
-     * @param <T>      id class.
-     * @return id.
+     * @param response the response to extract from
+     * @param function the extraction function
+     * @param <T>      type of ID
+     * @return extracted ID
      */
     default <T> T extractId(final Response response, final Function<Response, T> function) {
         return function.apply(response);
