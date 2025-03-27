@@ -7,7 +7,7 @@ import com.google.common.collect.Multimap;
 import java.util.stream.Collectors;
 
 /**
- * Utility for building URL query parameters (e.g., ?key1=val1&key2=val2).
+ * Utility for building URL query parameters (e.g., <!--?key1=val1&key2=val2-->).
  */
 public final class QueryParameter {
 

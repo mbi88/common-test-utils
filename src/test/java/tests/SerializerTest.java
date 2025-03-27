@@ -13,11 +13,8 @@ public class SerializerTest {
 
     @Test
     public void testWithInvalidResourcePath() {
-        try {
-            getResource("asd");
-        } catch (NullPointerException e) {
-            assertEquals(e.getMessage(), "Can't find a file: asd");
-        }
+        var ex = expectThrows(NullPointerException.class, () -> getResource("asd"));
+        assertTrue(ex.getMessage().contains("Can't find a file: asd"));
     }
 
     @Test

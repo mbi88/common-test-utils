@@ -15,7 +15,7 @@ import java.util.stream.Stream;
  */
 public interface Configuration {
 
-    Logger log = LoggerFactory.getLogger(Configuration.class);
+    Logger LOGGER = LoggerFactory.getLogger(Configuration.class);
 
     /**
      * Returns environment variable value by its name.
@@ -25,7 +25,7 @@ public interface Configuration {
      */
     default String readVar(final String varName) {
         final String value = System.getenv(varName);
-        log.info("Reading env var '{}': {}", varName, value);
+        LOGGER.info("Reading env var '{}': {}", varName, value);
         return Objects.requireNonNullElse(value, "null");
     }
 

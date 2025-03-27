@@ -90,12 +90,17 @@ public final class JsonDeserializer {
      */
     public static JSONObject findJsonInArray(final JSONArray sourceArray, final String name, final Object value) {
         for (var element : sourceArray) {
-            if (!(element instanceof JSONObject json)) continue;
+            if (!(element instanceof JSONObject json)) {
+                continue;
+            }
 
             try {
                 final var fieldValue = json.get(name);
-                if (Objects.equals(fieldValue, value)) return json;
+                if (Objects.equals(fieldValue, value)) {
+                    return json;
+                }
             } catch (JSONException ignored) {
+                // ignored
             }
         }
         return new JSONObject();

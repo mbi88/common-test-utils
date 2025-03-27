@@ -6,8 +6,6 @@ import org.testng.annotations.Test;
 import software.amazon.awssdk.core.exception.SdkClientException;
 import software.amazon.awssdk.services.ssm.model.ParameterNotFoundException;
 
-import java.util.Arrays;
-
 import static org.testng.Assert.*;
 
 public class ConfigTest implements Configuration {
@@ -37,10 +35,8 @@ public class ConfigTest implements Configuration {
 
     @Test
     public void tesGetSSMParameter() {
-        try {
-            readSsmParameter("ddd");
-        } catch (ParameterNotFoundException | SdkClientException ignored) {
-        }
+        var ex = expectThrows(Throwable.class, () -> readSsmParameter("ddd"));
+        assertTrue(ex instanceof ParameterNotFoundException || ex instanceof SdkClientException);
     }
 
     @Test

@@ -131,11 +131,9 @@ public final class Waiter<T> {
         }
 
         final var predicatePart = predicateAsString == null ? "" : "Predicate: " + predicateAsString + "\n";
-        final var defaultMsg = STR."""
-                \{predicatePart}Expected condition not met. Max waiting time exceeded
-
-                Result: \{resultToString.apply(response)}
-                """;
+        final var defaultMsg = predicatePart
+                + "Expected condition not met. Max waiting time exceeded\n\n"
+                + "Result: " + resultToString.apply(response);
 
         throw new TimeExceededRuntimeException(timeExceededMessage != null ? timeExceededMessage : defaultMsg);
     }

@@ -92,11 +92,9 @@ public class ControllersTest {
                 .setWaitingTime(10)
                 .build();
 
-        try {
-            waiter.waitCondition(response -> response.statusCode() == 20, "response.statusCode() == 20");
-        } catch (RuntimeException t) {
-            assertTrue(t.getMessage().contains("Expected condition not met. Max waiting time exceeded"));
-        }
+        var ex = expectThrows(RuntimeException.class, () -> waiter
+                .waitCondition(response -> response.statusCode() == 20, "response.statusCode() == 20"));
+        assertTrue(ex.getMessage().contains("Expected condition not met. Max waiting time exceeded"));
     }
 
     @Test
@@ -108,11 +106,9 @@ public class ControllersTest {
                 .setIdleDuration(5000)
                 .build();
 
-        try {
-            waiter.waitCondition(response -> response.statusCode() == 20);
-        } catch (RuntimeException t) {
-            assertTrue(t.getMessage().contains("Expected condition not met. Max waiting time exceeded"));
-        }
+        var ex = expectThrows(TimeExceededRuntimeException.class, () -> waiter
+                .waitCondition(response -> response.statusCode() == 20));
+        assertTrue(ex.getMessage().contains("Expected condition not met. Max waiting time exceeded"));
     }
 
     @Test
@@ -124,11 +120,9 @@ public class ControllersTest {
                 .setDebug(true)
                 .build();
 
-        try {
-            waiter.waitCondition(response -> response.statusCode() == 20);
-        } catch (RuntimeException t) {
-            assertTrue(t.getMessage().contains("Expected condition not met. Max waiting time exceeded"));
-        }
+        var ex = expectThrows(TimeExceededRuntimeException.class, () -> waiter
+                .waitCondition(response -> response.statusCode() == 20));
+        assertTrue(ex.getMessage().contains("Expected condition not met. Max waiting time exceeded"));
     }
 
     @Test
@@ -172,15 +166,8 @@ public class ControllersTest {
     public void testErrorMessageOnNullId() {
         var testClass = new TestClass(null);
 
-        boolean passed;
-        try {
-            testClass.getId();
-            passed = true;
-        } catch (NullPointerException ex) {
-            passed = false;
-            assertEquals(ex.getMessage(), "TestClass: Object id is not initialized");
-        }
-        assertFalse(passed);
+        var ex = expectThrows(NullPointerException.class, testClass::getId);
+        assertTrue(ex.getMessage().contains("TestClass: Object id is not initialized"));
     }
 
     @Test
@@ -203,11 +190,9 @@ public class ControllersTest {
                 .setTimeExceededMessage("hello! time exceeded")
                 .build();
 
-        try {
-            waiter.waitCondition(response -> response.statusCode() == 20);
-        } catch (RuntimeException t) {
-            assertTrue(t.getMessage().contains("hello! time exceeded"));
-        }
+        var ex = expectThrows(TimeExceededRuntimeException.class, () -> waiter
+                .waitCondition(response -> response.statusCode() == 20));
+        assertTrue(ex.getMessage().contains("hello! time exceeded"));
     }
 
     @Test
@@ -232,15 +217,8 @@ public class ControllersTest {
     public void testCanSendGraphQLRequestWithNoHasErrorsIfErrorsInResponse() {
         var graphQL = new GraphQL("https://dummyjson.com/c/773b-7f45-4971-b293", "CP_ADMIN_TOKEN");
 
-        boolean passed;
-        try {
-            graphQL.send(new JSONObject());
-            passed = true;
-        } catch (AssertionError error) {
-            passed = false;
-            assertTrue(error.getMessage().contains("Response has errors! expected [false] but found [true]"));
-        }
-        assertFalse(passed);
+        var ex = expectThrows(AssertionError.class, () -> graphQL.send(new JSONObject()));
+        assertTrue(ex.getMessage().contains("Response has errors! expected [false] but found [true]"));
     }
 
     @Test
@@ -265,15 +243,8 @@ public class ControllersTest {
     public void testCanSendGraphQLRequestWithHasErrorsFalseIfErrorsInResponse() {
         var graphQL = new GraphQL("https://dummyjson.com/c/773b-7f45-4971-b293", "CP_ADMIN_TOKEN");
 
-        boolean passed;
-        try {
-            graphQL.send(new JSONObject(), false);
-            passed = true;
-        } catch (AssertionError error) {
-            passed = false;
-            assertTrue(error.getMessage().contains("Response has errors! expected [false] but found [true]"));
-        }
-        assertFalse(passed);
+        var ex = expectThrows(AssertionError.class, () -> graphQL.send(new JSONObject(), false));
+        assertTrue(ex.getMessage().contains("Response has errors! expected [false] but found [true]"));
     }
 
     @Test

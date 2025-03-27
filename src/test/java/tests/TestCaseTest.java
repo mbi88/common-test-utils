@@ -78,41 +78,20 @@ public class TestCaseTest extends BaseTestCase {
 
     @Test
     public void testCantGetRandomNumWith0Digits() {
-        boolean passed;
-        try {
-            getRandomNum(0);
-            passed = true;
-        } catch (IllegalArgumentException error) {
-            passed = false;
-            assertEquals(error.getMessage(), "Value 0 is not in the specified exclusive range of 1 to 18");
-        }
-        assertFalse(passed);
+        var ex = expectThrows(IllegalArgumentException.class, () -> getRandomNum(0));
+        assertTrue(ex.getMessage().contains("Value 0 is not in the supported range [1, 18]"));
     }
 
     @Test
     public void testCantGetRandomNumWithMinus1Digits() {
-        boolean passed;
-        try {
-            getRandomNum(-1);
-            passed = true;
-        } catch (IllegalArgumentException error) {
-            passed = false;
-            assertEquals(error.getMessage(), "Value -1 is not in the specified exclusive range of 1 to 18");
-        }
-        assertFalse(passed);
+        var ex = expectThrows(IllegalArgumentException.class, () -> getRandomNum(-1));
+        assertTrue(ex.getMessage().contains("Value -1 is not in the supported range [1, 18]"));
     }
 
     @Test
     public void testCantGetRandomNumWith20Digits() {
-        boolean passed;
-        try {
-            getRandomNum(20);
-            passed = true;
-        } catch (IllegalArgumentException error) {
-            passed = false;
-            assertEquals(error.getMessage(), "Value 20 is not in the specified exclusive range of 1 to 18");
-        }
-        assertFalse(passed);
+        var ex = expectThrows(IllegalArgumentException.class, () -> getRandomNum(20));
+        assertTrue(ex.getMessage().contains("Value 20 is not in the supported range [1, 18]"));
     }
 
     @Test

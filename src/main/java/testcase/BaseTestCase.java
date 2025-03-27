@@ -18,6 +18,7 @@ import java.util.UUID;
 /**
  * Abstract base class for test cases.
  */
+@SuppressWarnings("checkstyle:ClassDataAbstractionCoupling")
 public abstract class BaseTestCase implements IConfigurable {
 
     private static final Random RANDOM = new Random();
