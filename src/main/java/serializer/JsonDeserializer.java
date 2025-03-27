@@ -8,18 +8,16 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.nio.charset.Charset;
+import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.function.BiFunction;
 import java.util.function.BiPredicate;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 /**
@@ -33,7 +31,6 @@ public final class JsonDeserializer {
      */
     private static final String FIELDS_SEPARATOR = ".";
     private static final Faker FAKER = new JsonFaker();
-    private static final Logger LOGGER = Logger.getLogger(JsonDeserializer.class.getCanonicalName());
 
     /**
      * Checks if field is present in flattened json.
@@ -162,19 +159,17 @@ public final class JsonDeserializer {
      * @param path representation of a system dependent file path
      * @return content from file as a string
      */
-    private static String readStringFromFile(final String path) {
-        try (
-                var data = JsonDeserializer.class.getResourceAsStream(path);
-                var inputStream = new InputStreamReader(
-                        Objects.requireNonNull(data, "Can't find a file: " + path), Charset.defaultCharset());
-                var reader = new BufferedReader(inputStream)
-        ) {
-            return reader.lines().collect(Collectors.joining("\n"));
-        } catch (IOException e) {
-            LOGGER.log(Level.INFO, e.getMessage());
+    public static String readStringFromFile(final String path) {
+        try {
+            final var url = JsonDeserializer.class.getResource(path);
+            if (url == null) {
+                throw new IllegalArgumentException("Can't find a file: " + path);
+            }
+            final var filePath = Path.of(Objects.requireNonNull(url).toURI());
+            return Files.readString(filePath);
+        } catch (URISyntaxException | IOException e) {
+            throw new IllegalArgumentException("Failed to read file: " + path, new IOException(e));
         }
-
-        return null;
     }
 
     private static JSONObject flatten(final String json) {

@@ -9,3 +9,6 @@ build/
 
 # config files
 src/main/resources/configuration/
+
+# internal web server reports
+test-output/

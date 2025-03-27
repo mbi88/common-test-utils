@@ -3,11 +3,8 @@ package tests;
 import com.mbi.request.RequestBuilder;
 import controllers.*;
 import io.restassured.response.Response;
-import org.json.JSONArray;
-import org.json.JSONObject;
 import org.testng.annotations.Test;
 
-import java.util.Map;
 import java.util.function.Function;
 
 import static org.testng.Assert.*;
@@ -139,6 +136,67 @@ public class ControllersTest {
     }
 
     @Test
+    public void testCantWaitWithoutSupplier() {
+        var waiter = Waiter.<Response>newBuilder()
+                .setResultToString(Response::asString)
+                .setWaitingTime(10)
+                .build();
+
+        var ex = expectThrows(IllegalStateException.class, () -> waiter
+                .waitCondition(response -> response.statusCode() == 200));
+        assertTrue(ex.getMessage().contains("Supplier, resultToString, and expectedCondition must not be null"));
+    }
+
+    @Test
+    public void testCantWaitWithoutResult() {
+        var waiter = Waiter.<Response>newBuilder()
+                .setSupplier(() -> new RequestBuilder().get("https://api.npoint.io/3a360af4f1419f85f238"))
+                .setWaitingTime(10)
+                .build();
+
+        var ex = expectThrows(IllegalStateException.class, () -> waiter
+                .waitCondition(response -> response.statusCode() == 200));
+        assertTrue(ex.getMessage().contains("Supplier, resultToString, and expectedCondition must not be null"));
+    }
+
+    @Test
+    public void testCantWaitWithoutExpectedResult() {
+        var waiter = Waiter.<Response>newBuilder()
+                .setSupplier(() -> new RequestBuilder().get("https://api.npoint.io/3a360af4f1419f85f238"))
+                .setResultToString(Response::asString)
+                .setWaitingTime(10)
+                .build();
+
+        var ex = expectThrows(IllegalStateException.class, () -> waiter
+                .waitCondition(null));
+        assertTrue(ex.getMessage().contains("Supplier, resultToString, and expectedCondition must not be null"));
+    }
+
+    @Test
+    public void testWithAllNull() {
+        var waiter = Waiter.<Response>newBuilder()
+                .build();
+
+        var ex = expectThrows(IllegalStateException.class, () -> waiter
+                .waitCondition(null));
+        assertTrue(ex.getMessage().contains("Supplier, resultToString, and expectedCondition must not be null"));
+    }
+
+    @Test
+    public void testCanGetWithIdle0() {
+        var waiter = Waiter.<Response>newBuilder()
+                .setSupplier(() -> new RequestBuilder().get("https://api.npoint.io/3a360af4f1419f85f238"))
+                .setResultToString(Response::asString)
+                .setWaitingTime(10)
+                .setIdleDuration(0)
+                .build();
+
+        var r = waiter.waitCondition(response -> response.statusCode() == 200);
+
+        assertEquals(toJson(r).getInt("a"), 1);
+    }
+
+    @Test
     public void testWithIncorrectId() {
         class TestClass extends Controller<TestClass> {
         }
@@ -193,106 +251,6 @@ public class ControllersTest {
         var ex = expectThrows(TimeExceededRuntimeException.class, () -> waiter
                 .waitCondition(response -> response.statusCode() == 20));
         assertTrue(ex.getMessage().contains("hello! time exceeded"));
-    }
-
-    @Test
-    public void testCanSendGraphQLRequest() {
-        var graphQL = new GraphQL("https://dummyjson.com/c/e983-d5bb-4bb2-be7d", "CP_ADMIN_TOKEN");
-        var r = graphQL.send(new JSONObject(), false);
-
-        assertEquals(r.asString(), """
-                {"data":{"a":1}}""");
-    }
-
-    @Test
-    public void testCanSendGraphQLRequestWithNoHasErrors() {
-        var graphQL = new GraphQL("https://dummyjson.com/c/e983-d5bb-4bb2-be7d", "CP_ADMIN_TOKEN");
-        var r = graphQL.send(new JSONObject());
-
-        assertEquals(r.asString(), """
-                {"data":{"a":1}}""");
-    }
-
-    @Test
-    public void testCanSendGraphQLRequestWithNoHasErrorsIfErrorsInResponse() {
-        var graphQL = new GraphQL("https://dummyjson.com/c/773b-7f45-4971-b293", "CP_ADMIN_TOKEN");
-
-        var ex = expectThrows(AssertionError.class, () -> graphQL.send(new JSONObject()));
-        assertTrue(ex.getMessage().contains("Response has errors! expected [false] but found [true]"));
-    }
-
-    @Test
-    public void testCanSendGraphQLRequestWithHasErrorsTrueIfNoErrorsInResponse() {
-        var graphQL = new GraphQL("https://dummyjson.com/c/e983-d5bb-4bb2-be7d", "CP_ADMIN_TOKEN");
-        var r = graphQL.send(new JSONObject(), true);
-
-        assertEquals(r.asString(), """
-                {"data":{"a":1}}""");
-    }
-
-    @Test
-    public void testCanSendGraphQLRequestWithHasErrorsTrueIfErrorsInResponse() {
-        var graphQL = new GraphQL("https://dummyjson.com/c/773b-7f45-4971-b293", "CP_ADMIN_TOKEN");
-        var r = graphQL.send(new JSONObject(), true);
-
-        assertEquals(r.asString(), """
-                {"data":{"a":1},"errors":[{"message":"error"}]}""");
-    }
-
-    @Test
-    public void testCanSendGraphQLRequestWithHasErrorsFalseIfErrorsInResponse() {
-        var graphQL = new GraphQL("https://dummyjson.com/c/773b-7f45-4971-b293", "CP_ADMIN_TOKEN");
-
-        var ex = expectThrows(AssertionError.class, () -> graphQL.send(new JSONObject(), false));
-        assertTrue(ex.getMessage().contains("Response has errors! expected [false] but found [true]"));
-    }
-
-    @Test
-    public void testCanSendGraphQLRequestWithToken() {
-        var graphQL = new GraphQL("https://dummyjson.com/c/e983-d5bb-4bb2-be7d", "CP_ADMIN_TOKEN");
-        var r = graphQL.send(new JSONObject(), "token", true);
-
-        assertEquals(r.asString(), """
-                {"data":{"a":1}}""");
-    }
-
-
-    @Test
-    public void testCanSendGraphQLRequestWithNullToken() {
-        var graphQL = new GraphQL("https://dummyjson.com/c/e983-d5bb-4bb2-be7d", "CP_ADMIN_TOKEN");
-        var r = graphQL.send(new JSONObject(), null, false);
-
-        assertEquals(r.asString(), """
-                {"data":{"a":1}}""");
-    }
-
-    @Test
-    public void testCanSendGraphQLRequestWithArray() {
-        var graphQL = new GraphQL("https://dummyjson.com/c/e983-d5bb-4bb2-be7d", "CP_ADMIN_TOKEN");
-        var r = graphQL.send(new JSONArray());
-
-        assertEquals(r.asString(), """
-                {"data":{"a":1}}""");
-    }
-
-    @Test
-    public void testCanGetQuery() {
-        var r = GraphQL.getGraphQLQuery("/jsons/jo.json", new JSONObject().put("a", 1));
-
-        assertEquals(r.toString(2), """
-                {
-                  "variables": {"a": 1},
-                  "query": "{\\n  \\"a\\": 1\\n}"
-                }""");
-    }
-
-    @Test
-    public void testCanSendMultipart() {
-        var graphQL = new GraphQL("https://dummyjson.com/c/e983-d5bb-4bb2-be7d", "CP_ADMIN_TOKEN");
-        var r = graphQL.sendMultipart(Map.of("a", 2), "token");
-
-        assertEquals(r.body(), """
-                {"data":{"a":1}}""");
     }
 
     static class TestClass extends Controller<TestClass> implements Creatable {

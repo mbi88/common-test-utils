@@ -11,6 +11,7 @@
             <class name="tests.ListenerTest"/>
             <class name="tests.ConfigTest"/>
             <class name="tests.BaseTestCaseTest"/>
+            <class name="tests.GraphQLTest"/>
         </classes>
     </test>
 </suite>

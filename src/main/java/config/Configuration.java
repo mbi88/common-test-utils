@@ -36,7 +36,7 @@ public interface Configuration {
      * @return parameter value
      */
     default String readSsmParameter(final String paramName) {
-        try (var client = SsmClient.builder().build()) {
+        try (var client = ssmClient()) {
             final var request = GetParameterRequest.builder()
                     .name(paramName)
                     .withDecryption(true)
@@ -46,6 +46,15 @@ public interface Configuration {
                     .parameter()
                     .value();
         }
+    }
+
+    /**
+     * Creates an instance of SSM client.
+     *
+     * @return SSM client
+     */
+    default SsmClient ssmClient() {
+        return SsmClient.builder().build();
     }
 
     /**

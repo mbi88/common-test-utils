@@ -24,7 +24,7 @@ public class BaseTestListener implements ITestListener {
      * @param result ITestResult test result.
      * @return command.
      */
-    private String formatMessage(final ITestResult result) {
+    protected String formatMessage(final ITestResult result) {
         return String.format(
                 " [ FAILED ] [ %dms ] [ gradle clean test --tests %s.%s ]",
                 result.getEndMillis() - result.getStartMillis(),

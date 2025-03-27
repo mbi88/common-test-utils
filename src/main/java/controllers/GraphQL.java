@@ -3,38 +3,26 @@ package controllers;
 import io.restassured.response.Response;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import serializer.JsonDeserializer;
 
 import java.io.IOException;
 import java.math.BigInteger;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Random;
-import java.util.function.Function;
 
 /**
  * Controller for sending GraphQL requests.
  */
 public final class GraphQL extends Controller<GraphQL> {
 
-    private static final Function<String, String> GET_STRING_FROM_FILE = path -> {
-        try {
-            final var url = GraphQL.class.getResource(path);
-            final var filePath = Paths.get(Objects.requireNonNull(url).toURI());
-            return Files.readString(filePath);
-        } catch (IOException | URISyntaxException e) {
-            throw new IllegalArgumentException("Can't read file: " + path, e);
-        }
-    };
     private static final HttpClient CLIENT = HttpClient.newHttpClient();
     private final String token;
     private final String apiUrl;
@@ -57,7 +45,7 @@ public final class GraphQL extends Controller<GraphQL> {
      * @return query as JSON object.
      */
     public static JSONObject getGraphQLQuery(final String path) {
-        return new JSONObject().put("query", GET_STRING_FROM_FILE.apply(path));
+        return new JSONObject().put("query", JsonDeserializer.readStringFromFile(path));
     }
 
     /**

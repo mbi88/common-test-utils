@@ -30,6 +30,13 @@ public class TestCaseTest extends BaseTestCase {
     }
 
     @Test
+    public void tesFaker() {
+        var res = jsonFaker.fakeData(new JSONObject().put("a", "Hello {$caller}!"));
+
+        assertEquals(res.toString(), "{\"a\":\"Hello tests.TestCaseTest.tesFaker!\"}");
+    }
+
+    @Test
     public void testRandomNumLength() {
         assertEquals(String.valueOf(getRandomNum(1)).length(), 1);
         assertEquals(String.valueOf(getRandomNum(10)).length(), 10);

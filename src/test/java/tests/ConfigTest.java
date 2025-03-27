@@ -4,8 +4,15 @@ import config.Configuration;
 import org.json.JSONObject;
 import org.testng.annotations.Test;
 import software.amazon.awssdk.core.exception.SdkClientException;
+import software.amazon.awssdk.services.ssm.SsmClient;
+import software.amazon.awssdk.services.ssm.model.GetParameterRequest;
+import software.amazon.awssdk.services.ssm.model.GetParameterResponse;
+import software.amazon.awssdk.services.ssm.model.Parameter;
 import software.amazon.awssdk.services.ssm.model.ParameterNotFoundException;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 import static org.testng.Assert.*;
 
 public class ConfigTest implements Configuration {
@@ -56,5 +63,24 @@ public class ConfigTest implements Configuration {
     public void testCantGetApiStatusIfInvalidUrl() {
         var ex = expectThrows(IllegalStateException.class, () -> getApiStatus("http://run.mocky"));
         assertTrue(ex.getMessage().contains("API is not available: http://run.mocky"));
+    }
+
+    @Test
+    void testReadSsmParameter() {
+        var mockClient = mock(SsmClient.class);
+        var mockParam = Parameter.builder().value("mocked-value").build();
+        var mockResponse = GetParameterResponse.builder().parameter(mockParam).build();
+        when(mockClient.getParameter(any(GetParameterRequest.class))).thenReturn(mockResponse);
+
+        // Anonymously implement Configuration with ssmClient() provided
+        Configuration config = new Configuration() {
+            @Override
+            public SsmClient ssmClient() {
+                return mockClient;
+            }
+        };
+
+        String value = config.readSsmParameter("dummy");
+        assertEquals(value, "mocked-value");
     }
 }

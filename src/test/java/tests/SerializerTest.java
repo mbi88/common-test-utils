@@ -2,10 +2,18 @@ package tests;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.mockito.MockedStatic;
 import org.testng.annotations.Test;
+import serializer.JsonDeserializer;
 
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Map;
 
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.mockStatic;
 import static org.testng.Assert.*;
 import static serializer.JsonDeserializer.*;
 
@@ -13,7 +21,7 @@ public class SerializerTest {
 
     @Test
     public void testWithInvalidResourcePath() {
-        var ex = expectThrows(NullPointerException.class, () -> getResource("asd"));
+        var ex = expectThrows(IllegalArgumentException.class, () -> getResource("asd"));
         assertTrue(ex.getMessage().contains("Can't find a file: asd"));
     }
 
@@ -256,5 +264,30 @@ public class SerializerTest {
         var r = updateJson(json, "[1].a", 3);
 
         assertTrue(r.similar(json));
+    }
+
+    @Test
+    public void testFindJsonInArrayIfArrayHasNotJsonObject() {
+        var json = new JSONArray();
+        json.put("a");
+        json.put(new JSONObject().put("c", 2));
+
+        findJsonInArray(json, "a", 1);
+    }
+
+    @Test
+    public void testIOExceptionWrappedInUnchecked() throws Exception {
+        var url = getClass().getResource("/jsons/jo.json");
+        assertNotNull(url); // ensure test fails if resource not found
+
+        // Mock Files.readString()
+        try (MockedStatic<Files> filesMock = mockStatic(Files.class)) {
+            filesMock.when(() -> Files.readString(any(Path.class)))
+                    .thenThrow(new IOException("Simulated IO error"));
+
+            var ex = expectThrows(IllegalArgumentException.class, () ->
+                    JsonDeserializer.readStringFromFile("/jsons/jo.json"));
+            assertTrue(ex.getMessage().contains("Failed to read file"));
+        }
     }
 }
