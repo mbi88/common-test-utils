@@ -10,6 +10,7 @@
             <class name="tests.AuthTest"/>
             <class name="tests.ListenerTest"/>
             <class name="tests.ConfigTest"/>
+            <class name="tests.BaseTestCaseTest"/>
         </classes>
     </test>
 </suite>

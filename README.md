@@ -234,82 +234,99 @@ assertion.jsonEquals(response, getResource("/expected-user.json"));
 
 ## Retry Mechanism
 
-This library supports **automatic test retry** using two independent mechanisms:
+This library supports **automatic retry** of both test methods and configuration methods using two separate mechanisms:
 
 ---
 
 ### 🔁 TestNG Retry (`RetryAnalyzer`)
 
-The default retry mechanism for **individual tests** is implemented via `RetryAnalyzer`:
+The default retry logic for `@Test` methods is provided by `RetryAnalyzer`:
 
-- Retries up to 3 times by default (can be customized using `@Retryable`)
-- Detects if test failed due to `504 Gateway Timeout ERROR` and skips retry
-- Supports opt-out using `@NonRetryable` at **method** or **class** level
+- Retries **up to 3 times** by default if no `@Retryable` annotation is present
+- Supports `@Retryable(attempts = N)` to customize retry count
+- Skips retry if test fails due to `"504 Gateway Timeout ERROR"`
+- Respects `@NonRetryable` **on method only** — does **not** check class-level annotation
 
-#### `@Retryable` annotation
-
-Retry configuration methods like `@BeforeClass` or `@BeforeMethod` using:
-
-```java
-@Retryable(attempts = 3)
-@BeforeMethod
-public void setup() {
-    // flaky setup logic
+```ajva
+@Test  
+@Retryable(attempts = 5)  
+public void flakyTest() {  
+    // Will retry up to 5 times  
 }
 ```
 
-For configuration methods (e.g. @BeforeMethod), retries only happen if @Retryable is present.
+If `@Retryable` is **not present**, the test is retried up to 3 times (default limit in `RetryAnalyzer`).
 
-For tests, retries are enabled by default (up to 3 times), unless the test class is annotated with @NonRetryable.
-
-Use `@Retryable(attempts = N)` to control the number of retries:
+To **disable** retry for a specific test method:
 
 ```java
-public class YourTest {
-    @Test
-    @Retryable(attempts = 5)
-    public void flakyTest() {
-        // Will be retried up to 5 times if it fails
-    }
-}
-```
-
-If `@Retryable` is not present — **default retry limit is 3** (via `RetryAnalyzer`).
-
-#### `@NonRetryable` annotation
-
-Use `@NonRetryable` to completely disable retry for:
-
-| Scope         | Effect                                                                 |
-|---------------|------------------------------------------------------------------------|
-| **Class**     | Disables retry for **all tests** in that class (used by Gradle plugin) |
-| **Method**    | Disables retry **only for that test method** (used by `RetryAnalyzer`) |
-
-Exclude entire test classes from retry logic (gradle plugin limitation):
-
-```java
-@NonRetryable
-public class TestClassThatShouldNeverRetry {
-    ...
+@Test  
+@NonRetryable  
+public void testWithoutRetry() {  
+    ...  
 }
 ```
 
 ---
 
-### 🧩 Gradle Test Retry Plugin
+### ⚙️ Configuration Method Retry (`@BeforeClass`, `@BeforeMethod`, etc.)
 
-In addition to TestNG retries, the project can be integrated with the [Gradle Test Retry Plugin](https://github.com/gradle/test-retry-gradle-plugin) — which allows automatic retry of failed tests **during the Gradle build**.
+Implemented via `IConfigurable` in `BaseTestCase`.
 
-⚠️ However, this plugin **does not support excluding individual test methods**.
+- Retries only happen if `@Retryable` is present on a **configuration method**
+- Without `@Retryable`, the method executes **only once**
+- Works for: `@BeforeMethod`, `@BeforeClass`, `@BeforeTest`, `@BeforeGroups`, `@BeforeSuite`
 
-> It only respects `@NonRetryable` when placed on the **class level**.
-
-So, to disable Gradle retries for a test class:
+Example:
 
 ```java
-@NonRetryable
-public class NoRetryTests {
-    // All tests here will be skipped from retry by Gradle
+@Retryable(attempts = 3)  
+@BeforeMethod  
+public void flakySetup() {  
+    ...  
+}
+```
+
+⚠️ Unlike test methods, there is **no retry by default** for configuration methods.
+
+---
+
+### ❌ `@NonRetryable` annotation
+
+Use `@NonRetryable` to **opt out** of retry:
+
+| Scope         | Affects                         | Notes                                                        |
+|---------------|----------------------------------|--------------------------------------------------------------|
+| Method        | `RetryAnalyzer` only             | Skips retry of specific test method                          |
+| Class         | Gradle Retry Plugin only         | Disables retry for entire class during Gradle builds only    |
+
+Example — skip retry for a test class (Gradle plugin only):
+
+```java
+@NonRetryable  
+public class SomeTestClass {  
+    // Gradle plugin will not retry tests here  
+}
+```
+
+> ⚠️ TestNG's `RetryAnalyzer` **does not** check class-level `@NonRetryable` — use method-level annotation to skip retry per test.
+
+---
+
+### 🧩 Gradle Retry Plugin (Optional)
+
+This library is compatible with the [Gradle Test Retry Plugin](https://github.com/gradle/test-retry-gradle-plugin), which allows retrying failed `@Test` methods during CI builds.
+
+✅ Works automatically on test failure  
+❌ Cannot retry config methods like `@BeforeClass`  
+❌ Cannot skip individual test methods — only full test classes
+
+To skip retry by Gradle plugin:
+
+```java
+@NonRetryable  
+public class NoRetryTests {  
+    // All tests in this class will not be retried by Gradle  
 }
 ```
 

@@ -151,13 +151,15 @@ public abstract class BaseTestCase implements IConfigurable {
     public void run(final IConfigureCallBack callBack, final ITestResult testResult) {
         final var retryable = testResult.getMethod()
                 .getConstructorOrMethod().getMethod().getAnnotation(Retryable.class);
-        final int attempts = retryable == null ? 0 : retryable.attempts();
+        // Ensure at least one attempt for configuration methods (e.g. @BeforeMethod)
+        final int attempts = Math.max(1, retryable == null ? 1 : retryable.attempts());
 
-        for (int attempt = 0; attempt < attempts; attempt++) {
+        int attempt = 1;
+        boolean success = false;
+        while (attempt <= attempts && !success) {
             callBack.runConfigurationMethod(testResult);
-            if (testResult.getThrowable() == null) {
-                break;
-            }
+            success = testResult.getThrowable() == null;
+            attempt++;
         }
     }
 }
