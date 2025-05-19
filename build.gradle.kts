@@ -24,7 +24,7 @@ dependencies {
     api("com.github.mbi88:date-handler:1.0.3")
     api("com.github.mbi88:data-faker:1.1.10")
     api("org.testng:testng:7.11.0")
-    api("org.json:json:20250107")
+    api("org.json:json:20250517")
     api("io.rest-assured:rest-assured:5.5.1")
     api("joda-time:joda-time:2.13.1")
     implementation("io.jsonwebtoken:jjwt-api:0.12.6")
