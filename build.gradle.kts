@@ -22,7 +22,7 @@ dependencies {
     api("com.github.mbi88:json-validator:1.1.4")
     api("com.github.mbi88:http-request:1.6.4")
     api("com.github.mbi88:date-handler:1.0.3")
-    api("com.github.mbi88:data-faker:1.1.10")
+    api("com.github.mbi88:data-faker:1.1.11")
     api("org.testng:testng:7.11.0")
     api("org.json:json:20250517")
     api("io.rest-assured:rest-assured:5.5.1")
