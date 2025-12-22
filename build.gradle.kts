@@ -31,7 +31,7 @@ dependencies {
     runtimeOnly("io.jsonwebtoken:jjwt-impl:0.13.0")
     runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.13.0")
     implementation("software.amazon.awssdk:ssm:2.34.8")
-    implementation("ch.qos.logback:logback-classic:1.5.19")
+    implementation("ch.qos.logback:logback-classic:1.5.23")
     implementation("com.google.guava:guava:33.5.0-jre")
     implementation("com.github.wnameless.json:json-flattener:0.17.3")
     testImplementation("org.mockito:mockito-core:5.20.0")
