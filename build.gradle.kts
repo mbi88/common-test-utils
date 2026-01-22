@@ -34,7 +34,7 @@ dependencies {
     implementation("ch.qos.logback:logback-classic:1.5.25")
     implementation("com.google.guava:guava:33.5.0-jre")
     implementation("com.github.wnameless.json:json-flattener:0.18.0")
-    testImplementation("org.mockito:mockito-core:5.20.0")
+    testImplementation("org.mockito:mockito-core:5.21.0")
 }
 
 tasks.test {
