@@ -1,5 +1,5 @@
 <!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd" >
-<suite name="test" parallel="classes">
+<suite name="test" verbose="1" parallel="false">
 
     <test name="test">
         <classes>
@@ -9,7 +9,7 @@
             <class name="tests.SerializerTest"/>
             <class name="tests.AuthTest"/>
             <class name="tests.ListenerTest"/>
-            <class name="tests.ConfigTest"/>
+            <class name="config.ConfigTest"/>
             <class name="tests.BaseTestCaseTest"/>
             <class name="tests.GraphQLTest"/>
         </classes>

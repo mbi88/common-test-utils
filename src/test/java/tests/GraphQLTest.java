@@ -30,7 +30,7 @@ public class GraphQLTest {
 
     @BeforeClass
     public void startServer() throws IOException {
-        server = HttpServer.create(new InetSocketAddress(0), 0); // 0 = авто вибір порту
+        server = HttpServer.create(new InetSocketAddress(0), 0); // automatically assign a free port
         server.createContext("/", new JsonHandler());
         server.setExecutor(null);
         server.start();

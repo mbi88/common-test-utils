@@ -1,17 +1,47 @@
 package tests;
 
+import com.sun.net.httpserver.HttpExchange;
+import com.sun.net.httpserver.HttpHandler;
+import com.sun.net.httpserver.HttpServer;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 import testcase.BaseTestCase;
+
+import java.io.IOException;
+import java.io.OutputStream;
+import java.net.InetSocketAddress;
 
 import static org.testng.Assert.*;
 
 public class TestCaseTest extends BaseTestCase {
 
+    private static String baseUrl;
+    private HttpServer server;
+
+    @BeforeClass
+    public void startServer() throws IOException {
+        server = HttpServer.create(new InetSocketAddress(0), 0); // automatically assign a free port
+        server.createContext("/json-object", new JsonHandler());
+        server.createContext("/json-array", new JsonHandler());
+
+        server.setExecutor(null);
+        server.start();
+
+        int port = server.getAddress().getPort();
+        baseUrl = "http://localhost:" + port;
+    }
+
+    @AfterClass
+    public void stopServer() {
+        server.stop(0);
+    }
+
     @Test
     public void testHttpRequest() {
-        http.setExpectedStatusCode(200).get("https://api.npoint.io/3a360af4f1419f85f238");
+        http.setExpectedStatusCode(200).get(baseUrl + "/json-object");
     }
 
     @Test
@@ -55,13 +85,13 @@ public class TestCaseTest extends BaseTestCase {
 
     @Test
     public void testToJson() {
-        var r = http.get("https://api.npoint.io/3a360af4f1419f85f238");
+        var r = http.get(baseUrl + "/json-object");
         toJson(r);
     }
 
     @Test
     public void testToJsonArray() {
-        var r = http.get("https://api.npoint.io/ef1154bf179619bd3d7d");
+        var r = http.get(baseUrl + "/json-array");
 
         toJsonArray(r);
     }
@@ -126,5 +156,36 @@ public class TestCaseTest extends BaseTestCase {
     public void testArrayHasUpdateParameter() {
         assertion.jsonEquals(getResources("/jsons/array_upd_par.json"),
                 new JSONArray().put(new JSONObject().put("a", "Hello " + dateHandler.getCurrentDate() + "!")));
+    }
+
+    static class JsonHandler implements HttpHandler {
+
+        @Override
+        public void handle(HttpExchange exchange) throws IOException {
+            String path = exchange.getHttpContext().getPath();
+            String response;
+            int status;
+
+            switch (path) {
+                case "/json-object" -> {
+                    response = "{\"a\":1}";
+                    status = 200;
+                }
+                case "/json-array" -> {
+                    response = "[{\"a\":1}]";
+                    status = 200;
+                }
+                default -> {
+                    response = "{\"error\":\"Unknown path\"}";
+                    status = 404;
+                }
+            }
+
+            exchange.getResponseHeaders().add("Content-Type", "application/json");
+            exchange.sendResponseHeaders(status, response.getBytes().length);
+            try (OutputStream os = exchange.getResponseBody()) {
+                os.write(response.getBytes());
+            }
+        }
     }
 }

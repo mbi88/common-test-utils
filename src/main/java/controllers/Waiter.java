@@ -1,8 +1,9 @@
 package controllers;
 
-import org.joda.time.DateTime;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.time.Duration;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.LockSupport;
 import java.util.function.Function;
@@ -18,9 +19,16 @@ import java.util.function.Supplier;
 public final class Waiter<T> {
 
     /**
-     * Time in seconds to be spent on waiting of condition.
+     * Logger name: "common-test-utils.waiter".
+     * To enable logging in consuming project, add this to your logback.xml:
+     * <logger name="common-test-utils.waiter" level="INFO"/>
      */
-    private int waitingTime;
+    private static final Logger LOGGER = LoggerFactory.getLogger("common-test-utils.waiter");
+
+    /**
+     * Time to be spent on waiting of condition.
+     */
+    private long waitingTimeMillis;
 
     /**
      * Function to execute.
@@ -33,9 +41,9 @@ public final class Waiter<T> {
     private Function<T, String> resultToString;
 
     /**
-     * Idle duration in ms. 1 sec by default.
+     * Idle duration. 1 sec by default.
      */
-    private int idleDuration = 1000;
+    private long idleDurationMillis = 1000;
 
     /**
      * Whether print intermediate response or not. False by default.
@@ -61,8 +69,8 @@ public final class Waiter<T> {
         return new Waiter<T>().new Builder();
     }
 
-    private int getWaitingTime() {
-        return waitingTime;
+    private long getWaitingTime() {
+        return waitingTimeMillis;
     }
 
     private Supplier<T> getSupplier() {
@@ -73,8 +81,8 @@ public final class Waiter<T> {
         return resultToString;
     }
 
-    private int getIdleDuration() {
-        return idleDuration;
+    private long getIdleDuration() {
+        return idleDurationMillis;
     }
 
     private boolean isDebug() {
@@ -94,6 +102,9 @@ public final class Waiter<T> {
 
     /**
      * Waits for the specified condition to be met.
+     * Logger name: "common-test-utils.waiter"
+     * To enable logging in consuming project, add this to your logback.xml:
+     * <logger name="common-test-utils.waiter" level="INFO"/>
      *
      * @param expectedCondition the condition to be satisfied.
      * @param predicateAsString the string representation of the predicate, optional.
@@ -105,23 +116,19 @@ public final class Waiter<T> {
             throw new IllegalStateException("Supplier, resultToString, and expectedCondition must not be null");
         }
 
-        if (idleDuration < 1) {
-            idleDuration = 1000;
-        }
+        final long startTime = System.currentTimeMillis();
+        final long endTime = startTime + getWaitingTime();
 
-        final long startTime = DateTime.now().getMillis();
-        final long endTime = startTime + getWaitingTime() * 1000L;
         T response = getSupplier().get();
 
-        while (DateTime.now().getMillis() < endTime) {
-            if (expectedCondition.test(response)) {
-                return response;
-            }
-
+        while (System.currentTimeMillis() < endTime) {
             // Print intermediate response
             if (isDebug()) {
-                final var logger = LoggerFactory.getLogger(Waiter.class);
-                logger.info(getResultToString().apply(response));
+                LOGGER.info(getResultToString().apply(response));
+            }
+
+            if (expectedCondition.test(response)) {
+                return response;
             }
 
             // Idle
@@ -148,8 +155,13 @@ public final class Waiter<T> {
             // Disabled
         }
 
-        public Builder setWaitingTime(final int waitingTime) {
-            Waiter.this.waitingTime = waitingTime;
+        @Deprecated
+        public Builder setWaitingTime(final int waitingTimeSeconds) {
+            return setTimeout(Duration.ofSeconds(waitingTimeSeconds));
+        }
+
+        public Builder setTimeout(final Duration duration) {
+            Waiter.this.waitingTimeMillis = duration.toMillis();
             return this;
         }
 
@@ -163,8 +175,13 @@ public final class Waiter<T> {
             return this;
         }
 
-        public Builder setIdleDuration(final int idleDuration) {
-            Waiter.this.idleDuration = idleDuration;
+        @Deprecated
+        public Builder setIdleDuration(final int idleDurationMs) {
+            return setIdleDuration(Duration.ofMillis(idleDurationMs));
+        }
+
+        public Builder setIdleDuration(final Duration duration) {
+            Waiter.this.idleDurationMillis = duration.toMillis();
             return this;
         }
 

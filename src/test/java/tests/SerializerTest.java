@@ -5,15 +5,13 @@ import org.json.JSONObject;
 import org.mockito.MockedStatic;
 import org.testng.annotations.Test;
 import serializer.JsonDeserializer;
+import serializer.JsonResourceLoader;
 
 import java.io.IOException;
-import java.io.UncheckedIOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
+import java.io.InputStream;
 import java.util.Map;
 
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.mockStatic;
+import static org.mockito.Mockito.*;
 import static org.testng.Assert.*;
 import static serializer.JsonDeserializer.*;
 
@@ -276,18 +274,26 @@ public class SerializerTest {
     }
 
     @Test
-    public void testIOExceptionWrappedInUnchecked() throws Exception {
-        var url = getClass().getResource("/jsons/jo.json");
-        assertNotNull(url); // ensure test fails if resource not found
+    public void testExceptionWhenFileNotFound() {
+        var ex = expectThrows(IllegalArgumentException.class, () ->
+                JsonDeserializer.readStringFromFile("/nonexistent.json"));
+        assertTrue(ex.getMessage().contains("Can't find a file"));
+    }
 
-        // Mock Files.readString()
-        try (MockedStatic<Files> filesMock = mockStatic(Files.class)) {
-            filesMock.when(() -> Files.readString(any(Path.class)))
-                    .thenThrow(new IOException("Simulated IO error"));
+    @Test
+    void testReadStringFromFileIOExceptionWrappedInIllegalArgumentException() throws IOException {
+        var mockInputStream = mock(InputStream.class);
+        when(mockInputStream.readAllBytes()).thenThrow(new IOException("Simulated IO exception"));
 
-            var ex = expectThrows(IllegalArgumentException.class, () ->
-                    JsonDeserializer.readStringFromFile("/jsons/jo.json"));
+        try (MockedStatic<JsonResourceLoader> mocked = mockStatic(JsonResourceLoader.class)) {
+            mocked.when(() -> JsonResourceLoader.getResourceAsStream("/jsons/ss.json"))
+                    .thenReturn(mockInputStream);
+
+            var ex = expectThrows(IllegalArgumentException.class,
+                    () -> JsonDeserializer.readStringFromFile("/jsons/ss.json"));
+
             assertTrue(ex.getMessage().contains("Failed to read file"));
         }
     }
+
 }

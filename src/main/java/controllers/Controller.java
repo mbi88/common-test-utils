@@ -43,10 +43,10 @@ public abstract class Controller<T> {
      * Returns object id.
      *
      * @return id
-     * @throws NullPointerException if object was not initialized.
+     * @throws NullPointerException if an object was not initialized.
      */
     public Object getId() {
-        Validate.notNull(this.id, this.getClass().getSimpleName() + ": Object id is not initialized");
+        Validate.notNull(this.id, STR."\{this.getClass().getSimpleName()}: Object id is not initialized");
         return this.id;
     }
 
@@ -65,7 +65,7 @@ public abstract class Controller<T> {
      * @return ""
      */
     public final Controller<T> withoutId() {
-        return new Controller<T>() {
+        return new Controller<>() {
             @Override
             public Object getId() {
                 return "";
@@ -79,7 +79,7 @@ public abstract class Controller<T> {
      * @return UUID
      */
     public final Controller<T> withIncorrectId() {
-        return new Controller<T>() {
+        return new Controller<>() {
             @Override
             public Object getId() {
                 return getRandomUID();

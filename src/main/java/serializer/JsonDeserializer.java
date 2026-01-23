@@ -9,9 +9,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.net.URISyntaxException;
-import java.nio.file.Files;
-import java.nio.file.Path;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -86,7 +84,7 @@ public final class JsonDeserializer {
      * @return matching JSONObject or empty object
      */
     public static JSONObject findJsonInArray(final JSONArray sourceArray, final String name, final Object value) {
-        for (var element : sourceArray) {
+        for (final var element : sourceArray) {
             if (!(element instanceof JSONObject json)) {
                 continue;
             }
@@ -112,7 +110,7 @@ public final class JsonDeserializer {
      */
     public static JSONObject updateJson(final JSONObject json, final Map<String, Object> map) {
         var updated = new JSONObject(json.toString());
-        for (var entry : map.entrySet()) {
+        for (final var entry : map.entrySet()) {
             updated = updateJson(updated, entry.getKey(), entry.getValue());
         }
         return new JSONObject(unflatten(updated));
@@ -160,22 +158,32 @@ public final class JsonDeserializer {
      * @return content from file as a string
      */
     public static String readStringFromFile(final String path) {
-        try {
-            final var url = JsonDeserializer.class.getResource(path);
-            if (url == null) {
+        try (var inputStream = JsonResourceLoader.getResourceAsStream(path)) {
+            if (inputStream == null) {
                 throw new IllegalArgumentException("Can't find a file: " + path);
             }
-            final var filePath = Path.of(Objects.requireNonNull(url).toURI());
-            return Files.readString(filePath);
-        } catch (URISyntaxException | IOException e) {
-            throw new IllegalArgumentException("Failed to read file: " + path, new IOException(e));
+            return new String(inputStream.readAllBytes(), StandardCharsets.UTF_8);
+        } catch (IOException e) {
+            throw new IllegalArgumentException("Failed to read file: " + path, e);
         }
     }
 
+    /**
+     * Flattens a JSON string into a flat JSON object.
+     *
+     * @param json the JSON string to flatten
+     * @return a JSONObject representing the flattened JSON
+     */
     private static JSONObject flatten(final String json) {
         return new JSONObject(new JsonFlattener(json).flatten());
     }
 
+    /**
+     * Unflattens a flattened JSON object back into its original form.
+     *
+     * @param flatJson the flattened JSON object to unflatten
+     * @return a string representing the unflattened JSON
+     */
     private static String unflatten(final JSONObject flatJson) {
         return new JsonUnflattener(flatJson.toString()).unflatten();
     }
