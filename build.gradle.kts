@@ -27,7 +27,7 @@ dependencies {
     api("com.github.mbi88:data-faker:1.1.13")
     api("org.testng:testng:7.12.0")
     api("io.rest-assured:rest-assured:6.3.0")
-    api("org.json:json:20251224")
+    api("org.json:json:20260814")
     api("joda-time:joda-time:2.14.1")
     implementation("io.jsonwebtoken:jjwt-api:0.13.0")
     runtimeOnly("io.jsonwebtoken:jjwt-impl:0.13.0")
