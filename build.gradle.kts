@@ -8,7 +8,7 @@ plugins {
     id("jacoco")
     id("maven-publish")
     id("code-quality")
-    id("com.github.spotbugs") version "6.4.8"
+    id("com.github.spotbugs") version "6.5.1"
 }
 
 group = "com.mbi"
@@ -28,15 +28,15 @@ dependencies {
     api("org.testng:testng:7.12.0")
     api("io.rest-assured:rest-assured:6.0.0")
     api("org.json:json:20251224")
-    api("joda-time:joda-time:2.14.0")
+    api("joda-time:joda-time:2.14.1")
     implementation("io.jsonwebtoken:jjwt-api:0.13.0")
     runtimeOnly("io.jsonwebtoken:jjwt-impl:0.13.0")
     runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.13.0")
     implementation("software.amazon.awssdk:ssm:2.41.12")
-    implementation("ch.qos.logback:logback-classic:1.5.25")
+    implementation("ch.qos.logback:logback-classic:1.5.32")
     implementation("com.google.guava:guava:33.6.0-jre")
     implementation("com.github.wnameless.json:json-flattener:0.18.0")
-    testImplementation("org.mockito:mockito-core:5.21.0")
+    testImplementation("org.mockito:mockito-core:5.23.0")
 }
 
 tasks.test {
