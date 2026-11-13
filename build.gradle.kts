@@ -20,11 +20,11 @@ repositories {
 }
 
 dependencies {
-    api("com.github.mbi88:json-assert:1.0.3")
-    api("com.github.mbi88:json-validator:1.1.6")
-    api("com.github.mbi88:http-request:1.6.5")
-    api("com.github.mbi88:date-handler:1.0.4")
-    api("com.github.mbi88:data-faker:1.1.12")
+    api("com.github.mbi88:json-assert:1.0.4")
+    api("com.github.mbi88:json-validator:1.1.7")
+    api("com.github.mbi88:http-request:1.6.6")
+    api("com.github.mbi88:date-handler:1.0.5")
+    api("com.github.mbi88:data-faker:1.1.13")
     api("org.testng:testng:7.12.0")
     api("io.rest-assured:rest-assured:6.0.0")
     api("org.json:json:20251224")
