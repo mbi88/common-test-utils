@@ -35,7 +35,7 @@ dependencies {
     implementation("ch.qos.logback:logback-classic:1.6.6")
     implementation("software.amazon.awssdk:ssm:2.57.12")
     implementation("com.github.wnameless.json:json-flattener:0.18.6")
-    implementation("com.google.guava:guava:33.6.0-jre")
+    implementation("com.google.guava:guava:33.8.0-jre")
     testImplementation("org.mockito:mockito-core:5.24.0")
 }
 
